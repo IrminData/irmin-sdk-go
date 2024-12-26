@@ -21,7 +21,7 @@ func NewUserService(client *client.Client) *UserService {
 }
 
 // FetchWorkspaceUsers fetches all users in the current workspace
-func (s *ProfileService) FetchWorkspaceUsers() ([]models.User, error) {
+func (s *UserService) FetchWorkspaceUsers() ([]models.User, error) {
 	resp, err := s.client.Request(client.RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/users",
@@ -38,7 +38,7 @@ func (s *ProfileService) FetchWorkspaceUsers() ([]models.User, error) {
 }
 
 // FetchUser fetches a user by ID
-func (s *ProfileService) FetchUser(userID string) (*models.User, error) {
+func (s *UserService) FetchUser(userID string) (*models.User, error) {
 	resp, err := s.client.Request(client.RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/users/%s", userID),
@@ -55,7 +55,7 @@ func (s *ProfileService) FetchUser(userID string) (*models.User, error) {
 }
 
 // ChangeUserRole changes the role of a user in the current workspace
-func (s *ProfileService) ChangeUserRole(userID, role string) error {
+func (s *UserService) ChangeUserRole(userID, role string) error {
 	body := map[string]string{
 		"_method": "PATCH",
 		"roles":   role,
@@ -73,7 +73,7 @@ func (s *ProfileService) ChangeUserRole(userID, role string) error {
 }
 
 // RemoveUserFromWorkspace removes a user from the current workspace
-func (s *ProfileService) RemoveUserFromWorkspace(userID string) error {
+func (s *UserService) RemoveUserFromWorkspace(userID string) error {
 	body := map[string]string{
 		"_method": "DELETE",
 	}
