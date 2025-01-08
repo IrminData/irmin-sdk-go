@@ -75,8 +75,8 @@ func (s *WorkspaceService) CreateWorkspace(name, description string) (*models.Wo
 	form := url.Values{}
 	form.Set("name", name)
 	form.Set("description", description)
-	var workspace models.Workspace
 
+	var workspace models.Workspace
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workspaces",
