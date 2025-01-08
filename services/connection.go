@@ -1,12 +1,12 @@
 package services
 
 import (
-	"bytes"
 	"fmt"
 	"irmin-sdk/client"
 	"irmin-sdk/models"
-	"mime/multipart"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 // ConnectionService handles operations related to connections
@@ -50,21 +50,18 @@ func (s *ConnectionService) UpdateConnection(
 	connectionID string,
 	data map[string]interface{},
 ) (*models.Connection, *client.IrminAPIResponse, error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	writer.WriteField("_method", "PATCH")
+	form := url.Values{}
+	form.Set("_method", "PATCH")
 	for key, value := range data {
-		writer.WriteField(key, fmt.Sprintf("%v", value))
+		form.Set(key, fmt.Sprintf("%v", value))
 	}
-	writer.Close()
 
 	var updatedConnection models.Connection
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connections/%s", connectionID),
-		ContentType: writer.FormDataContentType(),
-		Body:        body,
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        strings.NewReader(form.Encode()),
 	}, &updatedConnection)
 	if err != nil {
 		return nil, nil, fmt.Errorf("update connection error: %w", err)
@@ -76,18 +73,15 @@ func (s *ConnectionService) UpdateConnection(
 func (s *ConnectionService) ReassignConnection(
 	connectionID, newOwnerID string,
 ) (*models.Connection, *client.IrminAPIResponse, error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	writer.WriteField("owner", newOwnerID)
-	writer.Close()
+	form := url.Values{}
+	form.Set("owner", newOwnerID)
 
 	var updatedConnection models.Connection
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connections/%s/reassign", connectionID),
-		ContentType: writer.FormDataContentType(),
-		Body:        body,
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        strings.NewReader(form.Encode()),
 	}, &updatedConnection)
 	if err != nil {
 		return nil, nil, fmt.Errorf("reassign connection error: %w", err)
@@ -97,18 +91,15 @@ func (s *ConnectionService) ReassignConnection(
 
 // DeleteConnection deletes a connection by its ID
 func (s *ConnectionService) DeleteConnection(connectionID string) (*client.IrminAPIResponse, error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	writer.WriteField("_method", "DELETE")
-	writer.WriteField("connection", connectionID)
-	writer.Close()
+	form := url.Values{}
+	form.Set("_method", "DELETE")
+	form.Set("connection", connectionID)
 
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/connections",
-		ContentType: writer.FormDataContentType(),
-		Body:        body,
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        strings.NewReader(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete connection error: %w", err)
@@ -122,27 +113,24 @@ func (s *ConnectionService) CreateConnection(
 	connectionDetails, connectionSettings map[string]string,
 	name, description string,
 ) (*models.Connection, *client.IrminAPIResponse, error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	writer.WriteField("connector", connectorID)
-	writer.WriteField("name", name)
-	writer.WriteField("description", description)
+	form := url.Values{}
+	form.Set("connector", connectorID)
+	form.Set("name", name)
+	form.Set("description", description)
 
 	for key, value := range connectionDetails {
-		writer.WriteField(fmt.Sprintf("details[%s]", key), value)
+		form.Set(fmt.Sprintf("details[%s]", key), value)
 	}
 	for key, value := range connectionSettings {
-		writer.WriteField(fmt.Sprintf("settings[%s]", key), value)
+		form.Set(fmt.Sprintf("settings[%s]", key), value)
 	}
-	writer.Close()
 
 	var newConnection models.Connection
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/connections",
-		ContentType: writer.FormDataContentType(),
-		Body:        body,
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        strings.NewReader(form.Encode()),
 	}, &newConnection)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create connection error: %w", err)
