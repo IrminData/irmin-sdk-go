@@ -1,12 +1,12 @@
 package services
 
 import (
-	"bytes"
 	"fmt"
 	"irmin-sdk/client"
 	"irmin-sdk/models"
-	"mime/multipart"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 // CredentialService handles operations related to system tokens
@@ -36,27 +36,16 @@ func (s *CredentialService) GetSystemTokens() ([]models.SystemToken, *client.Irm
 
 // CreateSystemToken creates a new system token
 func (s *CredentialService) CreateSystemToken(name string, expiry int) (*models.SystemToken, *client.IrminAPIResponse, error) {
-	endpoint := "/v1/credentials"
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	if err := writer.WriteField("name", name); err != nil {
-		return nil, nil, fmt.Errorf("write name field error: %w", err)
-	}
-	if err := writer.WriteField("expiry", fmt.Sprintf("%d", expiry)); err != nil {
-		return nil, nil, fmt.Errorf("write expiry field error: %w", err)
-	}
-
-	if err := writer.Close(); err != nil {
-		return nil, nil, fmt.Errorf("close writer error: %w", err)
-	}
+	form := url.Values{}
+	form.Set("name", name)
+	form.Set("expiry", fmt.Sprintf("%d", expiry))
 
 	var token models.SystemToken
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    endpoint,
-		ContentType: writer.FormDataContentType(),
-		Body:        body,
+		Endpoint:    "/v1/credentials",
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        strings.NewReader(form.Encode()),
 	}, &token)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create system token error: %w", err)
@@ -66,23 +55,14 @@ func (s *CredentialService) CreateSystemToken(name string, expiry int) (*models.
 
 // RevokeSystemToken revokes a system token
 func (s *CredentialService) RevokeSystemToken(tokenID string) (*client.IrminAPIResponse, error) {
-	endpoint := fmt.Sprintf("/v1/credentials/%s", tokenID)
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	if err := writer.WriteField("_method", "DELETE"); err != nil {
-		return nil, fmt.Errorf("write _method field error: %w", err)
-	}
-
-	if err := writer.Close(); err != nil {
-		return nil, fmt.Errorf("close writer error: %w", err)
-	}
+	form := url.Values{}
+	form.Set("_method", "DELETE")
 
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    endpoint,
-		ContentType: writer.FormDataContentType(),
-		Body:        body,
+		Endpoint:    fmt.Sprintf("/v1/credentials/%s", tokenID),
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        strings.NewReader(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("revoke system token error: %w", err)
