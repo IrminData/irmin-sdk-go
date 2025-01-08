@@ -1,12 +1,12 @@
 package services
 
 import (
-	"bytes"
 	"fmt"
 	"irmin-sdk/client"
 	"irmin-sdk/models"
-	"mime/multipart"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 // CommitService handles operations related to repository commits
@@ -52,18 +52,15 @@ func (s *CommitService) FetchCommit(repository, hash string) (*models.Commit, *c
 
 // CreateCommit creates a new commit in a repository for the specified branch
 func (s *CommitService) CreateCommit(repository, branch, message string) (*client.IrminAPIResponse, error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	writer.WriteField("branch", branch)
-	writer.WriteField("message", message)
-	writer.Close()
+	form := url.Values{}
+	form.Set("branch", branch)
+	form.Set("message", message)
 
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/commits", repository),
-		ContentType: writer.FormDataContentType(),
-		Body:        body,
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        strings.NewReader(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("create commit error: %w", err)
@@ -73,17 +70,14 @@ func (s *CommitService) CreateCommit(repository, branch, message string) (*clien
 
 // RevertUncommittedChanges reverts uncommitted changes in a branch
 func (s *CommitService) RevertUncommittedChanges(repository, branch string) (*client.IrminAPIResponse, error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	writer.WriteField("branch", branch)
-	writer.Close()
+	form := url.Values{}
+	form.Set("branch", branch)
 
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/commits/revert", repository),
-		ContentType: writer.FormDataContentType(),
-		Body:        body,
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        strings.NewReader(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("revert uncommitted changes error: %w", err)
