@@ -26,13 +26,16 @@ func main() {
 
 	// Create objects used by the examples
 	examples.CreateTestRepository(baseURL, apiToken, locale)
+	examples.CreateTestScriptFile(baseURL, apiToken, locale)
 
 	// Run examples
 	examples.TestWorkspaces(baseURL, apiToken, locale)
 	examples.TestUsers(baseURL, apiToken, locale)
 	examples.TestWorkflows(baseURL, apiToken, locale)
 	examples.TestRepositories(baseURL, apiToken, locale)
+	examples.TestEditorItems(baseURL, apiToken, locale)
 
 	// Clean up and delete the example objects
 	examples.DeleteTestRepository(baseURL, apiToken, locale)
+	examples.DeleteTestScriptFile(baseURL, apiToken, locale)
 }
