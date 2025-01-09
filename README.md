@@ -4,9 +4,10 @@ Structure of the SDK project:
 
 ```bash
 irmin-sdk/
-├── client/          # SDK core client
-├── services/        # Service implementations
+├── client/          # API core client
+├── services/        # API Service implementations
 ├── models/          # Data models
+├── utils/           # Utility functions
 ├── examples/        # Example usage files
 ├── go.mod           # Go module file
 ```
