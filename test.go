@@ -24,7 +24,15 @@ func main() {
 		log.Fatalf("Missing required environment variables: BASE_URL, API_TOKEN, or LOCALE")
 	}
 
+	// Create objects used by the examples
+	examples.CreateTestRepository(baseURL, apiToken, locale)
+
+	// Run examples
 	examples.TestWorkspaces(baseURL, apiToken, locale)
 	examples.TestUsers(baseURL, apiToken, locale)
 	examples.TestWorkflows(baseURL, apiToken, locale)
+	examples.TestRepositories(baseURL, apiToken, locale)
+
+	// Clean up and delete the example objects
+	examples.DeleteTestRepository(baseURL, apiToken, locale)
 }
