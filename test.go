@@ -37,6 +37,7 @@ func main() {
 	examples.TestWorkflows(*connectionID, baseURL, apiToken, locale)
 	examples.TestRepositories(baseURL, apiToken, locale)
 	examples.TestEditorItems(baseURL, apiToken, locale)
+	examples.TestVersioningAndObjects(baseURL, apiToken, locale)
 
 	// Clean up and delete the example objects
 	examples.DeleteTestRepository(baseURL, apiToken, locale)
