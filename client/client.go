@@ -137,21 +137,15 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 
 	case "application/x-www-form-urlencoded":
 		// Encode form fields as URL-encoded data
-		formData := make(map[string][]string)
-		for key, val := range opts.FormFields {
-			formData[key] = []string{val}
-		}
-
 		var buf bytes.Buffer
-		for key, vals := range formData {
-			for _, v := range vals {
-				if buf.Len() > 0 {
-					buf.WriteByte('&')
-				}
-				buf.WriteString(fmt.Sprintf("%s=%s", key, v))
+		firstField := true
+		for key, val := range opts.FormFields {
+			if !firstField {
+				buf.WriteByte('&')
 			}
+			buf.WriteString(fmt.Sprintf("%s=%s", key, val))
+			firstField = false
 		}
-
 		bodyReader = bytes.NewReader(buf.Bytes())
 		headers["Content-Type"] = "application/x-www-form-urlencoded"
 
@@ -193,15 +187,15 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	// Non-2xx means an error
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("API request failed with status %d", resp.StatusCode)
-	}
-
-	// Read the response body
+	// Read the response body, regardless of status code
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	// Check for non-2xx status codes and include body in error
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, responseBody)
 	}
 
 	return responseBody, nil
