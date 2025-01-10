@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // RepositoryService handles repository-related API calls
@@ -67,7 +66,7 @@ func (s *RepositoryService) CreateRepository(
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/repositories",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &repository)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create repository error: %w", err)
@@ -85,7 +84,7 @@ func (s *RepositoryService) ReassignRepository(slug, ownerID string) (*client.Ir
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/reassign", slug),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("reassign repository error: %w", err)
@@ -102,7 +101,7 @@ func (s *RepositoryService) DeleteRepository(slug string) (*client.IrminAPIRespo
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s", slug),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete repository error: %w", err)
@@ -128,7 +127,7 @@ func (s *RepositoryService) UpdateRepository(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s", slug),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("update repository error: %w", err)
@@ -151,7 +150,7 @@ func (s *RepositoryService) GetRepositoryDownloadLink(slug, ref, path string) (*
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/download", slug),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &response)
 	if err != nil {
 		return nil, nil, fmt.Errorf("get repository download link error: %w", err)

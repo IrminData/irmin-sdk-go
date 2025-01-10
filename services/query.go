@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // QueryService handles query-related API calls
@@ -32,7 +31,7 @@ func (s *QueryService) ExecuteScript(scriptType, content string) (*models.QueryE
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/queries/execute",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &result)
 	if err != nil {
 		return nil, nil, fmt.Errorf("execute script error: %w", err)
@@ -62,7 +61,7 @@ func (s *QueryService) CreateQuery(
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/queries",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &query)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create query error: %w", err)
@@ -109,7 +108,7 @@ func (s *QueryService) DeleteQuery(queryID string) (*client.IrminAPIResponse, er
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/queries/%s", queryID),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete query error: %w", err)
@@ -135,7 +134,7 @@ func (s *QueryService) UpdateQuery(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/queries/%s", queryID),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &query)
 	if err != nil {
 		return nil, nil, fmt.Errorf("update query error: %w", err)

@@ -7,7 +7,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // ConnectorService handles operations related to connectors
@@ -68,7 +67,7 @@ func (s *ConnectorService) FetchConnectorConfigurationFields(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/%s", connectorID, configType),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &fields)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch connector configuration fields error: %w", err)
@@ -96,7 +95,7 @@ func (s *ConnectorService) ValidateConnectorConfiguration(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/validate", connectorID),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &validationResult)
 	if err != nil {
 		return nil, nil, fmt.Errorf("validate connector configuration error: %w", err)
@@ -124,7 +123,7 @@ func (s *ConnectorService) FetchConnectorSchema(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/schema/%s", connectorID, operation),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &schema)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch connector schema error: %w", err)
@@ -166,7 +165,7 @@ func (s *ConnectorService) ValidateConnectorData(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/schema/%s/validate", connectorID, operation),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &validationResult)
 	if err != nil {
 		return nil, nil, fmt.Errorf("validate connector data error: %w", err)

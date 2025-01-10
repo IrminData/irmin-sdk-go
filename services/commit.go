@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // CommitService handles operations related to repository commits
@@ -60,7 +59,7 @@ func (s *CommitService) CreateCommit(repository, branch, message string) (*clien
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/commits", repository),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("create commit error: %w", err)
@@ -77,7 +76,7 @@ func (s *CommitService) RevertUncommittedChanges(repository, branch string) (*cl
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/commits/revert", repository),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("revert uncommitted changes error: %w", err)

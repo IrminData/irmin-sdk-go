@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // ConnectionService handles operations related to connections
@@ -65,7 +64,7 @@ func (s *ConnectionService) UpdateConnection(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connections/%s", connectionID),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &updatedConnection)
 	if err != nil {
 		return nil, nil, fmt.Errorf("update connection error: %w", err)
@@ -85,7 +84,7 @@ func (s *ConnectionService) ReassignConnection(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connections/%s/reassign", connectionID),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &updatedConnection)
 	if err != nil {
 		return nil, nil, fmt.Errorf("reassign connection error: %w", err)
@@ -103,7 +102,7 @@ func (s *ConnectionService) DeleteConnection(connectionID string) (*client.Irmin
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/connections",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete connection error: %w", err)
@@ -134,7 +133,7 @@ func (s *ConnectionService) CreateConnection(
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/connections",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &newConnection)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create connection error: %w", err)

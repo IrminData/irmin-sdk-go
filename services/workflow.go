@@ -7,7 +7,6 @@ import (
 	"irmin-sdk/utils"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // WorkflowService handles workflow-related operations
@@ -82,7 +81,7 @@ func (s *WorkflowService) UpdateWorkflow(
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workflows/%s", workflowID),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &workflow)
 	if err != nil {
 		return nil, nil, fmt.Errorf("update workflow error: %w", err)
@@ -159,7 +158,7 @@ func (s *WorkflowService) CreateImportWorkflow(
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/imports",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &workflow)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create import workflow error: %w", err)
@@ -213,7 +212,7 @@ func (s *WorkflowService) CreateExportWorkflow(
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/exports",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &workflow)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create export workflow error: %w", err)
@@ -261,7 +260,7 @@ func (s *WorkflowService) CreateActionWorkflow(
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/actions",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &workflow)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create action workflow error: %w", err)
@@ -337,7 +336,7 @@ func (s *WorkflowService) CreatePipelineWorkflow(
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/pipelines",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &workflow)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create pipeline workflow error: %w", err)

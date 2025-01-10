@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // CredentialService handles operations related to system tokens
@@ -45,7 +44,7 @@ func (s *CredentialService) CreateSystemToken(name string, expiry int) (*models.
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/credentials",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &token)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create system token error: %w", err)
@@ -62,7 +61,7 @@ func (s *CredentialService) RevokeSystemToken(tokenID string) (*client.IrminAPIR
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/credentials/%s", tokenID),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("revoke system token error: %w", err)

@@ -8,7 +8,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // ObjectService handles repository object-related API calls
@@ -149,7 +148,7 @@ func (s *ObjectService) MoveObject(repository, ref, path, newPath, newName strin
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/objects/%s", repository, path),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &object)
 	if err != nil {
 		return nil, nil, fmt.Errorf("move object error: %w", err)
@@ -167,7 +166,7 @@ func (s *ObjectService) DeleteObject(repository, ref, path, name string) (*clien
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/objects/%s/%s", repository, path, name),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete object error: %w", err)

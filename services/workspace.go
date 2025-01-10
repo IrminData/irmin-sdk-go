@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // WorkspaceService wraps operations on workspaces
@@ -62,7 +61,7 @@ func (s *WorkspaceService) TransferWorkspaceOwnership(slug, userID string) (*cli
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("transfer workspace ownership error: %w", err)
@@ -81,7 +80,7 @@ func (s *WorkspaceService) CreateWorkspace(name, description string) (*models.Wo
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workspaces",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &workspace)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create workspace error: %w", err)
@@ -103,7 +102,7 @@ func (s *WorkspaceService) UpdateWorkspace(slug, name, description string) (*mod
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &workspace)
 	if err != nil {
 		return nil, nil, fmt.Errorf("update workspace error: %w", err)
@@ -122,7 +121,7 @@ func (s *WorkspaceService) DeleteWorkspace(slug string) (*client.IrminAPIRespons
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete workspace error: %w", err)

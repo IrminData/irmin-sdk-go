@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // EditorItemsService handles editor item-related operations
@@ -50,7 +49,7 @@ func (s *EditorItemsService) CreateFile(file *models.EditorItemsFile, isDraft bo
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/files",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &createdFile)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create file error: %w", err)
@@ -79,7 +78,7 @@ func (s *EditorItemsService) UpdateFile(
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/files",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &updatedFile)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create file error: %w", err)
@@ -98,7 +97,7 @@ func (s *EditorItemsService) DeleteFile(path string) (*client.IrminAPIResponse, 
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/files",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete file error: %w", err)
@@ -117,7 +116,7 @@ func (s *EditorItemsService) CreateFolder(folder *models.EditorItemsFolder) (*mo
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/folders",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &createdFolder)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create folder error: %w", err)
@@ -135,7 +134,7 @@ func (s *EditorItemsService) DeleteFolder(path string) (*client.IrminAPIResponse
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/folders",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete folder error: %w", err)

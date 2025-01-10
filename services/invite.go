@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // InviteService handles invite-related API calls
@@ -36,7 +35,7 @@ func (s *InviteService) InviteUserToWorkspace(firstName, lastName, email, phone,
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/invites",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &invite)
 	if err != nil {
 		return nil, nil, fmt.Errorf("invite user error: %w", err)
@@ -65,7 +64,7 @@ func (s *InviteService) CancelUserInvite(inviteID string) (*client.IrminAPIRespo
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/invites/%s", inviteID),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("cancel invite error: %w", err)
@@ -120,7 +119,7 @@ func (s *InviteService) AcceptInvite(inviteID, hash, password, passwordConfirmat
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/invites/%s/accept/%s", inviteID, hash),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("accept invite error: %w", err)

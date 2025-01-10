@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // BranchService handles branch-related API operations.
@@ -57,7 +56,7 @@ func (s *BranchService) CreateBranch(repository, name, from string) (*client.Irm
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches", repository),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("create branch error: %w", err)
@@ -75,7 +74,7 @@ func (s *BranchService) DeleteBranch(repository, branch string) (*client.IrminAP
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches/%s", repository, branch),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete branch error: %w", err)
@@ -94,7 +93,7 @@ func (s *BranchService) UpdateBranch(repository, oldName, newName string) (*clie
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches/%s", repository, oldName),
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 
 	if err != nil {

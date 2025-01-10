@@ -6,7 +6,6 @@ import (
 	"irmin-sdk/models"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // TagService handles repository tag-related API calls
@@ -63,7 +62,7 @@ func (s *TagService) CreateTag(repository, name, ref string) (*models.Tag, *clie
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &newTag)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create tag error: %w", err)
@@ -88,7 +87,7 @@ func (s *TagService) UpdateTag(repository, tag, name, ref string) (*models.Tag, 
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, &updatedTag)
 	if err != nil {
 		return nil, nil, fmt.Errorf("update tag error: %w", err)
@@ -106,7 +105,7 @@ func (s *TagService) DeleteTag(repository, tag string) (*client.IrminAPIResponse
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        strings.NewReader(form.Encode()),
+		Body:        []byte(form.Encode()),
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete tag error: %w", err)
