@@ -81,6 +81,7 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 			bodyReader = bytes.NewReader(jsonData)
 			headers["Content-Type"] = "application/json"
 		}
+
 	case "multipart/form-data":
 		// Build a multipart form
 		var b bytes.Buffer
@@ -134,9 +135,29 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 		bodyReader = &b
 		headers["Content-Type"] = writer.FormDataContentType()
 
+	case "application/x-www-form-urlencoded":
+		// Encode form fields as URL-encoded data
+		formData := make(map[string][]string)
+		for key, val := range opts.FormFields {
+			formData[key] = []string{val}
+		}
+
+		var buf bytes.Buffer
+		for key, vals := range formData {
+			for _, v := range vals {
+				if buf.Len() > 0 {
+					buf.WriteByte('&')
+				}
+				buf.WriteString(fmt.Sprintf("%s=%s", key, v))
+			}
+		}
+
+		bodyReader = bytes.NewReader(buf.Bytes())
+		headers["Content-Type"] = "application/x-www-form-urlencoded"
+
 	default:
-		// If the content type is something else (or unspecified)
-		// let the user provide raw bytes or a string.
+		// If the content type is something else (or unspecified),
+		// let the user provide raw bytes or a string
 		if opts.Body != nil {
 			switch data := opts.Body.(type) {
 			case []byte:
