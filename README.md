@@ -29,3 +29,11 @@ BASE_URL=https://api.irmin.dev
 API_TOKEN=your-api-token
 LOCALE=en
 ```
+
+## Running the examples
+
+To execute the `test.go` file and run all the examples in the correct order, use the following command:
+
+```bash
+go run test.go
+```
