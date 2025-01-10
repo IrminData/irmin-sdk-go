@@ -25,6 +25,7 @@ func main() {
 	}
 
 	// Create objects used by the examples
+	examples.CreateTestWorkspace(baseURL, apiToken, locale)
 	examples.CreateTestRepository(baseURL, apiToken, locale)
 	examples.CreateTestScriptFile(baseURL, apiToken, locale)
 	connectionID := examples.CreateTestConnection(baseURL, apiToken, locale)
@@ -32,6 +33,7 @@ func main() {
 	// Run examples
 	examples.TestWorkspaces(baseURL, apiToken, locale)
 	examples.TestUsers(baseURL, apiToken, locale)
+	examples.TestInvites(baseURL, apiToken, locale)
 	examples.TestCredentials(baseURL, apiToken, locale)
 	examples.TestConnectors(baseURL, apiToken, locale)
 	examples.TestConnections(*connectionID, baseURL, apiToken, locale)
@@ -44,4 +46,5 @@ func main() {
 	examples.DeleteTestRepository(baseURL, apiToken, locale)
 	examples.DeleteTestScriptFile(baseURL, apiToken, locale)
 	examples.DeleteTestConnection(*connectionID, baseURL, apiToken, locale)
+	examples.DeleteTestWorkspace(baseURL, apiToken, locale)
 }

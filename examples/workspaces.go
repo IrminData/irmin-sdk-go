@@ -6,7 +6,7 @@ import (
 	"irmin-sdk/services"
 )
 
-func TestWorkspaces(baseURL, apiToken, locale string) {
+func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
 	// Initialise the client and service
 	apiClient := client.NewClient(baseURL, apiToken, locale)
 	workspaceService := services.NewWorkspaceService(apiClient)
@@ -15,33 +15,40 @@ func TestWorkspaces(baseURL, apiToken, locale string) {
 	workspace, res, err := workspaceService.CreateWorkspace("Test Workspace", "This is for SDK testing")
 	if err != nil {
 		fmt.Println("Error creating workspace:", err)
-		return
+		return nil
 	}
 	fmt.Println(res.Message)
 	fmt.Printf("Created workspace: %s (%s)\n", workspace.Name, workspace.Slug)
 
-	// Switch to the new workspace
-	res, err = workspaceService.SwitchWorkspace(workspace.Slug)
-	if err != nil {
-		fmt.Println("Error switching workspace:", err)
-		return
-	}
-	fmt.Println(res.Message)
+	return &workspace.Slug
+}
+
+func DeleteTestWorkspace(baseURL, apiToken, locale string) {
+	// Initialise the client and service
+	apiClient := client.NewClient(baseURL, apiToken, locale)
+	workspaceService := services.NewWorkspaceService(apiClient)
 
 	// Delete the new workspace
-	res, err = workspaceService.DeleteWorkspace(workspace.Slug)
+	res, err := workspaceService.DeleteWorkspace("test-workspace")
 	if err != nil {
 		fmt.Println("Error deleting workspace:", err)
 		return
 	}
 	fmt.Println(res.Message)
+}
+
+func TestWorkspaces(baseURL, apiToken, locale string) {
+	// Initialise the client and service
+	apiClient := client.NewClient(baseURL, apiToken, locale)
+	workspaceService := services.NewWorkspaceService(apiClient)
 
 	// Fetch workspaces
-	workspaces, _, err := workspaceService.FetchWorkspaces()
+	workspaces, res, err := workspaceService.FetchWorkspaces()
 	if err != nil {
 		fmt.Println("Error fetching workspaces:", err)
 		return
 	}
+	fmt.Println(res.Message)
 
 	for _, workspace := range workspaces {
 		fmt.Printf("Workspace: %s (%s)\n", workspace.Name, workspace.Slug)
@@ -52,11 +59,20 @@ func TestWorkspaces(baseURL, apiToken, locale string) {
 		fmt.Println("No workspaces found")
 		return
 	}
-	_, err = workspaceService.SwitchWorkspace(workspaces[0].Slug)
+	res, err = workspaceService.SwitchWorkspace(workspaces[0].Slug)
 	if err != nil {
 		fmt.Println("Error switching workspace:", err)
 		return
 	}
+	fmt.Println(res.Message)
+
+	// Switch to the test workspace
+	res, err = workspaceService.SwitchWorkspace("test-workspace")
+	if err != nil {
+		fmt.Println("Error switching workspace:", err)
+		return
+	}
+	fmt.Println(res.Message)
 
 	// Fetch the current workspace
 	currentWorkspace, _, err := workspaceService.FetchWorkspace(workspaces[0].Slug)
