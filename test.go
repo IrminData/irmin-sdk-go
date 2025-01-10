@@ -32,6 +32,7 @@ func main() {
 
 	// Run examples
 	examples.TestProfile(baseURL, apiToken, locale)
+	examples.TestRoles(baseURL, apiToken, locale)
 	examples.TestWorkspaces(baseURL, apiToken, locale)
 	examples.TestUsers(baseURL, apiToken, locale)
 	examples.TestInvites(baseURL, apiToken, locale)
