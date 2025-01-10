@@ -31,6 +31,7 @@ func main() {
 	connectionID := examples.CreateTestConnection(baseURL, apiToken, locale)
 
 	// Run examples
+	examples.TestProfile(baseURL, apiToken, locale)
 	examples.TestWorkspaces(baseURL, apiToken, locale)
 	examples.TestUsers(baseURL, apiToken, locale)
 	examples.TestInvites(baseURL, apiToken, locale)
