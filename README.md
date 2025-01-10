@@ -9,6 +9,7 @@ irmin-sdk/
 ├── models/          # Data models
 ├── utils/           # Utility functions
 ├── examples/        # Example usage files
+├── test.go          # Test file to execute all the examples in a correct order
 ├── go.mod           # Go module file
 ```
 
