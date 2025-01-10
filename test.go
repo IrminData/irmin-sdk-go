@@ -32,6 +32,7 @@ func main() {
 	// Run examples
 	examples.TestWorkspaces(baseURL, apiToken, locale)
 	examples.TestUsers(baseURL, apiToken, locale)
+	examples.TestCredentials(baseURL, apiToken, locale)
 	examples.TestConnectors(baseURL, apiToken, locale)
 	examples.TestConnections(*connectionID, baseURL, apiToken, locale)
 	examples.TestWorkflows(*connectionID, baseURL, apiToken, locale)
