@@ -6,7 +6,7 @@ import (
 	"irmin-sdk/services"
 )
 
-func TestInvites(baseURL, apiToken, locale string) {
+func TestInvites(workspaceSlug, baseURL, apiToken, locale string) {
 	// Initialise the client and service
 	apiClient := client.NewClient(baseURL, apiToken, locale)
 	inviteService := services.NewInviteService(apiClient)
@@ -21,7 +21,7 @@ func TestInvites(baseURL, apiToken, locale string) {
 	fmt.Printf("New Invite: %s\n", newInvite.ID)
 
 	// Fetch all invites
-	invites, res, err := inviteService.FetchInvites("test-workspace", "", false, false)
+	invites, res, err := inviteService.FetchInvites(workspaceSlug, "", false, false)
 	if err != nil {
 		fmt.Println("Error fetching invites:", err)
 		return

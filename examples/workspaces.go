@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"irmin-sdk/client"
 	"irmin-sdk/services"
+	"time"
 )
 
 func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
@@ -12,7 +13,8 @@ func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
 	workspaceService := services.NewWorkspaceService(apiClient)
 
 	// Create a new workspace
-	workspace, res, err := workspaceService.CreateWorkspace("Test Workspace", "This is for SDK testing")
+	workspaceName := fmt.Sprintf("SDK Example Workspace %d", time.Now().Unix())
+	workspace, res, err := workspaceService.CreateWorkspace(workspaceName, "This is for SDK testing")
 	if err != nil {
 		fmt.Println("Error creating workspace:", err)
 		return nil
@@ -23,21 +25,22 @@ func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
 	return &workspace.Slug
 }
 
-func DeleteTestWorkspace(baseURL, apiToken, locale string) {
+func DeleteTestWorkspace(workspaceSlug, baseURL, apiToken, locale string) {
 	// Initialise the client and service
 	apiClient := client.NewClient(baseURL, apiToken, locale)
 	workspaceService := services.NewWorkspaceService(apiClient)
 
 	// Delete the new workspace
-	res, err := workspaceService.DeleteWorkspace("test-workspace")
+	res, err := workspaceService.DeleteWorkspace(workspaceSlug)
 	if err != nil {
 		fmt.Println("Error deleting workspace:", err)
 		return
 	}
 	fmt.Println(res.Message)
+	fmt.Printf("Deleted workspace: %s\n", workspaceSlug)
 }
 
-func TestWorkspaces(baseURL, apiToken, locale string) {
+func TestWorkspaces(workspaceSlug, baseURL, apiToken, locale string) {
 	// Initialise the client and service
 	apiClient := client.NewClient(baseURL, apiToken, locale)
 	workspaceService := services.NewWorkspaceService(apiClient)
@@ -67,7 +70,7 @@ func TestWorkspaces(baseURL, apiToken, locale string) {
 	fmt.Println(res.Message)
 
 	// Switch to the test workspace
-	res, err = workspaceService.SwitchWorkspace("test-workspace")
+	res, err = workspaceService.SwitchWorkspace(workspaceSlug)
 	if err != nil {
 		fmt.Println("Error switching workspace:", err)
 		return

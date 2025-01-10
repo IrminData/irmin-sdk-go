@@ -92,12 +92,13 @@ func (s *WorkflowService) UpdateWorkflow(
 // DeleteWorkflow deletes a workflow by its ID
 func (s *WorkflowService) DeleteWorkflow(workflowID string) (*client.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workflows/%s", workflowID)
-	body := map[string]string{"_method": "DELETE"}
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
-		ContentType: "application/json",
-		Body:        body,
+		ContentType: "application/x-www-form-urlencoded",
+		FormFields: map[string]string{
+			"_method": "DELETE",
+		},
 	}, nil)
 	if err != nil {
 		return nil, fmt.Errorf("delete workflow error: %w", err)
