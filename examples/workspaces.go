@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// CreateTestWorkspace creates a new workspace for testing and switches to it
 func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
 	// Initialise the client and service
 	apiClient := client.NewClient(baseURL, apiToken, locale)
@@ -21,6 +22,14 @@ func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
 	}
 	fmt.Println(res.Message)
 	fmt.Printf("Created workspace: %s (%s)\n", workspace.Name, workspace.Slug)
+
+	// Switch to the new workspace
+	res, err = workspaceService.SwitchWorkspace(workspace.Slug)
+	if err != nil {
+		fmt.Println("Error switching workspace:", err)
+		return nil
+	}
+	fmt.Println(res.Message)
 
 	return &workspace.Slug
 }
