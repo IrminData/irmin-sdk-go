@@ -30,6 +30,7 @@ func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
 		return nil
 	}
 	fmt.Println(res.Message)
+	fmt.Printf("Switched to workspace: %s\n", workspace.Slug)
 
 	return &workspace.Slug
 }
