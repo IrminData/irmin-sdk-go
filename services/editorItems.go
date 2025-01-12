@@ -87,10 +87,12 @@ func (s *EditorItemsService) UpdateFile(
 }
 
 // DeleteFile deletes a file from the editor items
-func (s *EditorItemsService) DeleteFile(path string) (*client.IrminAPIResponse, error) {
+func (s *EditorItemsService) DeleteFile(name, extension, path string) (*client.IrminAPIResponse, error) {
 	form := map[string]string{
-		"_method": "DELETE",
-		"path":    path,
+		"_method":   "DELETE",
+		"name":      name,
+		"extension": extension,
+		"path":      path,
 	}
 
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
@@ -126,9 +128,10 @@ func (s *EditorItemsService) CreateFolder(folder *models.EditorItemsFolder) (*mo
 }
 
 // DeleteFolder deletes a folder from the editor items
-func (s *EditorItemsService) DeleteFolder(path string) (*client.IrminAPIResponse, error) {
+func (s *EditorItemsService) DeleteFolder(name, path string) (*client.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "DELETE",
+		"name":    name,
 		"path":    path,
 	}
 
