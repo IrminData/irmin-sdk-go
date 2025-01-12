@@ -13,9 +13,9 @@ type Connection struct {
 	// Connection documentation as a markdown string
 	Documentation string `json:"documentation,omitempty"`
 	// String which contains a JSON object
-	Details string `json:"details,omitempty"`
+	Details map[string]string `json:"details,omitempty"`
 	// String which contains a JSON object
-	Settings string `json:"settings,omitempty"`
+	Settings map[string]string `json:"settings,omitempty"`
 	// Connector object
 	Connector Connector `json:"connector,omitempty"`
 	// Connection creation date
