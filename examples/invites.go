@@ -12,7 +12,7 @@ func TestInvites(workspaceSlug, baseURL, apiToken, locale string) {
 	inviteService := services.NewInviteService(apiClient)
 
 	// Send an invite to a user
-	newInvite, res, err := inviteService.InviteUserToWorkspace("John", "Doe", "tim@irmin.co", "+1234567890", "Irmin", "viewer")
+	newInvite, res, err := inviteService.InviteUserToWorkspace("John", "Doe", "tim@irmin.co", "+442087599036", "Irmin", "viewer")
 	if err != nil {
 		fmt.Println("Error inviting user:", err)
 		return
