@@ -92,11 +92,10 @@ func (s *ConnectionService) ReassignConnection(
 func (s *ConnectionService) DeleteConnection(connectionID string) (*client.IrminAPIResponse, error) {
 	form := url.Values{}
 	form.Set("_method", "DELETE")
-	form.Set("connection", connectionID)
 
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    "/v1/connections",
+		Endpoint:    fmt.Sprintf("/v1/connections/%s", connectionID),
 		ContentType: "application/x-www-form-urlencoded",
 		FormFields: map[string]string{
 			"_method":    "DELETE",
