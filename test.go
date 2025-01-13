@@ -30,13 +30,13 @@ func main() {
 		log.Fatalf("Missing required environment variables: BASE_URL, API_TOKEN, or LOCALE")
 	}
 
-	// ---- UTIL TESTS ----
+	// Utility tests
 	if *runUtils {
 		log.Println("Running utility tests...")
 		examples.TestParquetUtils()
 	}
 
-	// ---- API TESTS ----
+	// API tests
 	if *runAPI {
 		log.Println("Running API tests...")
 
@@ -66,5 +66,10 @@ func main() {
 		examples.DeleteTestScriptFile(baseURL, apiToken, locale)
 		examples.DeleteTestConnection(*connectionID, baseURL, apiToken, locale)
 		examples.DeleteTestWorkspace(*workspaceSlug, baseURL, apiToken, locale)
+	}
+
+	// Check if no tests were selected
+	if !*runAPI && !*runUtils {
+		log.Println("No tests selected. Use -api, -utils, or both to run tests.")
 	}
 }
