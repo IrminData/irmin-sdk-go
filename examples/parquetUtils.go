@@ -3,6 +3,7 @@ package examples
 import (
 	"fmt"
 	"irmin-sdk/utils"
+	"os"
 )
 
 func TestParquetUtils() {
@@ -10,6 +11,8 @@ func TestParquetUtils() {
 	jsonData := []string{
 		`{"Name":"Alice", "Age":25, "Score":90.5}`,
 		`{"Name":"Bob", "Age":30, "Score":85.3}`,
+		`{"Name":"Charlie", "Age":35, "Score":70.2}`,
+		`{"Name":"David", "Age":40, "Score":60.1}`,
 	}
 
 	// Define the schema
@@ -31,6 +34,14 @@ func TestParquetUtils() {
 		return
 	}
 	fmt.Println("JSON converted to Parquet successfully!")
+
+	// Save the Parquet data to a file
+	fmt.Println("Testing SaveParquetToFile...")
+	err = os.WriteFile("static/example.parquet", parquetData, 0644)
+	if err != nil {
+		fmt.Println("Error saving Parquet to file:", err)
+		return
+	}
 
 	// Convert the Parquet data back to JSON
 	fmt.Println("Testing ParquetToJSON...")
