@@ -169,3 +169,22 @@ func (s *ConnectorService) ValidateConnectorData(
 	}
 	return &validationResult, apiResp, nil
 }
+
+// RegisterNewConnector registers a new connector with the system. Requests to this endpoint must be authenticated with a system token.
+func (s *ConnectionService) RegisterNewConnector(baseURL, systemToken string) (*models.Connector, *client.IrminAPIResponse, error) {
+	form := url.Values{}
+	form.Set("url", baseURL)
+	form.Set("system_token", systemToken)
+
+	var connector models.Connector
+	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+		Method:      http.MethodPost,
+		Endpoint:    "/v1/connectors",
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        []byte(form.Encode()),
+	}, &connector)
+	if err != nil {
+		return nil, nil, fmt.Errorf("register new connector error: %w", err)
+	}
+	return &connector, apiResp, nil
+}
