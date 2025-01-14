@@ -7,7 +7,7 @@ import (
 )
 
 // JSONSchemaFromStruct takes any Go struct and returns an indented JSON Schema as bytes.
-func JSONSchemaFromStruct(input interface{}, schemaID string) ([]byte, map[string]interface{}, error) {
+func JSONSchemaFromStruct(input interface{}) ([]byte, map[string]interface{}, error) {
 	// Reflect the input struct into JSON schema.
 	schema := jsonschema.Reflect(input)
 
