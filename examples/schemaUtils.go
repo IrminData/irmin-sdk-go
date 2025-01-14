@@ -21,13 +21,13 @@ type TestUser struct {
 func TestSchemaUtils() {
 	// Create JSON schema from struct
 	fmt.Println("Testing JSONSchemaFromStruct...")
-	_, schemaMap, err := utils.JSONSchemaFromStruct(TestUser{}, "test_user")
+	schemaBytes, schemaMap, err := utils.JSONSchemaFromStruct(TestUser{}, "test_user")
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 	fmt.Println("JSON schema:")
-	fmt.Println(schemaMap)
+	fmt.Println(string(schemaBytes))
 
 	// Convert JSON schema to Parquet schema
 	fmt.Println("Testing JSONSchemaToParquet...")
