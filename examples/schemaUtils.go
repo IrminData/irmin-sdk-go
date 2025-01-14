@@ -14,9 +14,10 @@ type TestUser struct {
 	BirthDate   string                 `json:"birth_date,omitempty" jsonschema:"oneof_required=date"`
 	YearOfBirth string                 `json:"year_of_birth,omitempty" jsonschema:"oneof_required=year"`
 	Metadata    interface{}            `json:"metadata,omitempty" jsonschema:"oneof_type=string;array"`
-	FavColour   string                 `json:"fav_color,omitempty" jsonschema:"enum=red,enum=green,enum=blue"` // British spelling
+	FavColour   string                 `json:"fav_color,omitempty" jsonschema:"enum=red,enum=green,enum=blue"`
 }
 
+// TestSchemaUtils tests the schema utilities in the SDK.
 func TestSchemaUtils() {
 	// Create JSON schema from struct
 	fmt.Println("Testing JSONSchemaFromStruct...")
