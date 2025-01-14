@@ -172,19 +172,37 @@ func (s *ConnectorService) ValidateConnectorData(
 
 // RegisterNewConnector registers a new connector with the system. Requests to this endpoint must be authenticated with a system token.
 func (s *ConnectionService) RegisterNewConnector(baseURL, systemToken string) (*models.Connector, *client.IrminAPIResponse, error) {
-	form := url.Values{}
-	form.Set("url", baseURL)
-	form.Set("system_token", systemToken)
-
 	var connector models.Connector
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/connectors",
 		ContentType: "application/x-www-form-urlencoded",
-		Body:        []byte(form.Encode()),
+		FormFields: map[string]string{
+			"url":          baseURL,
+			"system_token": systemToken,
+		},
 	}, &connector)
 	if err != nil {
 		return nil, nil, fmt.Errorf("register new connector error: %w", err)
+	}
+	return &connector, apiResp, nil
+}
+
+// UpdateRegisteredConnector updates the details of a registered connector. Requests to this endpoint must be authenticated with a system token.
+func (s *ConnectionService) UpdateRegisteredConnector(connectorID, baseURL, systemToken string) (*models.Connector, *client.IrminAPIResponse, error) {
+	var connector models.Connector
+	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+		Method:      http.MethodPost,
+		Endpoint:    fmt.Sprintf("/v1/connectors/%s", connectorID),
+		ContentType: "application/x-www-form-urlencoded",
+		FormFields: map[string]string{
+			"_method":      "PATCH",
+			"url":          baseURL,
+			"system_token": systemToken,
+		},
+	}, &connector)
+	if err != nil {
+		return nil, nil, fmt.Errorf("update registered connector error: %w", err)
 	}
 	return &connector, apiResp, nil
 }
