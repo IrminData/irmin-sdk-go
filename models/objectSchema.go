@@ -144,3 +144,8 @@ func UnmarshalObjectSchema(data []byte) (ObjectSchema, error) {
 		return nil, fmt.Errorf("unrecognised type %q", wire.Type)
 	}
 }
+
+// MarshalObjectSchema helps us encode the correct subtype into JSON.
+func MarshalObjectSchema(obj ObjectSchema) ([]byte, error) {
+	return json.Marshal(obj) // This just works if `obj` is a concrete type
+}
