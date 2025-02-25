@@ -41,13 +41,14 @@ func NewClient(baseURL, token, locale string) *Client {
 
 // RequestOptions allows you to specify how you'd like to send data in the request.
 type RequestOptions struct {
-	Method      string
-	Endpoint    string
-	Body        interface{}       // For JSON, this can be a struct or map to JSON-encode
-	FormFields  map[string]string // Key-value form fields (for multipart/form-data)
-	Files       []FormFile        // Files to attach (for multipart/form-data)
-	Headers     map[string]string // Extra headers, if needed
-	ContentType string            // e.g. "application/json", "multipart/form-data", etc.
+	Method        string
+	Endpoint      string
+	AllowedStatus []int             // Status codes that are considered successful, e.g. 200, 201, 204
+	Body          interface{}       // For JSON, this can be a struct or map to JSON-encode
+	FormFields    map[string]string // Key-value form fields (for multipart/form-data)
+	Files         []FormFile        // Files to attach (for multipart/form-data)
+	Headers       map[string]string // Extra headers, if needed
+	ContentType   string            // e.g. "application/json", "multipart/form-data", etc.
 }
 
 // FormFile holds information about a file you want to upload with multipart/form-data.
