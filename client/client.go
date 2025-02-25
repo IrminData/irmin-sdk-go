@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"time"
 )
 
@@ -194,9 +195,17 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	// Check for non-2xx status codes and include body in error
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, responseBody)
+	// If no allowed status codes provided, consider all 2xx codes sucessful
+	if len(opts.AllowedStatus) == 0 {
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, responseBody)
+		}
+	} else {
+		// Check if the response status code is allowed.
+		allowed := slices.Contains(opts.AllowedStatus, resp.StatusCode)
+		if !allowed {
+			return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, responseBody)
+		}
 	}
 
 	return responseBody, nil
