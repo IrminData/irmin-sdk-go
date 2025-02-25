@@ -201,8 +201,7 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 	return responseBody, nil
 }
 
-// FetchAPI is analogous to your "fetchAPI" in TypeScript.
-// It sends a request and attempts to parse the response into IrminAPIResponse[T].
+// FetchAPI sends a request and attempts to parse the response into IrminAPIResponse[T].
 func (c *Client) FetchAPI(opts RequestOptions, out interface{}) (*IrminAPIResponse, error) {
 	// 1) Make the HTTP request using your existing `Request` method.
 	body, err := c.Request(opts)
@@ -231,8 +230,7 @@ func (c *Client) FetchAPI(opts RequestOptions, out interface{}) (*IrminAPIRespon
 	return &apiResp, nil
 }
 
-// FetchBinary is analogous to your "fetchBinary" in TypeScript.
-// It sends a request and returns the raw bytes (which you can treat as a file, or parse further).
+// FetchBinary sends a request and returns the raw bytes (which you can treat as a file, or parse further).
 func (c *Client) FetchBinary(opts RequestOptions) ([]byte, error) {
 	return c.Request(opts)
 }
