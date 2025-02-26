@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // UserService wraps operations on the user profile
@@ -19,8 +19,8 @@ func NewUserService(client *Client) *UserService {
 
 // FetchWorkspaceUsers fetches all users in the current workspace.
 // Returns a list of users, the full response, and an error if any.
-func (s *UserService) FetchWorkspaceUsers() ([]models.User, *models.IrminAPIResponse, error) {
-	var users []models.User
+func (s *UserService) FetchWorkspaceUsers() ([]irminModels.User, *irminModels.IrminAPIResponse, error) {
+	var users []irminModels.User
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -35,8 +35,8 @@ func (s *UserService) FetchWorkspaceUsers() ([]models.User, *models.IrminAPIResp
 
 // FetchUser fetches a user by ID.
 // Returns the user object, the full response, and an error if any.
-func (s *UserService) FetchUser(userID string) (*models.User, *models.IrminAPIResponse, error) {
-	var user models.User
+func (s *UserService) FetchUser(userID string) (*irminModels.User, *irminModels.IrminAPIResponse, error) {
+	var user irminModels.User
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -51,7 +51,7 @@ func (s *UserService) FetchUser(userID string) (*models.User, *models.IrminAPIRe
 
 // ChangeUserRole changes the role of a user in the current workspace.
 // The API endpoint does not return meaningful data, so we just return the response object for consistency.
-func (s *UserService) ChangeUserRole(userID, role string) (*models.IrminAPIResponse, error) {
+func (s *UserService) ChangeUserRole(userID, role string) (*irminModels.IrminAPIResponse, error) {
 	body := map[string]string{
 		"_method": "PATCH",
 		"roles":   role,
@@ -71,7 +71,7 @@ func (s *UserService) ChangeUserRole(userID, role string) (*models.IrminAPIRespo
 
 // RemoveUserFromWorkspace removes a user from the current workspace.
 // Again, no data is returned, so we only return the response object.
-func (s *UserService) RemoveUserFromWorkspace(userID string) (*models.IrminAPIResponse, error) {
+func (s *UserService) RemoveUserFromWorkspace(userID string) (*irminModels.IrminAPIResponse, error) {
 	body := map[string]string{
 		"_method": "DELETE",
 	}

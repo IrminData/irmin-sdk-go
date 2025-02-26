@@ -5,7 +5,7 @@ import (
 
 	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 func TestWorkflows(exampleConnectionID, baseURL, apiToken, locale string) {
@@ -17,8 +17,8 @@ func TestWorkflows(exampleConnectionID, baseURL, apiToken, locale string) {
 	maxRetries := 3
 	maxRuntime := 300
 	minInterval := 60
-	schedule := models.WorkflowSchedule{
-		Triggers:    []models.WorkflowTrigger{},
+	schedule := irminModels.WorkflowSchedule{
+		Triggers:    []irminModels.WorkflowTrigger{},
 		MaxRetries:  &maxRetries,
 		MaxRuntime:  &maxRuntime,
 		MinInterval: &minInterval,
@@ -78,24 +78,24 @@ func TestWorkflows(exampleConnectionID, baseURL, apiToken, locale string) {
 
 	// Create pipeline workflow
 	pipelineWorkflow, res, err := workflowService.CreatePipelineWorkflow(
-		[]models.PipelineStage{
-			&models.PipelineStageAction{
+		[]irminModels.PipelineStage{
+			&irminModels.PipelineStageAction{
 				Type:       "action",
 				Executable: "/test.js",
-				CommonProperties: models.CommonProperties{
+				CommonProperties: irminModels.CommonProperties{
 					Description: "First stage in the pipeline",
 					Write:       true,
 					Read:        true,
 				},
 			},
-			&models.PipelineStageRepository{
+			&irminModels.PipelineStageRepository{
 				Type: "repository",
-				Repository: models.Repository{
+				Repository: irminModels.Repository{
 					Slug: "test-repository",
 				},
 				Branch: "main",
 				Path:   "/",
-				CommonProperties: models.CommonProperties{
+				CommonProperties: irminModels.CommonProperties{
 					Description: "Second stage in the pipeline",
 					Write:       true,
 					Read:        true,

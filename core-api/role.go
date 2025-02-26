@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // RoleService handles Role-related API calls
@@ -20,9 +20,9 @@ func NewRoleService(client *Client) *RoleService {
 }
 
 // FetchRoles retrieves all available roles
-func (s *RoleService) FetchRoles() ([]models.IrminRole, *models.IrminAPIResponse, error) {
+func (s *RoleService) FetchRoles() ([]irminModels.IrminRole, *irminModels.IrminAPIResponse, error) {
 	endpoint := "/v1/roles"
-	var roles []models.IrminRole
+	var roles []irminModels.IrminRole
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,

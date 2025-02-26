@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // ProfileService wraps operations on the user profile
@@ -22,8 +22,8 @@ func NewProfileService(client *Client) *ProfileService {
 
 // GetProfile fetches the current user's profile
 // Returns the user struct and the full IrminAPIResponse for inspection (e.g. message, errors, metadata).
-func (s *ProfileService) GetProfile() (*models.User, *models.IrminAPIResponse, error) {
-	var profile models.User
+func (s *ProfileService) GetProfile() (*irminModels.User, *irminModels.IrminAPIResponse, error) {
+	var profile irminModels.User
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -41,7 +41,7 @@ func (s *ProfileService) GetProfile() (*models.User, *models.IrminAPIResponse, e
 func (s *ProfileService) UpdateProfile(
 	firstName, lastName, email, phone, company string,
 	avatar *os.File,
-) (*models.User, *models.IrminAPIResponse, error) {
+) (*irminModels.User, *irminModels.IrminAPIResponse, error) {
 
 	// Build form fields for multipart data
 	formFields := map[string]string{
@@ -64,7 +64,7 @@ func (s *ProfileService) UpdateProfile(
 	}
 
 	// We'll parse the updated user from the `Data` field
-	var updatedProfile models.User
+	var updatedProfile irminModels.User
 
 	// Call FetchAPI with multipart/form-data
 	apiResp, err := s.client.FetchAPI(RequestOptions{

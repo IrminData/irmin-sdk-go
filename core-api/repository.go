@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // RepositoryService handles repository-related API calls
@@ -20,9 +20,9 @@ func NewRepositoryService(client *Client) *RepositoryService {
 }
 
 // FetchRepositories retrieves all repositories
-func (s *RepositoryService) FetchRepositories() ([]models.Repository, *models.IrminAPIResponse, error) {
+func (s *RepositoryService) FetchRepositories() ([]irminModels.Repository, *irminModels.IrminAPIResponse, error) {
 	endpoint := "/v1/repositories"
-	var repositories []models.Repository
+	var repositories []irminModels.Repository
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -35,9 +35,9 @@ func (s *RepositoryService) FetchRepositories() ([]models.Repository, *models.Ir
 }
 
 // FetchRepository retrieves a single repository by its slug
-func (s *RepositoryService) FetchRepository(slug string) (*models.Repository, *models.IrminAPIResponse, error) {
+func (s *RepositoryService) FetchRepository(slug string) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/repositories/%s", slug)
-	var repository models.Repository
+	var repository irminModels.Repository
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -54,14 +54,14 @@ func (s *RepositoryService) CreateRepository(
 	name,
 	description,
 	documentation string,
-) (*models.Repository, *models.IrminAPIResponse, error) {
+) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"name":          name,
 		"description":   description,
 		"documentation": documentation,
 	}
 
-	var repository models.Repository
+	var repository irminModels.Repository
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/repositories",
@@ -76,7 +76,7 @@ func (s *RepositoryService) CreateRepository(
 }
 
 // ReassignRepository reassigns ownership of a repository
-func (s *RepositoryService) ReassignRepository(slug, ownerID string) (*models.IrminAPIResponse, error) {
+func (s *RepositoryService) ReassignRepository(slug, ownerID string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"owner": ownerID,
 	}
@@ -94,7 +94,7 @@ func (s *RepositoryService) ReassignRepository(slug, ownerID string) (*models.Ir
 }
 
 // DeleteRepository deletes a repository by its slug
-func (s *RepositoryService) DeleteRepository(slug string) (*models.IrminAPIResponse, error) {
+func (s *RepositoryService) DeleteRepository(slug string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "DELETE",
 	}
@@ -117,7 +117,7 @@ func (s *RepositoryService) UpdateRepository(
 	name,
 	description,
 	documentation string,
-) (*models.IrminAPIResponse, error) {
+) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method":       "PATCH",
 		"name":          name,
@@ -138,7 +138,7 @@ func (s *RepositoryService) UpdateRepository(
 }
 
 // GetRepositoryDownloadLink retrieves a download link for a repository
-func (s *RepositoryService) GetRepositoryDownloadLink(slug, ref, path string) (*string, *models.IrminAPIResponse, error) {
+func (s *RepositoryService) GetRepositoryDownloadLink(slug, ref, path string) (*string, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"ref":  ref,
 		"path": path,

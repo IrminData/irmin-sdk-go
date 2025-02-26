@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // CreateTestScriptFile creates a script file for testing the SDK
@@ -14,10 +14,10 @@ func CreateTestScriptFile(baseURL, apiToken, locale string) {
 	editorItemsService := irminCore.NewEditorItemsService(apiClient)
 
 	// Create a new file
-	newFile, res, err := editorItemsService.CreateFile(&models.EditorItemsFile{
+	newFile, res, err := editorItemsService.CreateFile(&irminModels.EditorItemsFile{
 		Name:     "test.js",
 		Path:     "/test.js",
-		Type:     models.IrminFileTypeJS,
+		Type:     irminModels.IrminFileTypeJS,
 		Contents: `console.log("Hello, world!");`,
 	}, false)
 	if err != nil {
@@ -50,7 +50,7 @@ func TestEditorItems(baseURL, apiToken, locale string) {
 	editorItemsService := irminCore.NewEditorItemsService(apiClient)
 
 	// Create example folder
-	folder, res, err := editorItemsService.CreateFolder(&models.EditorItemsFolder{
+	folder, res, err := editorItemsService.CreateFolder(&irminModels.EditorItemsFolder{
 		Name: "example",
 		Path: "/example",
 	})
@@ -62,10 +62,10 @@ func TestEditorItems(baseURL, apiToken, locale string) {
 	fmt.Println("Folder created:", folder.Path)
 
 	// Create example file in the folder
-	file, res, err := editorItemsService.CreateFile(&models.EditorItemsFile{
+	file, res, err := editorItemsService.CreateFile(&irminModels.EditorItemsFile{
 		Name:     "test.js",
 		Path:     "/example/test.js",
-		Type:     models.IrminFileTypeJS,
+		Type:     irminModels.IrminFileTypeJS,
 		Contents: `console.log("Hello, world!");`,
 	}, false)
 	if err != nil {

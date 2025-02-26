@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // LogService handles log-related API calls
@@ -20,9 +20,9 @@ func NewLogService(client *Client) *LogService {
 }
 
 // FetchLogEvents retrieves general audit log events for the current workspace
-func (s *LogService) FetchLogEvents() ([]models.LogEvent, *models.IrminAPIResponse, error) {
+func (s *LogService) FetchLogEvents() ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
 	endpoint := "/v1/logs"
-	var logEvents []models.LogEvent
+	var logEvents []irminModels.LogEvent
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -35,9 +35,9 @@ func (s *LogService) FetchLogEvents() ([]models.LogEvent, *models.IrminAPIRespon
 }
 
 // FetchWorkflowLogEvents retrieves log events for a specific workflow
-func (s *LogService) FetchWorkflowLogEvents(workflowID string) ([]models.LogEvent, *models.IrminAPIResponse, error) {
+func (s *LogService) FetchWorkflowLogEvents(workflowID string) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workflows/%s/logs", workflowID)
-	var workflowLogs []models.LogEvent
+	var workflowLogs []irminModels.LogEvent
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -50,9 +50,9 @@ func (s *LogService) FetchWorkflowLogEvents(workflowID string) ([]models.LogEven
 }
 
 // FetchWorkflowRunLogs retrieves logs for a specific workflow run
-func (s *LogService) FetchWorkflowRunLogs(workflowID, workflowRunID string) (*models.WorkflowRunLogs, *models.IrminAPIResponse, error) {
+func (s *LogService) FetchWorkflowRunLogs(workflowID, workflowRunID string) (*irminModels.WorkflowRunLogs, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workflows/%s/runs/%s/logs", workflowID, workflowRunID)
-	var workflowRunLogs models.WorkflowRunLogs
+	var workflowRunLogs irminModels.WorkflowRunLogs
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -65,9 +65,9 @@ func (s *LogService) FetchWorkflowRunLogs(workflowID, workflowRunID string) (*mo
 }
 
 // FetchRepositoryLogs retrieves log events for a specific repository
-func (s *LogService) FetchRepositoryLogs(repository string) ([]models.LogEvent, *models.IrminAPIResponse, error) {
+func (s *LogService) FetchRepositoryLogs(repository string) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/repositories/%s/logs", repository)
-	var repositoryLogs []models.LogEvent
+	var repositoryLogs []irminModels.LogEvent
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -80,9 +80,9 @@ func (s *LogService) FetchRepositoryLogs(repository string) ([]models.LogEvent, 
 }
 
 // FetchConnectionLogs retrieves log events for a specific connection
-func (s *LogService) FetchConnectionLogs(connectionID string) ([]models.LogEvent, *models.IrminAPIResponse, error) {
+func (s *LogService) FetchConnectionLogs(connectionID string) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/connections/%s/logs", connectionID)
-	var connectionLogs []models.LogEvent
+	var connectionLogs []irminModels.LogEvent
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,

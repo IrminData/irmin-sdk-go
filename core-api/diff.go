@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // DiffService provides methods to compare and merge refs
@@ -20,10 +20,10 @@ func NewDiffService(client *Client) *DiffService {
 }
 
 // CompareRefs compares two refs in a repository and returns the differences
-func (s *DiffService) CompareRefs(repository, baseRef, compareRef string) (*models.Diff, *models.IrminAPIResponse, error) {
+func (s *DiffService) CompareRefs(repository, baseRef, compareRef string) (*irminModels.Diff, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/repositories/%s/compare?base_ref=%s&compare_ref=%s", repository, baseRef, compareRef)
 
-	var diff models.Diff
+	var diff irminModels.Diff
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
@@ -35,7 +35,7 @@ func (s *DiffService) CompareRefs(repository, baseRef, compareRef string) (*mode
 }
 
 // MergeRefs merges one ref into another
-func (s *DiffService) MergeRefs(repository, baseRef, compareRef, description, strategy string) (*models.IrminAPIResponse, error) {
+func (s *DiffService) MergeRefs(repository, baseRef, compareRef, description, strategy string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"base_ref":    baseRef,
 		"compare_ref": compareRef,

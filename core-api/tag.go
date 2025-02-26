@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // TagService handles repository tag-related API calls
@@ -20,9 +20,9 @@ func NewTagService(client *Client) *TagService {
 }
 
 // FetchTags retrieves all tags for a specific repository
-func (s *TagService) FetchTags(repository string) ([]models.Tag, *models.IrminAPIResponse, error) {
+func (s *TagService) FetchTags(repository string) ([]irminModels.Tag, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/repositories/%s/tags", repository)
-	var tags []models.Tag
+	var tags []irminModels.Tag
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -35,9 +35,9 @@ func (s *TagService) FetchTags(repository string) ([]models.Tag, *models.IrminAP
 }
 
 // FetchTag retrieves a single tag by its ID
-func (s *TagService) FetchTag(repository, tag string) (*models.Tag, *models.IrminAPIResponse, error) {
+func (s *TagService) FetchTag(repository, tag string) (*irminModels.Tag, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/repositories/%s/tags/%s", repository, tag)
-	var tagDetails models.Tag
+	var tagDetails irminModels.Tag
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -50,13 +50,13 @@ func (s *TagService) FetchTag(repository, tag string) (*models.Tag, *models.Irmi
 }
 
 // CreateTag creates a new tag in the specified repository
-func (s *TagService) CreateTag(repository, name, ref string) (*models.Tag, *models.IrminAPIResponse, error) {
+func (s *TagService) CreateTag(repository, name, ref string) (*irminModels.Tag, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"name": name,
 		"ref":  ref,
 	}
 
-	var newTag models.Tag
+	var newTag irminModels.Tag
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/tags", repository),
@@ -70,14 +70,14 @@ func (s *TagService) CreateTag(repository, name, ref string) (*models.Tag, *mode
 }
 
 // UpdateTag updates the name or ref of an existing tag
-func (s *TagService) UpdateTag(repository, tag, name, ref string) (*models.Tag, *models.IrminAPIResponse, error) {
+func (s *TagService) UpdateTag(repository, tag, name, ref string) (*irminModels.Tag, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "PATCH",
 		"name":    name,
 		"ref":     ref,
 	}
 
-	var updatedTag models.Tag
+	var updatedTag irminModels.Tag
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/tags/%s", repository, tag),
@@ -91,7 +91,7 @@ func (s *TagService) UpdateTag(repository, tag, name, ref string) (*models.Tag, 
 }
 
 // DeleteTag deletes a tag from the repository
-func (s *TagService) DeleteTag(repository, tag string) (*models.IrminAPIResponse, error) {
+func (s *TagService) DeleteTag(repository, tag string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "DELETE",
 	}

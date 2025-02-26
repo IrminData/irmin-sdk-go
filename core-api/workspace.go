@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // WorkspaceService wraps operations on workspaces
@@ -20,8 +20,8 @@ func NewWorkspaceService(client *Client) *WorkspaceService {
 }
 
 // FetchWorkspaces retrieves a list of workspaces
-func (s *WorkspaceService) FetchWorkspaces() ([]models.Workspace, *models.IrminAPIResponse, error) {
-	var workspaces []models.Workspace
+func (s *WorkspaceService) FetchWorkspaces() ([]irminModels.Workspace, *irminModels.IrminAPIResponse, error) {
+	var workspaces []irminModels.Workspace
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -35,9 +35,9 @@ func (s *WorkspaceService) FetchWorkspaces() ([]models.Workspace, *models.IrminA
 }
 
 // FetchWorkspace retrieves a single workspace by slug
-func (s *WorkspaceService) FetchWorkspace(slug string) (*models.Workspace, *models.IrminAPIResponse, error) {
+func (s *WorkspaceService) FetchWorkspace(slug string) (*irminModels.Workspace, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workspaces/%s", slug)
-	var workspace models.Workspace
+	var workspace irminModels.Workspace
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -51,7 +51,7 @@ func (s *WorkspaceService) FetchWorkspace(slug string) (*models.Workspace, *mode
 }
 
 // TransferWorkspaceOwnership reassigns ownership of a workspace
-func (s *WorkspaceService) TransferWorkspaceOwnership(slug, userID string) (*models.IrminAPIResponse, error) {
+func (s *WorkspaceService) TransferWorkspaceOwnership(slug, userID string) (*irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workspaces/%s/reassign", slug)
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
@@ -69,8 +69,8 @@ func (s *WorkspaceService) TransferWorkspaceOwnership(slug, userID string) (*mod
 }
 
 // CreateWorkspace creates a new workspace
-func (s *WorkspaceService) CreateWorkspace(name, description string) (*models.Workspace, *models.IrminAPIResponse, error) {
-	var workspace models.Workspace
+func (s *WorkspaceService) CreateWorkspace(name, description string) (*irminModels.Workspace, *irminModels.IrminAPIResponse, error) {
+	var workspace irminModels.Workspace
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workspaces",
@@ -88,9 +88,9 @@ func (s *WorkspaceService) CreateWorkspace(name, description string) (*models.Wo
 }
 
 // UpdateWorkspace updates an existing workspace
-func (s *WorkspaceService) UpdateWorkspace(slug, name, description string) (*models.Workspace, *models.IrminAPIResponse, error) {
+func (s *WorkspaceService) UpdateWorkspace(slug, name, description string) (*irminModels.Workspace, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workspaces/%s", slug)
-	var workspace models.Workspace
+	var workspace irminModels.Workspace
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
@@ -110,7 +110,7 @@ func (s *WorkspaceService) UpdateWorkspace(slug, name, description string) (*mod
 }
 
 // DeleteWorkspace deletes a workspace
-func (s *WorkspaceService) DeleteWorkspace(slug string) (*models.IrminAPIResponse, error) {
+func (s *WorkspaceService) DeleteWorkspace(slug string) (*irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workspaces/%s", slug)
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
@@ -128,7 +128,7 @@ func (s *WorkspaceService) DeleteWorkspace(slug string) (*models.IrminAPIRespons
 }
 
 // SwitchWorkspace switches to the specified workspace
-func (s *WorkspaceService) SwitchWorkspace(slug string) (*models.IrminAPIResponse, error) {
+func (s *WorkspaceService) SwitchWorkspace(slug string) (*irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workspaces/%s/switch", slug)
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
@@ -142,7 +142,7 @@ func (s *WorkspaceService) SwitchWorkspace(slug string) (*models.IrminAPIRespons
 }
 
 // LeaveWorkspace lets the user leave the specified workspace
-func (s *WorkspaceService) LeaveWorkspace(slug string) (*models.IrminAPIResponse, error) {
+func (s *WorkspaceService) LeaveWorkspace(slug string) (*irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workspaces/%s/leave", slug)
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{

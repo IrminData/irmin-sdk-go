@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // ObjectService handles repository object-related API calls
@@ -21,7 +21,7 @@ func NewObjectService(client *Client) *ObjectService {
 }
 
 // FetchObjects retrieves objects at a given path in a repository and ref
-func (s *ObjectService) FetchObjects(repository, path, ref string) ([]models.Object, *models.IrminAPIResponse, error) {
+func (s *ObjectService) FetchObjects(repository, path, ref string) ([]irminModels.Object, *irminModels.IrminAPIResponse, error) {
 	// Build the endpoint: /v1/repositories/:repository/objects/:path removing the first / from path if it exists
 	if len(path) > 0 && path[0] == '/' {
 		path = path[1:]
@@ -33,7 +33,7 @@ func (s *ObjectService) FetchObjects(repository, path, ref string) ([]models.Obj
 		endpoint += fmt.Sprintf("?ref=%s", ref)
 	}
 
-	var objects []models.Object
+	var objects []irminModels.Object
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
@@ -45,7 +45,7 @@ func (s *ObjectService) FetchObjects(repository, path, ref string) ([]models.Obj
 }
 
 // FetchObject retrieves a single object by its name and path in a repository
-func (s *ObjectService) FetchObject(repository, path, ref string) (*models.Object, *models.IrminAPIResponse, error) {
+func (s *ObjectService) FetchObject(repository, path, ref string) (*irminModels.Object, *irminModels.IrminAPIResponse, error) {
 	// Build the endpoint: /v1/repositories/:repository/objects/:path removing the first / from path if it exists
 	if len(path) > 0 && path[0] == '/' {
 		path = path[1:]
@@ -57,7 +57,7 @@ func (s *ObjectService) FetchObject(repository, path, ref string) (*models.Objec
 		endpoint += fmt.Sprintf("?ref=%s", ref)
 	}
 
-	var object models.Object
+	var object irminModels.Object
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
@@ -69,13 +69,13 @@ func (s *ObjectService) FetchObject(repository, path, ref string) (*models.Objec
 }
 
 // FetchObjectSchema retrieves the schema of an object in a repository
-func (s *ObjectService) FetchObjectSchema(repository, path, ref string) (*models.ObjectSchema, *models.IrminAPIResponse, error) {
+func (s *ObjectService) FetchObjectSchema(repository, path, ref string) (*irminModels.ObjectSchema, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/repositories/%s/objects/schema/%s", repository, path)
 	if ref != "" {
 		endpoint += fmt.Sprintf("?ref=%s", ref)
 	}
 
-	var schema models.ObjectSchema
+	var schema irminModels.ObjectSchema
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
@@ -113,7 +113,7 @@ func (s *ObjectService) UploadObject(
 	path string,
 	name string,
 	files map[string][]byte,
-) (*models.Object, *models.IrminAPIResponse, error) {
+) (*irminModels.Object, *irminModels.IrminAPIResponse, error) {
 
 	// Build the endpoint: /v1/repositories/:repository/objects/:path removing the first / from path if it exists
 	if len(path) > 0 && path[0] == '/' {
@@ -148,7 +148,7 @@ func (s *ObjectService) UploadObject(
 	}
 
 	// Prepare an object to hold the response data
-	var object models.Object
+	var object irminModels.Object
 
 	// FetchAPI will also parse the IrminAPIResponse
 	apiResp, err := s.client.FetchAPI(reqOpts, &object)
@@ -160,7 +160,7 @@ func (s *ObjectService) UploadObject(
 }
 
 // MoveObject moves or renames an object in the repository
-func (s *ObjectService) MoveObject(repository, ref, path, newPath, newName string) (*models.Object, *models.IrminAPIResponse, error) {
+func (s *ObjectService) MoveObject(repository, ref, path, newPath, newName string) (*irminModels.Object, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method":  "MOVE",
 		"ref":      ref,
@@ -174,7 +174,7 @@ func (s *ObjectService) MoveObject(repository, ref, path, newPath, newName strin
 	}
 	endpoint := fmt.Sprintf("/v1/repositories/%s/objects/%s", repository, path)
 
-	var object models.Object
+	var object irminModels.Object
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
@@ -188,7 +188,7 @@ func (s *ObjectService) MoveObject(repository, ref, path, newPath, newName strin
 }
 
 // DeleteObject deletes an object from the repository
-func (s *ObjectService) DeleteObject(repository, ref, path, name string) (*models.IrminAPIResponse, error) {
+func (s *ObjectService) DeleteObject(repository, ref, path, name string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "DELETE",
 		"ref":     ref,

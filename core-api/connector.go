@@ -6,7 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // ConnectorService handles operations related to connectors
@@ -22,8 +22,8 @@ func NewConnectorService(client *Client) *ConnectorService {
 }
 
 // FetchAllConnectors retrieves all available connectors
-func (s *ConnectorService) FetchAllConnectors() ([]models.Connector, *models.IrminAPIResponse, error) {
-	var connectors []models.Connector
+func (s *ConnectorService) FetchAllConnectors() ([]irminModels.Connector, *irminModels.IrminAPIResponse, error) {
+	var connectors []irminModels.Connector
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/connectors",
@@ -35,8 +35,8 @@ func (s *ConnectorService) FetchAllConnectors() ([]models.Connector, *models.Irm
 }
 
 // FetchConnector retrieves a connector by its ID
-func (s *ConnectorService) FetchConnector(connectorID string) (*models.Connector, *models.IrminAPIResponse, error) {
-	var connector models.Connector
+func (s *ConnectorService) FetchConnector(connectorID string) (*irminModels.Connector, *irminModels.IrminAPIResponse, error) {
+	var connector irminModels.Connector
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/connectors/%s", connectorID),
@@ -52,7 +52,7 @@ func (s *ConnectorService) FetchConnectorConfigurationFields(
 	connectorID, configType string,
 	currentDetails map[string]string,
 	currentSettings map[string]string,
-) ([]models.DynamicField, *models.IrminAPIResponse, error) {
+) ([]irminModels.DynamicField, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{}
 	for key, value := range currentDetails {
 		form[fmt.Sprintf("details[%s]", key)] = value
@@ -61,7 +61,7 @@ func (s *ConnectorService) FetchConnectorConfigurationFields(
 		form[fmt.Sprintf("settings[%s]", key)] = value
 	}
 
-	var fields []models.DynamicField
+	var fields []irminModels.DynamicField
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/%s", connectorID, configType),
@@ -79,7 +79,7 @@ func (s *ConnectorService) ValidateConnectorConfiguration(
 	connectorID string,
 	details map[string]string,
 	settings map[string]string,
-) (*models.ConnectorConfigurationValidationResult, *models.IrminAPIResponse, error) {
+) (*irminModels.ConnectorConfigurationValidationResult, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{}
 	for key, value := range details {
 		form[fmt.Sprintf("details[%s]", key)] = value
@@ -88,7 +88,7 @@ func (s *ConnectorService) ValidateConnectorConfiguration(
 		form[fmt.Sprintf("settings[%s]", key)] = value
 	}
 
-	var validationResult models.ConnectorConfigurationValidationResult
+	var validationResult irminModels.ConnectorConfigurationValidationResult
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/validate", connectorID),
@@ -106,7 +106,7 @@ func (s *ConnectorService) FetchConnectorSchema(
 	connectorID, operation string,
 	details map[string]string,
 	settings map[string]string,
-) (*models.ObjectSchema, *models.IrminAPIResponse, error) {
+) (*irminModels.ObjectSchema, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{}
 	for key, value := range details {
 		form[fmt.Sprintf("details[%s]", key)] = value
@@ -115,7 +115,7 @@ func (s *ConnectorService) FetchConnectorSchema(
 		form[fmt.Sprintf("settings[%s]", key)] = value
 	}
 
-	var schema models.ObjectSchema
+	var schema irminModels.ObjectSchema
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/schema/%s", connectorID, operation),
@@ -136,7 +136,7 @@ func (s *ConnectorService) ValidateConnectorData(
 	dataFilename string, // Optional, e.g. "my-image.jpg", "data.json", ...
 	details map[string]string,
 	settings map[string]string,
-) (*models.ConnectorSchemaValidationResult, *models.IrminAPIResponse, error) {
+) (*irminModels.ConnectorSchemaValidationResult, *irminModels.IrminAPIResponse, error) {
 	// If no filename is provided, pick a default:
 	if dataFilename == "" {
 		dataFilename = "data.bin"
@@ -174,7 +174,7 @@ func (s *ConnectorService) ValidateConnectorData(
 	}
 
 	// Prepare the validation result
-	var validationResult models.ConnectorSchemaValidationResult
+	var validationResult irminModels.ConnectorSchemaValidationResult
 
 	// Make the request with the multipart body
 	apiResp, err := s.client.FetchAPI(RequestOptions{
@@ -191,8 +191,8 @@ func (s *ConnectorService) ValidateConnectorData(
 }
 
 // RegisterNewConnector registers a new connector with the system. Requests to this endpoint must be authenticated with a system token.
-func (s *ConnectorService) RegisterNewConnector(baseURL, systemToken string) (*models.Connector, *models.IrminAPIResponse, error) {
-	var connector models.Connector
+func (s *ConnectorService) RegisterNewConnector(baseURL, systemToken string) (*irminModels.Connector, *irminModels.IrminAPIResponse, error) {
+	var connector irminModels.Connector
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/connectors",
@@ -209,8 +209,8 @@ func (s *ConnectorService) RegisterNewConnector(baseURL, systemToken string) (*m
 }
 
 // UpdateRegisteredConnector updates the details of a registered connector. Requests to this endpoint must be authenticated with a system token.
-func (s *ConnectorService) UpdateRegisteredConnector(connectorID, baseURL, systemToken string) (*models.Connector, *models.IrminAPIResponse, error) {
-	var connector models.Connector
+func (s *ConnectorService) UpdateRegisteredConnector(connectorID, baseURL, systemToken string) (*irminModels.Connector, *irminModels.IrminAPIResponse, error) {
+	var connector irminModels.Connector
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s", connectorID),

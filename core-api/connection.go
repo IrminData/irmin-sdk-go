@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // ConnectionService handles operations related to connections
@@ -19,8 +19,8 @@ func NewConnectionService(client *Client) *ConnectionService {
 }
 
 // FetchConnections retrieves all connections for the current workspace
-func (s *ConnectionService) FetchConnections() ([]models.Connection, *models.IrminAPIResponse, error) {
-	var connections []models.Connection
+func (s *ConnectionService) FetchConnections() ([]irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+	var connections []irminModels.Connection
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/connections",
@@ -32,8 +32,8 @@ func (s *ConnectionService) FetchConnections() ([]models.Connection, *models.Irm
 }
 
 // FetchConnection retrieves a connection by its ID
-func (s *ConnectionService) FetchConnection(connectionID string) (*models.Connection, *models.IrminAPIResponse, error) {
-	var connection models.Connection
+func (s *ConnectionService) FetchConnection(connectionID string) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+	var connection irminModels.Connection
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/connections/%s", connectionID),
@@ -50,8 +50,8 @@ func (s *ConnectionService) UpdateConnection(
 	name,
 	description,
 	documentation string,
-) (*models.Connection, *models.IrminAPIResponse, error) {
-	var updatedConnection models.Connection
+) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+	var updatedConnection irminModels.Connection
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connections/%s", connectionID),
@@ -72,8 +72,8 @@ func (s *ConnectionService) UpdateConnection(
 // ReassignConnection reassigns a connection to a new owner
 func (s *ConnectionService) ReassignConnection(
 	connectionID, newOwnerID string,
-) (*models.Connection, *models.IrminAPIResponse, error) {
-	var updatedConnection models.Connection
+) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+	var updatedConnection irminModels.Connection
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connections/%s/reassign", connectionID),
@@ -89,7 +89,7 @@ func (s *ConnectionService) ReassignConnection(
 }
 
 // DeleteConnection deletes a connection by its ID
-func (s *ConnectionService) DeleteConnection(connectionID string) (*models.IrminAPIResponse, error) {
+func (s *ConnectionService) DeleteConnection(connectionID string) (*irminModels.IrminAPIResponse, error) {
 	form := url.Values{}
 	form.Set("_method", "DELETE")
 
@@ -113,7 +113,7 @@ func (s *ConnectionService) CreateConnection(
 	connectorID string,
 	connectionDetails, connectionSettings map[string]string,
 	name, description string,
-) (*models.Connection, *models.IrminAPIResponse, error) {
+) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
 
 	fields := map[string]string{
 		"connector":   connectorID,
@@ -127,7 +127,7 @@ func (s *ConnectionService) CreateConnection(
 		fields[fmt.Sprintf("settings[%s]", key)] = value
 	}
 
-	var newConnection models.Connection
+	var newConnection irminModels.Connection
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/connections",

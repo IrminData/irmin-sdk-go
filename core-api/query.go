@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // QueryService handles query-related API calls
@@ -20,13 +20,13 @@ func NewQueryService(client *Client) *QueryService {
 }
 
 // ExecuteScript executes a script (e.g., Irmin SQL query or Compute Sandbox script)
-func (s *QueryService) ExecuteScript(scriptType, content string) (*models.QueryExecutionResult, *models.IrminAPIResponse, error) {
+func (s *QueryService) ExecuteScript(scriptType, content string) (*irminModels.QueryExecutionResult, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"type":    scriptType,
 		"content": content,
 	}
 
-	var result models.QueryExecutionResult
+	var result irminModels.QueryExecutionResult
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/queries/execute",
@@ -43,7 +43,7 @@ func (s *QueryService) ExecuteScript(scriptType, content string) (*models.QueryE
 func (s *QueryService) CreateQuery(
 	scriptType, content, name, description string,
 	stored, run bool,
-) (*models.Query, *models.IrminAPIResponse, error) {
+) (*irminModels.Query, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"type":    scriptType,
 		"content": content,
@@ -57,7 +57,7 @@ func (s *QueryService) CreateQuery(
 		form["description"] = description
 	}
 
-	var query models.Query
+	var query irminModels.Query
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/queries",
@@ -71,9 +71,9 @@ func (s *QueryService) CreateQuery(
 }
 
 // GetQueries retrieves all queries in the workspace
-func (s *QueryService) GetQueries() ([]models.Query, *models.IrminAPIResponse, error) {
+func (s *QueryService) GetQueries() ([]irminModels.Query, *irminModels.IrminAPIResponse, error) {
 	endpoint := "/v1/queries"
-	var queries []models.Query
+	var queries []irminModels.Query
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -86,9 +86,9 @@ func (s *QueryService) GetQueries() ([]models.Query, *models.IrminAPIResponse, e
 }
 
 // GetQuery retrieves a single query by ID
-func (s *QueryService) GetQuery(queryID string) (*models.Query, *models.IrminAPIResponse, error) {
+func (s *QueryService) GetQuery(queryID string) (*irminModels.Query, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/queries/%s", queryID)
-	var query models.Query
+	var query irminModels.Query
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -101,7 +101,7 @@ func (s *QueryService) GetQuery(queryID string) (*models.Query, *models.IrminAPI
 }
 
 // DeleteQuery deletes a query by ID
-func (s *QueryService) DeleteQuery(queryID string) (*models.IrminAPIResponse, error) {
+func (s *QueryService) DeleteQuery(queryID string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "DELETE",
 	}
@@ -122,7 +122,7 @@ func (s *QueryService) DeleteQuery(queryID string) (*models.IrminAPIResponse, er
 func (s *QueryService) UpdateQuery(
 	queryID, scriptType, content, name, description string,
 	stored bool,
-) (*models.Query, *models.IrminAPIResponse, error) {
+) (*irminModels.Query, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method":     "PATCH",
 		"type":        scriptType,
@@ -132,7 +132,7 @@ func (s *QueryService) UpdateQuery(
 		"stored":      fmt.Sprintf("%t", stored),
 	}
 
-	var query models.Query
+	var query irminModels.Query
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/queries/%s", queryID),
@@ -146,7 +146,7 @@ func (s *QueryService) UpdateQuery(
 }
 
 // ExecuteQuery executes a query by ID
-func (s *QueryService) ExecuteQuery(queryID string) (*models.IrminAPIResponse, error) {
+func (s *QueryService) ExecuteQuery(queryID string) (*irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/queries/%s/execute", queryID)
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -159,9 +159,9 @@ func (s *QueryService) ExecuteQuery(queryID string) (*models.IrminAPIResponse, e
 }
 
 // GetQueryResults retrieves the results of a query, paginated
-func (s *QueryService) GetQueryResults(queryID string, page int) (*models.QueryExecutionResult, *models.IrminAPIResponse, error) {
+func (s *QueryService) GetQueryResults(queryID string, page int) (*irminModels.QueryExecutionResult, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/queries/%s/results?page=%d", queryID, page)
-	var result models.QueryExecutionResult
+	var result irminModels.QueryExecutionResult
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // InviteService handles invite-related API calls
@@ -20,7 +20,7 @@ func NewInviteService(client *Client) *InviteService {
 }
 
 // InviteUserToWorkspace invites a user to the workspace
-func (s *InviteService) InviteUserToWorkspace(firstName, lastName, email, phone, company, role string) (*models.Invite, *models.IrminAPIResponse, error) {
+func (s *InviteService) InviteUserToWorkspace(firstName, lastName, email, phone, company, role string) (*irminModels.Invite, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"first_name": firstName,
 		"last_name":  lastName,
@@ -30,7 +30,7 @@ func (s *InviteService) InviteUserToWorkspace(firstName, lastName, email, phone,
 		"role":       role,
 	}
 
-	var invite models.Invite
+	var invite irminModels.Invite
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/invites",
@@ -44,7 +44,7 @@ func (s *InviteService) InviteUserToWorkspace(firstName, lastName, email, phone,
 }
 
 // ResendUserInvite resends an invite
-func (s *InviteService) ResendUserInvite(inviteID string) (*models.IrminAPIResponse, error) {
+func (s *InviteService) ResendUserInvite(inviteID string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/invites/%s/resend", inviteID),
@@ -56,7 +56,7 @@ func (s *InviteService) ResendUserInvite(inviteID string) (*models.IrminAPIRespo
 }
 
 // CancelUserInvite cancels an invite
-func (s *InviteService) CancelUserInvite(inviteID string) (*models.IrminAPIResponse, error) {
+func (s *InviteService) CancelUserInvite(inviteID string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "DELETE",
 	}
@@ -74,7 +74,7 @@ func (s *InviteService) CancelUserInvite(inviteID string) (*models.IrminAPIRespo
 }
 
 // FetchInvites retrieves a list of invites
-func (s *InviteService) FetchInvites(workspace, user string, trashed, expired bool) ([]models.Invite, *models.IrminAPIResponse, error) {
+func (s *InviteService) FetchInvites(workspace, user string, trashed, expired bool) ([]irminModels.Invite, *irminModels.IrminAPIResponse, error) {
 	endpoint := "/v1/invites"
 	params := ""
 
@@ -95,7 +95,7 @@ func (s *InviteService) FetchInvites(workspace, user string, trashed, expired bo
 		endpoint += "?" + params[:len(params)-1] // Remove trailing "&"
 	}
 
-	var invites []models.Invite
+	var invites []irminModels.Invite
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
@@ -107,7 +107,7 @@ func (s *InviteService) FetchInvites(workspace, user string, trashed, expired bo
 }
 
 // AcceptInvite accepts an invite
-func (s *InviteService) AcceptInvite(inviteID, hash, password, passwordConfirmation string) (*models.IrminAPIResponse, error) {
+func (s *InviteService) AcceptInvite(inviteID, hash, password, passwordConfirmation string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"password":              password,
 		"password_confirmation": passwordConfirmation,
@@ -126,7 +126,7 @@ func (s *InviteService) AcceptInvite(inviteID, hash, password, passwordConfirmat
 }
 
 // DeclineInvite declines an invite
-func (s *InviteService) DeclineInvite(inviteID, hash string) (*models.IrminAPIResponse, error) {
+func (s *InviteService) DeclineInvite(inviteID, hash string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodPost,
 		Endpoint: fmt.Sprintf("/v1/invites/%s/decline/%s", inviteID, hash),

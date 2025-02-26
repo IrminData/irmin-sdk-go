@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 	irminUtils "github.com/IrminData/irmin-sdk-go/utils"
 )
 
@@ -21,8 +21,8 @@ func NewWorkflowService(client *Client) *WorkflowService {
 }
 
 // FetchWorkflows retrieves a list of all workflows
-func (s *WorkflowService) FetchWorkflows() ([]models.Workflow, *models.IrminAPIResponse, error) {
-	var workflows []models.Workflow
+func (s *WorkflowService) FetchWorkflows() ([]irminModels.Workflow, *irminModels.IrminAPIResponse, error) {
+	var workflows []irminModels.Workflow
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/workflows",
@@ -34,9 +34,9 @@ func (s *WorkflowService) FetchWorkflows() ([]models.Workflow, *models.IrminAPIR
 }
 
 // FetchWorkflow retrieves a single workflow by its ID
-func (s *WorkflowService) FetchWorkflow(workflowID string) (*models.Workflow, *models.IrminAPIResponse, error) {
+func (s *WorkflowService) FetchWorkflow(workflowID string) (*irminModels.Workflow, *irminModels.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workflows/%s", workflowID)
-	var workflow models.Workflow
+	var workflow irminModels.Workflow
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
@@ -53,8 +53,8 @@ func (s *WorkflowService) UpdateWorkflow(
 	name,
 	description,
 	documentation string,
-	workflowSchedule *models.WorkflowSchedule,
-) (*models.Workflow, *models.IrminAPIResponse, error) {
+	workflowSchedule *irminModels.WorkflowSchedule,
+) (*irminModels.Workflow, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "PATCH",
 		// Workflow properties
@@ -74,7 +74,7 @@ func (s *WorkflowService) UpdateWorkflow(
 		}
 	}
 
-	var workflow models.Workflow
+	var workflow irminModels.Workflow
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workflows/%s", workflowID),
@@ -88,7 +88,7 @@ func (s *WorkflowService) UpdateWorkflow(
 }
 
 // DeleteWorkflow deletes a workflow by its ID
-func (s *WorkflowService) DeleteWorkflow(workflowID string) (*models.IrminAPIResponse, error) {
+func (s *WorkflowService) DeleteWorkflow(workflowID string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workflows/%s", workflowID),
@@ -104,7 +104,7 @@ func (s *WorkflowService) DeleteWorkflow(workflowID string) (*models.IrminAPIRes
 }
 
 // TriggerWorkflowRun triggers a workflow run manually
-func (s *WorkflowService) TriggerWorkflowRun(workflowID string) (*models.IrminAPIResponse, error) {
+func (s *WorkflowService) TriggerWorkflowRun(workflowID string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workflows/%s/run", workflowID),
@@ -124,8 +124,8 @@ func (s *WorkflowService) CreateImportWorkflow(
 	name,
 	description,
 	documentation string,
-	workflowSchedule *models.WorkflowSchedule,
-) (*models.Workflow, *models.IrminAPIResponse, error) {
+	workflowSchedule *irminModels.WorkflowSchedule,
+) (*irminModels.Workflow, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		// Import Workflow properties
 		"connection": connection,
@@ -149,7 +149,7 @@ func (s *WorkflowService) CreateImportWorkflow(
 		}
 	}
 
-	var workflow models.Workflow
+	var workflow irminModels.Workflow
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/imports",
@@ -172,8 +172,8 @@ func (s *WorkflowService) CreateExportWorkflow(
 	name,
 	description,
 	documentation string,
-	workflowSchedule *models.WorkflowSchedule,
-) (*models.Workflow, *models.IrminAPIResponse, error) {
+	workflowSchedule *irminModels.WorkflowSchedule,
+) (*irminModels.Workflow, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		// Import Workflow properties
 		"connection": connection,
@@ -198,7 +198,7 @@ func (s *WorkflowService) CreateExportWorkflow(
 		}
 	}
 
-	var workflow models.Workflow
+	var workflow irminModels.Workflow
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/exports",
@@ -220,8 +220,8 @@ func (s *WorkflowService) CreateActionWorkflow(
 	name,
 	description,
 	documentation string,
-	schedule *models.WorkflowSchedule,
-) (*models.Workflow, *models.IrminAPIResponse, error) {
+	schedule *irminModels.WorkflowSchedule,
+) (*irminModels.Workflow, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		// Action Workflow properties
 		"executable": executable,
@@ -245,7 +245,7 @@ func (s *WorkflowService) CreateActionWorkflow(
 		}
 	}
 
-	var workflow models.Workflow
+	var workflow irminModels.Workflow
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/actions",
@@ -260,13 +260,13 @@ func (s *WorkflowService) CreateActionWorkflow(
 
 // CreatePipelineWorkflow creates a new pipeline workflow
 func (s *WorkflowService) CreatePipelineWorkflow(
-	stages []models.PipelineStage,
+	stages []irminModels.PipelineStage,
 	live bool,
 	name,
 	description,
 	documentation string,
-	schedule *models.WorkflowSchedule,
-) (*models.Workflow, *models.IrminAPIResponse, error) {
+	schedule *irminModels.WorkflowSchedule,
+) (*irminModels.Workflow, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"live": fmt.Sprintf("%t", live),
 		// Workflow properties
@@ -280,13 +280,13 @@ func (s *WorkflowService) CreatePipelineWorkflow(
 		form[fmt.Sprintf("stages[%d][type]", i)] = stage.GetType()
 		switch stage.GetType() {
 		case "action":
-			actionStage := stage.(*models.PipelineStageAction)
+			actionStage := stage.(*irminModels.PipelineStageAction)
 			form[fmt.Sprintf("stages[%d][description]", i)] = actionStage.Description
 			form[fmt.Sprintf("stages[%d][write]", i)] = fmt.Sprintf("%t", actionStage.Write)
 			form[fmt.Sprintf("stages[%d][read]", i)] = fmt.Sprintf("%t", actionStage.Read)
 			form[fmt.Sprintf("stages[%d][executable]", i)] = actionStage.Executable
 		case "connection":
-			connectionStage := stage.(*models.PipelineStageConnection)
+			connectionStage := stage.(*irminModels.PipelineStageConnection)
 			form[fmt.Sprintf("stages[%d][description]", i)] = connectionStage.Description
 			form[fmt.Sprintf("stages[%d][write]", i)] = fmt.Sprintf("%t", connectionStage.Write)
 			form[fmt.Sprintf("stages[%d][read]", i)] = fmt.Sprintf("%t", connectionStage.Read)
@@ -294,7 +294,7 @@ func (s *WorkflowService) CreatePipelineWorkflow(
 			form[fmt.Sprintf("stages[%d][connection_write_path]", i)] = connectionStage.ConnectionWritePath
 			form[fmt.Sprintf("stages[%d][connection_read_path]", i)] = connectionStage.ConnectionReadPath
 		case "repository":
-			repositoryStage := stage.(*models.PipelineStageRepository)
+			repositoryStage := stage.(*irminModels.PipelineStageRepository)
 			form[fmt.Sprintf("stages[%d][description]", i)] = repositoryStage.Description
 			form[fmt.Sprintf("stages[%d][write]", i)] = fmt.Sprintf("%t", repositoryStage.Write)
 			form[fmt.Sprintf("stages[%d][read]", i)] = fmt.Sprintf("%t", repositoryStage.Read)
@@ -317,7 +317,7 @@ func (s *WorkflowService) CreatePipelineWorkflow(
 		}
 	}
 
-	var workflow models.Workflow
+	var workflow irminModels.Workflow
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/pipelines",

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // CommitService handles operations related to repository commits
@@ -18,8 +18,8 @@ func NewCommitService(client *Client) *CommitService {
 }
 
 // FetchCommits retrieves all commits for a repository and optionally a ref
-func (s *CommitService) FetchCommits(repository, ref string) ([]models.Commit, *models.IrminAPIResponse, error) {
-	var commits []models.Commit
+func (s *CommitService) FetchCommits(repository, ref string) ([]irminModels.Commit, *irminModels.IrminAPIResponse, error) {
+	var commits []irminModels.Commit
 	endpoint := fmt.Sprintf("/v1/repositories/%s/commits", repository)
 	if ref != "" {
 		endpoint += fmt.Sprintf("?ref=%s", ref)
@@ -36,8 +36,8 @@ func (s *CommitService) FetchCommits(repository, ref string) ([]models.Commit, *
 }
 
 // FetchCommit retrieves a commit by its hash
-func (s *CommitService) FetchCommit(repository, hash string) (*models.Commit, *models.IrminAPIResponse, error) {
-	var commit models.Commit
+func (s *CommitService) FetchCommit(repository, hash string) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
+	var commit irminModels.Commit
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/repositories/%s/commits/%s", repository, hash),
@@ -49,7 +49,7 @@ func (s *CommitService) FetchCommit(repository, hash string) (*models.Commit, *m
 }
 
 // CreateCommit creates a new commit in a repository for the specified branch
-func (s *CommitService) CreateCommit(repository, branch, message string) (*models.IrminAPIResponse, error) {
+func (s *CommitService) CreateCommit(repository, branch, message string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/commits", repository),
@@ -66,7 +66,7 @@ func (s *CommitService) CreateCommit(repository, branch, message string) (*model
 }
 
 // RevertUncommittedChanges reverts uncommitted changes in a branch
-func (s *CommitService) RevertUncommittedChanges(repository, branch string) (*models.IrminAPIResponse, error) {
+func (s *CommitService) RevertUncommittedChanges(repository, branch string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/commits/revert", repository),
@@ -82,8 +82,8 @@ func (s *CommitService) RevertUncommittedChanges(repository, branch string) (*mo
 }
 
 // FetchLastModification retrieves the last commit modifying a specific object
-func (s *CommitService) FetchLastModification(repository, branch, objectPath string) (*models.Commit, *models.IrminAPIResponse, error) {
-	var commit models.Commit
+func (s *CommitService) FetchLastModification(repository, branch, objectPath string) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
+	var commit irminModels.Commit
 	urlParams := fmt.Sprintf("?branch=%s", branch)
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,

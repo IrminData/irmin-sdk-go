@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // EditorItemsService handles editor item-related operations
@@ -20,9 +20,9 @@ func NewEditorItemsService(client *Client) *EditorItemsService {
 }
 
 // FetchEditorItems retrieves all editor items
-func (s *EditorItemsService) FetchEditorItems() (*models.EditorItems, *models.IrminAPIResponse, error) {
+func (s *EditorItemsService) FetchEditorItems() (*irminModels.EditorItems, *irminModels.IrminAPIResponse, error) {
 	endpoint := "/v1/editor-items"
-	var editorItems models.EditorItems
+	var editorItems irminModels.EditorItems
 
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -35,7 +35,7 @@ func (s *EditorItemsService) FetchEditorItems() (*models.EditorItems, *models.Ir
 }
 
 // CreateFile creates a new file in the editor items
-func (s *EditorItemsService) CreateFile(file *models.EditorItemsFile, isDraft bool) (*models.EditorItemsFile, *models.IrminAPIResponse, error) {
+func (s *EditorItemsService) CreateFile(file *irminModels.EditorItemsFile, isDraft bool) (*irminModels.EditorItemsFile, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"name":      file.Name,
 		"path":      file.Path,
@@ -44,7 +44,7 @@ func (s *EditorItemsService) CreateFile(file *models.EditorItemsFile, isDraft bo
 		"is_draft":  fmt.Sprintf("%v", isDraft),
 	}
 
-	var createdFile models.EditorItemsFile
+	var createdFile irminModels.EditorItemsFile
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/files",
@@ -60,7 +60,7 @@ func (s *EditorItemsService) CreateFile(file *models.EditorItemsFile, isDraft bo
 // UpdateFile updates an existing file in the editor items
 func (s *EditorItemsService) UpdateFile(
 	name, path, contents, extension, owner, originalPath string, isDraft bool,
-) (*models.EditorItemsFile, *models.IrminAPIResponse, error) {
+) (*irminModels.EditorItemsFile, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method":       "PATCH",
 		"name":          name,
@@ -72,7 +72,7 @@ func (s *EditorItemsService) UpdateFile(
 		"is_draft":      fmt.Sprintf("%v", isDraft),
 	}
 
-	var updatedFile models.EditorItemsFile
+	var updatedFile irminModels.EditorItemsFile
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/files",
@@ -87,7 +87,7 @@ func (s *EditorItemsService) UpdateFile(
 }
 
 // DeleteFile deletes a file from the editor items
-func (s *EditorItemsService) DeleteFile(name, extension, path string) (*models.IrminAPIResponse, error) {
+func (s *EditorItemsService) DeleteFile(name, extension, path string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method":   "DELETE",
 		"name":      name,
@@ -108,13 +108,13 @@ func (s *EditorItemsService) DeleteFile(name, extension, path string) (*models.I
 }
 
 // CreateFolder creates a new folder in the editor items
-func (s *EditorItemsService) CreateFolder(folder *models.EditorItemsFolder) (*models.EditorItemsFolder, *models.IrminAPIResponse, error) {
+func (s *EditorItemsService) CreateFolder(folder *irminModels.EditorItemsFolder) (*irminModels.EditorItemsFolder, *irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"name": folder.Name,
 		"path": folder.Path,
 	}
 
-	var createdFolder models.EditorItemsFolder
+	var createdFolder irminModels.EditorItemsFolder
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/folders",
@@ -128,7 +128,7 @@ func (s *EditorItemsService) CreateFolder(folder *models.EditorItemsFolder) (*mo
 }
 
 // DeleteFolder deletes a folder from the editor items
-func (s *EditorItemsService) DeleteFolder(name, path string) (*models.IrminAPIResponse, error) {
+func (s *EditorItemsService) DeleteFolder(name, path string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"_method": "DELETE",
 		"name":    name,

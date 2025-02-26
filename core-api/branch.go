@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/models"
+	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // BranchService handles branch-related API operations.
@@ -20,8 +20,8 @@ func NewBranchService(client *Client) *BranchService {
 }
 
 // FetchBranches fetches all branches for a given repository.
-func (s *BranchService) FetchBranches(repository string) ([]models.Branch, *models.IrminAPIResponse, error) {
-	var branches []models.Branch
+func (s *BranchService) FetchBranches(repository string) ([]irminModels.Branch, *irminModels.IrminAPIResponse, error) {
+	var branches []irminModels.Branch
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/repositories/%s/branches", repository),
@@ -33,8 +33,8 @@ func (s *BranchService) FetchBranches(repository string) ([]models.Branch, *mode
 }
 
 // FetchBranch fetches a specific branch by name.
-func (s *BranchService) FetchBranch(branchName, repository string) (models.Branch, *models.IrminAPIResponse, error) {
-	var branch models.Branch
+func (s *BranchService) FetchBranch(branchName, repository string) (irminModels.Branch, *irminModels.IrminAPIResponse, error) {
+	var branch irminModels.Branch
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/repositories/%s/branches/%s", repository, branchName),
@@ -46,7 +46,7 @@ func (s *BranchService) FetchBranch(branchName, repository string) (models.Branc
 }
 
 // CreateBranch creates a new branch in the repository.
-func (s *BranchService) CreateBranch(repository, name, from string) (*models.IrminAPIResponse, error) {
+func (s *BranchService) CreateBranch(repository, name, from string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches", repository),
@@ -64,7 +64,7 @@ func (s *BranchService) CreateBranch(repository, name, from string) (*models.Irm
 }
 
 // DeleteBranch deletes a branch in the repository.
-func (s *BranchService) DeleteBranch(repository, branch string) (*models.IrminAPIResponse, error) {
+func (s *BranchService) DeleteBranch(repository, branch string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches/%s", repository, branch),
@@ -81,7 +81,7 @@ func (s *BranchService) DeleteBranch(repository, branch string) (*models.IrminAP
 }
 
 // UpdateBranch updates a branch name in the repository.
-func (s *BranchService) UpdateBranch(repository, oldName, newName string) (*models.IrminAPIResponse, error) {
+func (s *BranchService) UpdateBranch(repository, oldName, newName string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches/%s", repository, oldName),
