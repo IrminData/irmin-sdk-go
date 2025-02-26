@@ -53,7 +53,7 @@ func (s *ConnectorService) FetchConnectorConfigurationFields(
 	connectorID, configType string,
 	currentDetails map[string]string,
 	currentSettings map[string]string,
-) (map[string]interface{}, *client.IrminAPIResponse, error) {
+) ([]models.DynamicField, *client.IrminAPIResponse, error) {
 	form := map[string]string{}
 	for key, value := range currentDetails {
 		form[fmt.Sprintf("details[%s]", key)] = value
@@ -62,7 +62,7 @@ func (s *ConnectorService) FetchConnectorConfigurationFields(
 		form[fmt.Sprintf("settings[%s]", key)] = value
 	}
 
-	var fields map[string]interface{}
+	var fields []models.DynamicField
 	apiResp, err := s.client.FetchAPI(client.RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/%s", connectorID, configType),

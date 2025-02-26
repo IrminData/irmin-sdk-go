@@ -3,26 +3,9 @@ package irminConnectorClient
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/IrminData/irmin-sdk-go/models"
 )
-
-type DynamicField struct {
-	Type         string         `json:"type"`
-	Label        string         `json:"label"`
-	Min          interface{}    `json:"min,omitempty"`
-	Max          interface{}    `json:"max,omitempty"`
-	Multiple     bool           `json:"multiple,omitempty"`
-	Options      []SelectOption `json:"options,omitempty"`
-	HelpText     string         `json:"help_text,omitempty"`
-	Example      string         `json:"example,omitempty"`
-	Default      interface{}    `json:"default,omitempty"`
-	Required     bool           `json:"required,omitempty"`
-	RequiredWith []string       `json:"required_with,omitempty"`
-}
-
-type SelectOption struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
 
 // GetConfigFields fetches the configuration fields for a given configuration type.
 //
@@ -36,7 +19,7 @@ type SelectOption struct {
 // Returns:
 // - A list of DynamicField objects representing the configuration fields if the request is successful.
 // - An error if the request fails.
-func (c *Client) GetConfigFields(configType string, details map[string]string, settings map[string]string) ([]DynamicField, error) {
+func (c *Client) GetConfigFields(configType string, details map[string]string, settings map[string]string) ([]models.DynamicField, error) {
 	// Build the endpoint URL using the provided configuration type.
 	endpoint := fmt.Sprintf("/configuration/%s/fields", configType)
 
@@ -52,7 +35,7 @@ func (c *Client) GetConfigFields(configType string, details map[string]string, s
 	}
 
 	// Define a variable to hold the resulting configuration fields.
-	var fields []DynamicField
+	var fields []models.DynamicField
 
 	// Send the POST request using FetchAPI with URL-encoded form fields.
 	if err := c.FetchAPI(RequestOptions{
