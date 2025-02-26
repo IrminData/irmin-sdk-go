@@ -4,18 +4,17 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 	"github.com/IrminData/irmin-sdk-go/utils"
 )
 
 // WorkflowService handles workflow-related operations
 type WorkflowService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewWorkflowService creates a new WorkflowService
-func NewWorkflowService(client *client.Client) *WorkflowService {
+func NewWorkflowService(client *Client) *WorkflowService {
 	return &WorkflowService{
 		client: client,
 	}
@@ -24,7 +23,7 @@ func NewWorkflowService(client *client.Client) *WorkflowService {
 // FetchWorkflows retrieves a list of all workflows
 func (s *WorkflowService) FetchWorkflows() ([]models.Workflow, *models.IrminAPIResponse, error) {
 	var workflows []models.Workflow
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/workflows",
 	}, &workflows)
@@ -38,7 +37,7 @@ func (s *WorkflowService) FetchWorkflows() ([]models.Workflow, *models.IrminAPIR
 func (s *WorkflowService) FetchWorkflow(workflowID string) (*models.Workflow, *models.IrminAPIResponse, error) {
 	endpoint := fmt.Sprintf("/v1/workflows/%s", workflowID)
 	var workflow models.Workflow
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &workflow)
@@ -76,7 +75,7 @@ func (s *WorkflowService) UpdateWorkflow(
 	}
 
 	var workflow models.Workflow
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workflows/%s", workflowID),
 		ContentType: "application/x-www-form-urlencoded",
@@ -90,7 +89,7 @@ func (s *WorkflowService) UpdateWorkflow(
 
 // DeleteWorkflow deletes a workflow by its ID
 func (s *WorkflowService) DeleteWorkflow(workflowID string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workflows/%s", workflowID),
 		ContentType: "application/x-www-form-urlencoded",
@@ -106,7 +105,7 @@ func (s *WorkflowService) DeleteWorkflow(workflowID string) (*models.IrminAPIRes
 
 // TriggerWorkflowRun triggers a workflow run manually
 func (s *WorkflowService) TriggerWorkflowRun(workflowID string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workflows/%s/run", workflowID),
 	}, nil)
@@ -151,7 +150,7 @@ func (s *WorkflowService) CreateImportWorkflow(
 	}
 
 	var workflow models.Workflow
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/imports",
 		ContentType: "application/x-www-form-urlencoded",
@@ -200,7 +199,7 @@ func (s *WorkflowService) CreateExportWorkflow(
 	}
 
 	var workflow models.Workflow
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/exports",
 		ContentType: "application/x-www-form-urlencoded",
@@ -247,7 +246,7 @@ func (s *WorkflowService) CreateActionWorkflow(
 	}
 
 	var workflow models.Workflow
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/actions",
 		ContentType: "application/x-www-form-urlencoded",
@@ -319,7 +318,7 @@ func (s *WorkflowService) CreatePipelineWorkflow(
 	}
 
 	var workflow models.Workflow
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/workflows/pipelines",
 		ContentType: "application/x-www-form-urlencoded",

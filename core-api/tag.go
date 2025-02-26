@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // TagService handles repository tag-related API calls
 type TagService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewTagService creates a new TagService
-func NewTagService(client *client.Client) *TagService {
+func NewTagService(client *Client) *TagService {
 	return &TagService{
 		client: client,
 	}
@@ -25,7 +24,7 @@ func (s *TagService) FetchTags(repository string) ([]models.Tag, *models.IrminAP
 	endpoint := fmt.Sprintf("/v1/repositories/%s/tags", repository)
 	var tags []models.Tag
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &tags)
@@ -40,7 +39,7 @@ func (s *TagService) FetchTag(repository, tag string) (*models.Tag, *models.Irmi
 	endpoint := fmt.Sprintf("/v1/repositories/%s/tags/%s", repository, tag)
 	var tagDetails models.Tag
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &tagDetails)
@@ -58,7 +57,7 @@ func (s *TagService) CreateTag(repository, name, ref string) (*models.Tag, *mode
 	}
 
 	var newTag models.Tag
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/tags", repository),
 		ContentType: "application/x-www-form-urlencoded",
@@ -79,7 +78,7 @@ func (s *TagService) UpdateTag(repository, tag, name, ref string) (*models.Tag, 
 	}
 
 	var updatedTag models.Tag
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/tags/%s", repository, tag),
 		ContentType: "application/x-www-form-urlencoded",
@@ -97,7 +96,7 @@ func (s *TagService) DeleteTag(repository, tag string) (*models.IrminAPIResponse
 		"_method": "DELETE",
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/tags/%s", repository, tag),
 		ContentType: "application/x-www-form-urlencoded",

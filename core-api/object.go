@@ -5,17 +5,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // ObjectService handles repository object-related API calls
 type ObjectService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewObjectService creates a new ObjectService
-func NewObjectService(client *client.Client) *ObjectService {
+func NewObjectService(client *Client) *ObjectService {
 	return &ObjectService{
 		client: client,
 	}
@@ -35,7 +34,7 @@ func (s *ObjectService) FetchObjects(repository, path, ref string) ([]models.Obj
 	}
 
 	var objects []models.Object
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &objects)
@@ -59,7 +58,7 @@ func (s *ObjectService) FetchObject(repository, path, ref string) (*models.Objec
 	}
 
 	var object models.Object
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &object)
@@ -77,7 +76,7 @@ func (s *ObjectService) FetchObjectSchema(repository, path, ref string) (*models
 	}
 
 	var schema models.ObjectSchema
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &schema)
@@ -97,7 +96,7 @@ func (s *ObjectService) FetchContent(repository, path, ref string, raw bool) ([]
 		endpoint += "&raw=true"
 	}
 
-	apiResp, err := s.client.FetchBinary(client.RequestOptions{
+	apiResp, err := s.client.FetchBinary(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	})
@@ -122,12 +121,12 @@ func (s *ObjectService) UploadObject(
 	}
 	endpoint := fmt.Sprintf("/v1/repositories/%s/objects/%s", repository, path)
 
-	// Convert files map into []client.FormFile
-	var formFiles []client.FormFile
+	// Convert files map into []FormFile
+	var formFiles []FormFile
 	for fileName, fileContent := range files {
 		// Use bytes.NewReader for in-memory file data
 		reader := bytes.NewReader(fileContent)
-		formFiles = append(formFiles, client.FormFile{
+		formFiles = append(formFiles, FormFile{
 			FieldName: "file",   // The multipart form field name
 			FileName:  fileName, // The filename to send in the multipart
 			Reader:    reader,   // The file contents
@@ -140,7 +139,7 @@ func (s *ObjectService) UploadObject(
 	}
 
 	// Construct your RequestOptions for a multipart form upload
-	reqOpts := client.RequestOptions{
+	reqOpts := RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		FormFields:  formFields,
@@ -176,7 +175,7 @@ func (s *ObjectService) MoveObject(repository, ref, path, newPath, newName strin
 	endpoint := fmt.Sprintf("/v1/repositories/%s/objects/%s", repository, path)
 
 	var object models.Object
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		ContentType: "application/x-www-form-urlencoded",
@@ -201,7 +200,7 @@ func (s *ObjectService) DeleteObject(repository, ref, path, name string) (*model
 	}
 	endpoint := fmt.Sprintf("/v1/repositories/%s/objects/%s", repository, path)
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    endpoint,
 		ContentType: "application/x-www-form-urlencoded",

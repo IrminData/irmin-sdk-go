@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // BranchService handles branch-related API operations.
 type BranchService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewBranchService creates a new BranchService
-func NewBranchService(client *client.Client) *BranchService {
+func NewBranchService(client *Client) *BranchService {
 	return &BranchService{
 		client: client,
 	}
@@ -23,7 +22,7 @@ func NewBranchService(client *client.Client) *BranchService {
 // FetchBranches fetches all branches for a given repository.
 func (s *BranchService) FetchBranches(repository string) ([]models.Branch, *models.IrminAPIResponse, error) {
 	var branches []models.Branch
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/repositories/%s/branches", repository),
 	}, &branches)
@@ -36,7 +35,7 @@ func (s *BranchService) FetchBranches(repository string) ([]models.Branch, *mode
 // FetchBranch fetches a specific branch by name.
 func (s *BranchService) FetchBranch(branchName, repository string) (models.Branch, *models.IrminAPIResponse, error) {
 	var branch models.Branch
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/repositories/%s/branches/%s", repository, branchName),
 	}, &branch)
@@ -48,7 +47,7 @@ func (s *BranchService) FetchBranch(branchName, repository string) (models.Branc
 
 // CreateBranch creates a new branch in the repository.
 func (s *BranchService) CreateBranch(repository, name, from string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches", repository),
 		ContentType: "application/x-www-form-urlencoded",
@@ -66,7 +65,7 @@ func (s *BranchService) CreateBranch(repository, name, from string) (*models.Irm
 
 // DeleteBranch deletes a branch in the repository.
 func (s *BranchService) DeleteBranch(repository, branch string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches/%s", repository, branch),
 		ContentType: "application/x-www-form-urlencoded",
@@ -83,7 +82,7 @@ func (s *BranchService) DeleteBranch(repository, branch string) (*models.IrminAP
 
 // UpdateBranch updates a branch name in the repository.
 func (s *BranchService) UpdateBranch(repository, oldName, newName string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/branches/%s", repository, oldName),
 		ContentType: "application/x-www-form-urlencoded",

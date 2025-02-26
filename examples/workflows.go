@@ -3,14 +3,13 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 	"github.com/IrminData/irmin-sdk-go/services"
 )
 
 func TestWorkflows(exampleConnectionID, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	workflowService := services.NewWorkflowService(apiClient)
 
 	// Create example of a workflow schedule

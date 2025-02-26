@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // CredentialService handles operations related to system tokens
 type CredentialService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewCredentialService creates a new instance of CredentialService
-func NewCredentialService(client *client.Client) *CredentialService {
+func NewCredentialService(client *Client) *CredentialService {
 	return &CredentialService{
 		client: client,
 	}
@@ -23,7 +22,7 @@ func NewCredentialService(client *client.Client) *CredentialService {
 // GetSystemTokens retrieves the user's system tokens
 func (s *CredentialService) GetSystemTokens() ([]models.SystemToken, *models.IrminAPIResponse, error) {
 	var tokens []models.SystemToken
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/credentials",
 	}, &tokens)
@@ -41,7 +40,7 @@ func (s *CredentialService) CreateSystemToken(name string, expiry int) (*models.
 	}
 
 	var token models.SystemToken
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/credentials",
 		ContentType: "application/x-www-form-urlencoded",
@@ -59,7 +58,7 @@ func (s *CredentialService) RevokeSystemToken(tokenID string) (*models.IrminAPIR
 		"_method": "DELETE",
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/credentials/%s", tokenID),
 		ContentType: "application/x-www-form-urlencoded",

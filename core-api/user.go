@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // UserService wraps operations on the user profile
 type UserService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewUserService creates a new UserService
-func NewUserService(client *client.Client) *UserService {
+func NewUserService(client *Client) *UserService {
 	return &UserService{client: client}
 }
 
@@ -23,7 +22,7 @@ func NewUserService(client *client.Client) *UserService {
 func (s *UserService) FetchWorkspaceUsers() ([]models.User, *models.IrminAPIResponse, error) {
 	var users []models.User
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/users",
 	}, &users)
@@ -39,7 +38,7 @@ func (s *UserService) FetchWorkspaceUsers() ([]models.User, *models.IrminAPIResp
 func (s *UserService) FetchUser(userID string) (*models.User, *models.IrminAPIResponse, error) {
 	var user models.User
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/users/%s", userID),
 	}, &user)
@@ -58,7 +57,7 @@ func (s *UserService) ChangeUserRole(userID, role string) (*models.IrminAPIRespo
 		"roles":   role,
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodPost,
 		Endpoint: fmt.Sprintf("/v1/users/%s", userID),
 		Body:     body,
@@ -77,7 +76,7 @@ func (s *UserService) RemoveUserFromWorkspace(userID string) (*models.IrminAPIRe
 		"_method": "DELETE",
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodPost,
 		Endpoint: fmt.Sprintf("/v1/users/%s", userID),
 		Body:     body,

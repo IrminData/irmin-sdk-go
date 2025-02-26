@@ -5,17 +5,16 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // ProfileService wraps operations on the user profile
 type ProfileService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewProfileService creates a new ProfileService
-func NewProfileService(client *client.Client) *ProfileService {
+func NewProfileService(client *Client) *ProfileService {
 	return &ProfileService{
 		client: client,
 	}
@@ -26,7 +25,7 @@ func NewProfileService(client *client.Client) *ProfileService {
 func (s *ProfileService) GetProfile() (*models.User, *models.IrminAPIResponse, error) {
 	var profile models.User
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/profile",
 	}, &profile)
@@ -55,9 +54,9 @@ func (s *ProfileService) UpdateProfile(
 	}
 
 	// Prepare file attachments if avatar is provided
-	var files []client.FormFile
+	var files []FormFile
 	if avatar != nil {
-		files = append(files, client.FormFile{
+		files = append(files, FormFile{
 			FieldName: "avatar",
 			Reader:    avatar,
 			FileName:  avatar.Name(),
@@ -68,7 +67,7 @@ func (s *ProfileService) UpdateProfile(
 	var updatedProfile models.User
 
 	// Call FetchAPI with multipart/form-data
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/profile",
 		ContentType: "multipart/form-data",

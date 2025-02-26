@@ -3,7 +3,6 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 	"github.com/IrminData/irmin-sdk-go/services"
 )
@@ -11,7 +10,7 @@ import (
 // CreateTestScriptFile creates a script file for testing the SDK
 func CreateTestScriptFile(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	editorItemsService := services.NewEditorItemsService(apiClient)
 
 	// Create a new file
@@ -33,7 +32,7 @@ func CreateTestScriptFile(baseURL, apiToken, locale string) {
 // DeleteTestScript deletes the previously created script file
 func DeleteTestScriptFile(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	editorItemsService := services.NewEditorItemsService(apiClient)
 
 	// Delete the script
@@ -47,7 +46,7 @@ func DeleteTestScriptFile(baseURL, apiToken, locale string) {
 
 func TestEditorItems(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	editorItemsService := services.NewEditorItemsService(apiClient)
 
 	// Create example folder

@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // CommitService handles operations related to repository commits
 type CommitService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewCommitService creates a new instance of CommitService
-func NewCommitService(client *client.Client) *CommitService {
+func NewCommitService(client *Client) *CommitService {
 	return &CommitService{client: client}
 }
 
@@ -26,7 +25,7 @@ func (s *CommitService) FetchCommits(repository, ref string) ([]models.Commit, *
 		endpoint += fmt.Sprintf("?ref=%s", ref)
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &commits)
@@ -39,7 +38,7 @@ func (s *CommitService) FetchCommits(repository, ref string) ([]models.Commit, *
 // FetchCommit retrieves a commit by its hash
 func (s *CommitService) FetchCommit(repository, hash string) (*models.Commit, *models.IrminAPIResponse, error) {
 	var commit models.Commit
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/repositories/%s/commits/%s", repository, hash),
 	}, &commit)
@@ -51,7 +50,7 @@ func (s *CommitService) FetchCommit(repository, hash string) (*models.Commit, *m
 
 // CreateCommit creates a new commit in a repository for the specified branch
 func (s *CommitService) CreateCommit(repository, branch, message string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/commits", repository),
 		ContentType: "application/x-www-form-urlencoded",
@@ -68,7 +67,7 @@ func (s *CommitService) CreateCommit(repository, branch, message string) (*model
 
 // RevertUncommittedChanges reverts uncommitted changes in a branch
 func (s *CommitService) RevertUncommittedChanges(repository, branch string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/commits/revert", repository),
 		ContentType: "application/x-www-form-urlencoded",
@@ -86,7 +85,7 @@ func (s *CommitService) RevertUncommittedChanges(repository, branch string) (*mo
 func (s *CommitService) FetchLastModification(repository, branch, objectPath string) (*models.Commit, *models.IrminAPIResponse, error) {
 	var commit models.Commit
 	urlParams := fmt.Sprintf("?branch=%s", branch)
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/repositories/%s/objects/%s/last-commit%s", repository, objectPath, urlParams),
 	}, &commit)

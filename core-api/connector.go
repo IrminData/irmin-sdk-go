@@ -6,17 +6,16 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // ConnectorService handles operations related to connectors
 type ConnectorService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewConnectorService creates a new instance of ConnectorService
-func NewConnectorService(client *client.Client) *ConnectorService {
+func NewConnectorService(client *Client) *ConnectorService {
 	return &ConnectorService{
 		client: client,
 	}
@@ -25,7 +24,7 @@ func NewConnectorService(client *client.Client) *ConnectorService {
 // FetchAllConnectors retrieves all available connectors
 func (s *ConnectorService) FetchAllConnectors() ([]models.Connector, *models.IrminAPIResponse, error) {
 	var connectors []models.Connector
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/v1/connectors",
 	}, &connectors)
@@ -38,7 +37,7 @@ func (s *ConnectorService) FetchAllConnectors() ([]models.Connector, *models.Irm
 // FetchConnector retrieves a connector by its ID
 func (s *ConnectorService) FetchConnector(connectorID string) (*models.Connector, *models.IrminAPIResponse, error) {
 	var connector models.Connector
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/connectors/%s", connectorID),
 	}, &connector)
@@ -63,7 +62,7 @@ func (s *ConnectorService) FetchConnectorConfigurationFields(
 	}
 
 	var fields []models.DynamicField
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/%s", connectorID, configType),
 		ContentType: "application/x-www-form-urlencoded",
@@ -90,7 +89,7 @@ func (s *ConnectorService) ValidateConnectorConfiguration(
 	}
 
 	var validationResult models.ConnectorConfigurationValidationResult
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/validate", connectorID),
 		ContentType: "application/x-www-form-urlencoded",
@@ -117,7 +116,7 @@ func (s *ConnectorService) FetchConnectorSchema(
 	}
 
 	var schema models.ObjectSchema
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/schema/%s", connectorID, operation),
 		ContentType: "application/x-www-form-urlencoded",
@@ -178,7 +177,7 @@ func (s *ConnectorService) ValidateConnectorData(
 	var validationResult models.ConnectorSchemaValidationResult
 
 	// Make the request with the multipart body
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s/schema/%s/validate", connectorID, operation),
 		ContentType: "multipart/form-data",
@@ -194,7 +193,7 @@ func (s *ConnectorService) ValidateConnectorData(
 // RegisterNewConnector registers a new connector with the system. Requests to this endpoint must be authenticated with a system token.
 func (s *ConnectorService) RegisterNewConnector(baseURL, systemToken string) (*models.Connector, *models.IrminAPIResponse, error) {
 	var connector models.Connector
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/connectors",
 		ContentType: "application/x-www-form-urlencoded",
@@ -212,7 +211,7 @@ func (s *ConnectorService) RegisterNewConnector(baseURL, systemToken string) (*m
 // UpdateRegisteredConnector updates the details of a registered connector. Requests to this endpoint must be authenticated with a system token.
 func (s *ConnectorService) UpdateRegisteredConnector(connectorID, baseURL, systemToken string) (*models.Connector, *models.IrminAPIResponse, error) {
 	var connector models.Connector
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/connectors/%s", connectorID),
 		ContentType: "application/x-www-form-urlencoded",

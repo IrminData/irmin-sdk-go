@@ -3,13 +3,12 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/services"
 )
 
 func TestLogs(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	logService := services.NewLogService(apiClient)
 
 	// Fetch all logs

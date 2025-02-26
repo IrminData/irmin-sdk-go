@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // EditorItemsService handles editor item-related operations
 type EditorItemsService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewEditorItemsService creates a new instance of EditorItemsService
-func NewEditorItemsService(client *client.Client) *EditorItemsService {
+func NewEditorItemsService(client *Client) *EditorItemsService {
 	return &EditorItemsService{
 		client: client,
 	}
@@ -25,7 +24,7 @@ func (s *EditorItemsService) FetchEditorItems() (*models.EditorItems, *models.Ir
 	endpoint := "/v1/editor-items"
 	var editorItems models.EditorItems
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &editorItems)
@@ -46,7 +45,7 @@ func (s *EditorItemsService) CreateFile(file *models.EditorItemsFile, isDraft bo
 	}
 
 	var createdFile models.EditorItemsFile
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/files",
 		ContentType: "application/x-www-form-urlencoded",
@@ -74,7 +73,7 @@ func (s *EditorItemsService) UpdateFile(
 	}
 
 	var updatedFile models.EditorItemsFile
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/files",
 		ContentType: "application/x-www-form-urlencoded",
@@ -96,7 +95,7 @@ func (s *EditorItemsService) DeleteFile(name, extension, path string) (*models.I
 		"path":      path,
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/files",
 		ContentType: "application/x-www-form-urlencoded",
@@ -116,7 +115,7 @@ func (s *EditorItemsService) CreateFolder(folder *models.EditorItemsFolder) (*mo
 	}
 
 	var createdFolder models.EditorItemsFolder
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/folders",
 		ContentType: "application/x-www-form-urlencoded",
@@ -136,7 +135,7 @@ func (s *EditorItemsService) DeleteFolder(name, path string) (*models.IrminAPIRe
 		"path":    path,
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/editor-items/folders",
 		ContentType: "application/x-www-form-urlencoded",

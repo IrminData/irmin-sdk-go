@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/services"
 )
 
 func TestVersioningAndObjects(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	branchService := services.NewBranchService(apiClient)
 	commitService := services.NewCommitService(apiClient)
 	tagService := services.NewTagService(apiClient)

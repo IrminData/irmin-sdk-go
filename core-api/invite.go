@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // InviteService handles invite-related API calls
 type InviteService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewInviteService creates a new InviteService
-func NewInviteService(client *client.Client) *InviteService {
+func NewInviteService(client *Client) *InviteService {
 	return &InviteService{
 		client: client,
 	}
@@ -32,7 +31,7 @@ func (s *InviteService) InviteUserToWorkspace(firstName, lastName, email, phone,
 	}
 
 	var invite models.Invite
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/invites",
 		ContentType: "application/x-www-form-urlencoded",
@@ -46,7 +45,7 @@ func (s *InviteService) InviteUserToWorkspace(firstName, lastName, email, phone,
 
 // ResendUserInvite resends an invite
 func (s *InviteService) ResendUserInvite(inviteID string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/invites/%s/resend", inviteID),
 	}, nil)
@@ -62,7 +61,7 @@ func (s *InviteService) CancelUserInvite(inviteID string) (*models.IrminAPIRespo
 		"_method": "DELETE",
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/invites/%s", inviteID),
 		ContentType: "application/x-www-form-urlencoded",
@@ -97,7 +96,7 @@ func (s *InviteService) FetchInvites(workspace, user string, trashed, expired bo
 	}
 
 	var invites []models.Invite
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &invites)
@@ -114,7 +113,7 @@ func (s *InviteService) AcceptInvite(inviteID, hash, password, passwordConfirmat
 		"password_confirmation": passwordConfirmation,
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/invites/%s/accept/%s", inviteID, hash),
 		ContentType: "application/x-www-form-urlencoded",
@@ -128,7 +127,7 @@ func (s *InviteService) AcceptInvite(inviteID, hash, password, passwordConfirmat
 
 // DeclineInvite declines an invite
 func (s *InviteService) DeclineInvite(inviteID, hash string) (*models.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodPost,
 		Endpoint: fmt.Sprintf("/v1/invites/%s/decline/%s", inviteID, hash),
 	}, nil)

@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // LogService handles log-related API calls
 type LogService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewLogService creates a new LogService
-func NewLogService(client *client.Client) *LogService {
+func NewLogService(client *Client) *LogService {
 	return &LogService{
 		client: client,
 	}
@@ -25,7 +24,7 @@ func (s *LogService) FetchLogEvents() ([]models.LogEvent, *models.IrminAPIRespon
 	endpoint := "/v1/logs"
 	var logEvents []models.LogEvent
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &logEvents)
@@ -40,7 +39,7 @@ func (s *LogService) FetchWorkflowLogEvents(workflowID string) ([]models.LogEven
 	endpoint := fmt.Sprintf("/v1/workflows/%s/logs", workflowID)
 	var workflowLogs []models.LogEvent
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &workflowLogs)
@@ -55,7 +54,7 @@ func (s *LogService) FetchWorkflowRunLogs(workflowID, workflowRunID string) (*mo
 	endpoint := fmt.Sprintf("/v1/workflows/%s/runs/%s/logs", workflowID, workflowRunID)
 	var workflowRunLogs models.WorkflowRunLogs
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &workflowRunLogs)
@@ -70,7 +69,7 @@ func (s *LogService) FetchRepositoryLogs(repository string) ([]models.LogEvent, 
 	endpoint := fmt.Sprintf("/v1/repositories/%s/logs", repository)
 	var repositoryLogs []models.LogEvent
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &repositoryLogs)
@@ -85,7 +84,7 @@ func (s *LogService) FetchConnectionLogs(connectionID string) ([]models.LogEvent
 	endpoint := fmt.Sprintf("/v1/connections/%s/logs", connectionID)
 	var connectionLogs []models.LogEvent
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &connectionLogs)

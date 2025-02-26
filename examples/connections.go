@@ -3,13 +3,12 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/services"
 )
 
 func CreateTestConnection(baseURL, apiToken, locale string) *string {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	connectionService := services.NewConnectionService(apiClient)
 
 	// Create a new connection
@@ -29,7 +28,7 @@ func CreateTestConnection(baseURL, apiToken, locale string) *string {
 
 func DeleteTestConnection(connectionID, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	connectionService := services.NewConnectionService(apiClient)
 
 	// Delete the connection
@@ -43,7 +42,7 @@ func DeleteTestConnection(connectionID, baseURL, apiToken, locale string) {
 
 func TestConnections(exampleConnectionID, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := client.NewClient(baseURL, apiToken, locale)
+	apiClient := services.NewClient(baseURL, apiToken, locale)
 	connectionService := services.NewConnectionService(apiClient)
 
 	// Get a list of all connections

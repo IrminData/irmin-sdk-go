@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IrminData/irmin-sdk-go/client"
 	"github.com/IrminData/irmin-sdk-go/models"
 )
 
 // RepositoryService handles repository-related API calls
 type RepositoryService struct {
-	client *client.Client
+	client *Client
 }
 
 // NewRepositoryService creates a new RepositoryService
-func NewRepositoryService(client *client.Client) *RepositoryService {
+func NewRepositoryService(client *Client) *RepositoryService {
 	return &RepositoryService{
 		client: client,
 	}
@@ -25,7 +24,7 @@ func (s *RepositoryService) FetchRepositories() ([]models.Repository, *models.Ir
 	endpoint := "/v1/repositories"
 	var repositories []models.Repository
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &repositories)
@@ -40,7 +39,7 @@ func (s *RepositoryService) FetchRepository(slug string) (*models.Repository, *m
 	endpoint := fmt.Sprintf("/v1/repositories/%s", slug)
 	var repository models.Repository
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: endpoint,
 	}, &repository)
@@ -63,7 +62,7 @@ func (s *RepositoryService) CreateRepository(
 	}
 
 	var repository models.Repository
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/v1/repositories",
 		ContentType: "application/x-www-form-urlencoded",
@@ -82,7 +81,7 @@ func (s *RepositoryService) ReassignRepository(slug, ownerID string) (*models.Ir
 		"owner": ownerID,
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/reassign", slug),
 		ContentType: "application/x-www-form-urlencoded",
@@ -100,7 +99,7 @@ func (s *RepositoryService) DeleteRepository(slug string) (*models.IrminAPIRespo
 		"_method": "DELETE",
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s", slug),
 		ContentType: "application/x-www-form-urlencoded",
@@ -126,7 +125,7 @@ func (s *RepositoryService) UpdateRepository(
 		"documentation": documentation,
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s", slug),
 		ContentType: "application/x-www-form-urlencoded",
@@ -149,7 +148,7 @@ func (s *RepositoryService) GetRepositoryDownloadLink(slug, ref, path string) (*
 		DownloadURL string `json:"download_url"`
 	}
 
-	apiResp, err := s.client.FetchAPI(client.RequestOptions{
+	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/repositories/%s/download", slug),
 		ContentType: "application/x-www-form-urlencoded",
