@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/IrminData/irmin-sdk-go/models"
-	"github.com/IrminData/irmin-sdk-go/utils"
+	irminUtils "github.com/IrminData/irmin-sdk-go/utils"
 )
 
 // WorkflowService handles workflow-related operations
@@ -65,7 +65,7 @@ func (s *WorkflowService) UpdateWorkflow(
 
 	// Workflow schedule
 	if workflowSchedule != nil {
-		scheduleFields, err := utils.PrepareWorkflowScheduleData(*workflowSchedule)
+		scheduleFields, err := irminUtils.PrepareWorkflowScheduleData(*workflowSchedule)
 		if err != nil {
 			return nil, nil, fmt.Errorf("prepare workflow schedule data error: %w", err)
 		}
@@ -140,7 +140,7 @@ func (s *WorkflowService) CreateImportWorkflow(
 
 	// Workflow schedule
 	if workflowSchedule != nil {
-		scheduleFields, err := utils.PrepareWorkflowScheduleData(*workflowSchedule)
+		scheduleFields, err := irminUtils.PrepareWorkflowScheduleData(*workflowSchedule)
 		if err != nil {
 			return nil, nil, fmt.Errorf("prepare workflow schedule data error: %w", err)
 		}
@@ -189,7 +189,7 @@ func (s *WorkflowService) CreateExportWorkflow(
 
 	// Workflow schedule
 	if workflowSchedule != nil {
-		scheduleFields, err := utils.PrepareWorkflowScheduleData(*workflowSchedule)
+		scheduleFields, err := irminUtils.PrepareWorkflowScheduleData(*workflowSchedule)
 		if err != nil {
 			return nil, nil, fmt.Errorf("prepare workflow schedule data error: %w", err)
 		}
@@ -236,7 +236,7 @@ func (s *WorkflowService) CreateActionWorkflow(
 
 	// Workflow schedule
 	if schedule != nil {
-		scheduleFields, err := utils.PrepareWorkflowScheduleData(*schedule)
+		scheduleFields, err := irminUtils.PrepareWorkflowScheduleData(*schedule)
 		if err != nil {
 			return nil, nil, fmt.Errorf("prepare workflow schedule data error: %w", err)
 		}
@@ -308,7 +308,7 @@ func (s *WorkflowService) CreatePipelineWorkflow(
 
 	// Workflow schedule
 	if schedule != nil {
-		scheduleFields, err := utils.PrepareWorkflowScheduleData(*schedule)
+		scheduleFields, err := irminUtils.PrepareWorkflowScheduleData(*schedule)
 		if err != nil {
 			return nil, nil, fmt.Errorf("prepare workflow schedule data error: %w", err)
 		}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/IrminData/irmin-sdk-go/utils"
+	irminUtils "github.com/IrminData/irmin-sdk-go/utils"
 )
 
 func TestParquetUtils() {
@@ -29,7 +29,7 @@ func TestParquetUtils() {
 
 	// Convert JSON data to Parquet format
 	fmt.Println("Testing ConvertJSONToParquet...")
-	parquetData, err := utils.ConvertJSONToParquet(jsonData, parquetSchema, 4)
+	parquetData, err := irminUtils.ConvertJSONToParquet(jsonData, parquetSchema, 4)
 	if err != nil {
 		fmt.Println("Error converting JSON to Parquet:", err)
 		return
@@ -46,7 +46,7 @@ func TestParquetUtils() {
 
 	// Convert the Parquet data back to JSON
 	fmt.Println("Testing ParquetToJSON...")
-	revertedJSON, err := utils.ParquetToJSON(parquetData, nil)
+	revertedJSON, err := irminUtils.ParquetToJSON(parquetData, nil)
 	if err != nil {
 		fmt.Println("Error converting Parquet to JSON:", err)
 		return
@@ -64,7 +64,7 @@ func TestParquetUtils() {
 	// Read Parquet into the struct
 	fmt.Println("Testing ReadParquetToStruct...")
 	var schema ExampleSchema
-	records, err := utils.ReadParquetToStruct(parquetData, &schema)
+	records, err := irminUtils.ReadParquetToStruct(parquetData, &schema)
 	if err != nil {
 		fmt.Println("Error reading Parquet into struct:", err)
 		return

@@ -3,7 +3,7 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/utils"
+	irminUtils "github.com/IrminData/irmin-sdk-go/utils"
 )
 
 // Example struct for testing schema operations.
@@ -22,7 +22,7 @@ type testUserStruct struct {
 func TestSchemaUtils() {
 	// Create JSON schema from struct
 	fmt.Println("Testing JSONSchemaFromStruct...")
-	schemaBytes, schemaMap, err := utils.JSONSchemaFromStruct(testUserStruct{})
+	schemaBytes, schemaMap, err := irminUtils.JSONSchemaFromStruct(testUserStruct{})
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -32,7 +32,7 @@ func TestSchemaUtils() {
 
 	// Convert JSON schema to Parquet schema
 	fmt.Println("Testing JSONSchemaToParquet...")
-	parquetSchema := utils.JSONSchemaToParquet(schemaMap, "example_root")
+	parquetSchema := irminUtils.JSONSchemaToParquet(schemaMap, "example_root")
 	fmt.Println("Parquet schema:")
 	fmt.Println(parquetSchema)
 }
