@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/IrminData/irmin-sdk-go/services"
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 )
 
 // CreateTestRepository creates a test repository used for the examples
 func CreateTestRepository(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	repositoryService := services.NewRepositoryService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	repositoryService := irminCore.NewRepositoryService(apiClient)
 
 	// Create a new repository
 	repository, res, err := repositoryService.CreateRepository("Test Repository", "This is for SDK testing", "# Hello World")
@@ -26,8 +26,8 @@ func CreateTestRepository(baseURL, apiToken, locale string) {
 // DeleteTestRepository deletes the test repository used for the examples
 func DeleteTestRepository(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	repositoryService := services.NewRepositoryService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	repositoryService := irminCore.NewRepositoryService(apiClient)
 
 	// Delete the test repository
 	res, err := repositoryService.DeleteRepository("test-repository")
@@ -40,8 +40,8 @@ func DeleteTestRepository(baseURL, apiToken, locale string) {
 
 func TestRepositories(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	repositoryService := services.NewRepositoryService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	repositoryService := irminCore.NewRepositoryService(apiClient)
 
 	// Fetch repositories
 	repositories, _, err := repositoryService.FetchRepositories()

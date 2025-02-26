@@ -3,13 +3,13 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/services"
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 )
 
 func CreateTestConnection(baseURL, apiToken, locale string) *string {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	connectionService := services.NewConnectionService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	connectionService := irminCore.NewConnectionService(apiClient)
 
 	// Create a new connection
 	connection, res, err := connectionService.CreateConnection("connector-f817ec7768badf505a3bac3d4c3079fd", map[string]string{
@@ -28,8 +28,8 @@ func CreateTestConnection(baseURL, apiToken, locale string) *string {
 
 func DeleteTestConnection(connectionID, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	connectionService := services.NewConnectionService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	connectionService := irminCore.NewConnectionService(apiClient)
 
 	// Delete the connection
 	res, err := connectionService.DeleteConnection(connectionID)
@@ -42,8 +42,8 @@ func DeleteTestConnection(connectionID, baseURL, apiToken, locale string) {
 
 func TestConnections(exampleConnectionID, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	connectionService := services.NewConnectionService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	connectionService := irminCore.NewConnectionService(apiClient)
 
 	// Get a list of all connections
 	connections, res, err := connectionService.FetchConnections()

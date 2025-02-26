@@ -3,13 +3,13 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/services"
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 )
 
 func TestCredentials(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	credentialService := services.NewCredentialService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	credentialService := irminCore.NewCredentialService(apiClient)
 
 	// Create a new system token
 	newToken, res, err := credentialService.CreateSystemToken("sdk test token", 3600) // 1 hour

@@ -3,13 +3,13 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/services"
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 )
 
 func TestInvites(workspaceSlug, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	inviteService := services.NewInviteService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	inviteService := irminCore.NewInviteService(apiClient)
 
 	// Send an invite to a user
 	newInvite, res, err := inviteService.InviteUserToWorkspace("John", "Doe", "tim@irmin.co", "+442087599036", "Irmin", "viewer")

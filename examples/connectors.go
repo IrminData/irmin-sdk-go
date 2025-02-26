@@ -3,13 +3,13 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/services"
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 )
 
 func TestConnectors(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	connectorService := services.NewConnectorService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	connectorService := irminCore.NewConnectorService(apiClient)
 
 	// Fetch all connectors
 	connectors, res, err := connectorService.FetchAllConnectors()

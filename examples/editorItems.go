@@ -3,15 +3,15 @@ package examples
 import (
 	"fmt"
 
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 	"github.com/IrminData/irmin-sdk-go/models"
-	"github.com/IrminData/irmin-sdk-go/services"
 )
 
 // CreateTestScriptFile creates a script file for testing the SDK
 func CreateTestScriptFile(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	editorItemsService := services.NewEditorItemsService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	editorItemsService := irminCore.NewEditorItemsService(apiClient)
 
 	// Create a new file
 	newFile, res, err := editorItemsService.CreateFile(&models.EditorItemsFile{
@@ -32,8 +32,8 @@ func CreateTestScriptFile(baseURL, apiToken, locale string) {
 // DeleteTestScript deletes the previously created script file
 func DeleteTestScriptFile(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	editorItemsService := services.NewEditorItemsService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	editorItemsService := irminCore.NewEditorItemsService(apiClient)
 
 	// Delete the script
 	res, err := editorItemsService.DeleteFile("test.js", "js", "/test.js")
@@ -46,8 +46,8 @@ func DeleteTestScriptFile(baseURL, apiToken, locale string) {
 
 func TestEditorItems(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	editorItemsService := services.NewEditorItemsService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	editorItemsService := irminCore.NewEditorItemsService(apiClient)
 
 	// Create example folder
 	folder, res, err := editorItemsService.CreateFolder(&models.EditorItemsFolder{

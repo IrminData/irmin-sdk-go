@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/IrminData/irmin-sdk-go/services"
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 )
 
 func TestVersioningAndObjects(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	branchService := services.NewBranchService(apiClient)
-	commitService := services.NewCommitService(apiClient)
-	tagService := services.NewTagService(apiClient)
-	objectService := services.NewObjectService(apiClient)
-	diffService := services.NewDiffService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	branchService := irminCore.NewBranchService(apiClient)
+	commitService := irminCore.NewCommitService(apiClient)
+	tagService := irminCore.NewTagService(apiClient)
+	objectService := irminCore.NewObjectService(apiClient)
+	diffService := irminCore.NewDiffService(apiClient)
 
 	// Create a branch in the test repository
 	res, err := branchService.CreateBranch("test-repository", "example-branch", "main")

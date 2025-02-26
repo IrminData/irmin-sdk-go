@@ -3,13 +3,13 @@ package examples
 import (
 	"fmt"
 
-	"github.com/IrminData/irmin-sdk-go/services"
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 )
 
 func TestProfile(baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	profileService := services.NewProfileService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	profileService := irminCore.NewProfileService(apiClient)
 
 	// Fetch the user's profile
 	profile, res, err := profileService.GetProfile()

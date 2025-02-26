@@ -3,14 +3,15 @@ package examples
 import (
 	"fmt"
 
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
+
 	"github.com/IrminData/irmin-sdk-go/models"
-	"github.com/IrminData/irmin-sdk-go/services"
 )
 
 func TestWorkflows(exampleConnectionID, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	workflowService := services.NewWorkflowService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	workflowService := irminCore.NewWorkflowService(apiClient)
 
 	// Create example of a workflow schedule
 	maxRetries := 3

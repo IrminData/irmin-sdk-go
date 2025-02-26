@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/IrminData/irmin-sdk-go/services"
+	irminCore "github.com/IrminData/irmin-sdk-go/core-api"
 )
 
 // CreateTestWorkspace creates a new workspace for testing and switches to it
 func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	workspaceService := services.NewWorkspaceService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	workspaceService := irminCore.NewWorkspaceService(apiClient)
 
 	// Create a new workspace
 	workspaceName := fmt.Sprintf("SDK Example Workspace %d", time.Now().Unix())
@@ -37,8 +37,8 @@ func CreateTestWorkspace(baseURL, apiToken, locale string) *string {
 
 func DeleteTestWorkspace(workspaceSlug, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	workspaceService := services.NewWorkspaceService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	workspaceService := irminCore.NewWorkspaceService(apiClient)
 
 	// Delete the new workspace
 	res, err := workspaceService.DeleteWorkspace(workspaceSlug)
@@ -52,8 +52,8 @@ func DeleteTestWorkspace(workspaceSlug, baseURL, apiToken, locale string) {
 
 func TestWorkspaces(workspaceSlug, baseURL, apiToken, locale string) {
 	// Initialise the client and service
-	apiClient := services.NewClient(baseURL, apiToken, locale)
-	workspaceService := services.NewWorkspaceService(apiClient)
+	apiClient := irminCore.NewClient(baseURL, apiToken, locale)
+	workspaceService := irminCore.NewWorkspaceService(apiClient)
 
 	// Fetch workspaces
 	workspaces, res, err := workspaceService.FetchWorkspaces()
