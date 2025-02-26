@@ -1,4 +1,4 @@
-package connector
+package irminConnectorClient
 
 import "net/http"
 
