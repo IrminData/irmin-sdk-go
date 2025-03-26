@@ -3,7 +3,7 @@ package irminModels
 import "time"
 
 // JSONValue represents a JSON-compatible value.
-type JSONValue interface{}
+type JSONValue any
 
 // JSONObject represents a JSON-compatible object.
 type JSONObject map[string]JSONValue
