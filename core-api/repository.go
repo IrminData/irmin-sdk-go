@@ -36,7 +36,7 @@ func (s *RepositoryService) GetRepository(workspace, slug string) (*irminModels.
 	var repository irminModels.Repository
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
-		Endpoint: fmt.Sprintf("/v1/workspaces/%s/repositories/%s", workspace),
+		Endpoint: fmt.Sprintf("/v1/workspaces/%s/repositories/%s", workspace, slug),
 	}, &repository)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch repository error: %w", err)
