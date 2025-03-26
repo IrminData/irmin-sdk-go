@@ -103,18 +103,6 @@ func (s *WorkflowService) DeleteWorkflow(workflowID string) (*irminModels.IrminA
 	return apiResp, nil
 }
 
-// TriggerWorkflowRun triggers a workflow run manually
-func (s *WorkflowService) TriggerWorkflowRun(workflowID string) (*irminModels.IrminAPIResponse, error) {
-	apiResp, err := s.client.FetchAPI(RequestOptions{
-		Method:   http.MethodGet,
-		Endpoint: fmt.Sprintf("/v1/workflows/%s/run", workflowID),
-	}, nil)
-	if err != nil {
-		return nil, fmt.Errorf("trigger workflow run error: %w", err)
-	}
-	return apiResp, nil
-}
-
 // CreateImportWorkflow creates a new import workflow
 func (s *WorkflowService) CreateImportWorkflow(
 	connection,
