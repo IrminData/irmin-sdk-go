@@ -75,8 +75,8 @@ func (s *RepositoryService) CreateRepository(
 	return &repository, apiResp, nil
 }
 
-// ReassignRepository reassigns ownership of a repository
-func (s *RepositoryService) ReassignRepository(slug, ownerID string) (*irminModels.IrminAPIResponse, error) {
+// TransferRepository reassigns ownership of a repository
+func (s *RepositoryService) TransferRepository(slug, ownerID string) (*irminModels.IrminAPIResponse, error) {
 	form := map[string]string{
 		"owner": ownerID,
 	}
@@ -88,7 +88,7 @@ func (s *RepositoryService) ReassignRepository(slug, ownerID string) (*irminMode
 		FormFields:  form,
 	}, nil)
 	if err != nil {
-		return nil, fmt.Errorf("reassign repository error: %w", err)
+		return nil, fmt.Errorf("ownership transfer repository error: %w", err)
 	}
 	return apiResp, nil
 }
