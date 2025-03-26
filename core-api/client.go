@@ -233,9 +233,9 @@ func (c *Client) FetchAPI(opts RequestOptions, out any) (*irminModels.IrminAPIRe
 	}
 
 	// 4) If the caller passed a destination for `Data`, unmarshal it.
-	if out != nil && len(apiResp.Data) > 0 {
-		if err := json.Unmarshal(apiResp.Data, out); err != nil {
-			return &apiResp, fmt.Errorf("failed to unmarshal Data field: %w", err)
+	if out != nil && len(body) > 0 {
+		if err := json.Unmarshal(body, out); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal Data field: %w", err)
 		}
 	}
 
