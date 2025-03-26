@@ -19,130 +19,98 @@ func NewEditorItemsService(client *Client) *EditorItemsService {
 	}
 }
 
-// FetchEditorItems retrieves all editor items
-func (s *EditorItemsService) FetchEditorItems() (*irminModels.EditorItems, *irminModels.IrminAPIResponse, error) {
-	endpoint := "/v1/editor-items"
-	var editorItems irminModels.EditorItems
-
+func (s *EditorItemsService) ListEditorItems(workspace, path string) ([]irminModels.EditorItem, *irminModels.IrminAPIResponse, error) {
+	var editorItems []irminModels.EditorItem
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
-		Endpoint: endpoint,
+		Endpoint: fmt.Sprintf("/v1/workspaces/%s/editor?path=%s", workspace, path),
 	}, &editorItems)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch editor items error: %w", err)
 	}
-	return &editorItems, apiResp, nil
+	return editorItems, apiResp, nil
 }
 
-// CreateFile creates a new file in the editor items
-func (s *EditorItemsService) CreateFile(file *irminModels.EditorItemsFile, isDraft bool) (*irminModels.EditorItemsFile, *irminModels.IrminAPIResponse, error) {
-	form := map[string]string{
-		"name":      file.Name,
-		"path":      file.Path,
-		"contents":  file.Contents,
-		"extension": string(file.Type),
-		"is_draft":  fmt.Sprintf("%v", isDraft),
-	}
-
-	var createdFile irminModels.EditorItemsFile
+func (s *EditorItemsService) GetEditorItemContent(workspace, path string) (*string, *irminModels.IrminAPIResponse, error) {
+	var editorItemContent string
 	apiResp, err := s.client.FetchAPI(RequestOptions{
-		Method:      http.MethodPost,
-		Endpoint:    "/v1/editor-items/files",
-		ContentType: "application/x-www-form-urlencoded",
-		FormFields:  form,
-	}, &createdFile)
+		Method:   http.MethodGet,
+		Endpoint: fmt.Sprintf("/v1/workspaces/%s/editor/content?path=%s", workspace, path),
+	}, &editorItemContent)
 	if err != nil {
-		return nil, nil, fmt.Errorf("create file error: %w", err)
+		return nil, nil, fmt.Errorf("fetch editor item content error: %w", err)
 	}
-	return &createdFile, apiResp, nil
+	return &editorItemContent, apiResp, nil
 }
 
-// UpdateFile updates an existing file in the editor items
-func (s *EditorItemsService) UpdateFile(
-	name, path, contents, extension, owner, originalPath string, isDraft bool,
-) (*irminModels.EditorItemsFile, *irminModels.IrminAPIResponse, error) {
-	form := map[string]string{
-		"_method":       "PATCH",
-		"name":          name,
-		"path":          path,
-		"contents":      contents,
-		"extension":     extension,
-		"owner":         owner,
-		"original_path": originalPath,
-		"is_draft":      fmt.Sprintf("%v", isDraft),
-	}
-
-	var updatedFile irminModels.EditorItemsFile
+func (s *EditorItemsService) MoveEditorItem(workspace, path, destinationPath string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    "/v1/editor-items/files",
+		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/editor/move?path=%s", workspace, path),
 		ContentType: "application/x-www-form-urlencoded",
-		FormFields:  form,
-	}, &updatedFile)
-	if err != nil {
-		return nil, nil, fmt.Errorf("create file error: %w", err)
-	}
-	return &updatedFile, apiResp, nil
-
-}
-
-// DeleteFile deletes a file from the editor items
-func (s *EditorItemsService) DeleteFile(name, extension, path string) (*irminModels.IrminAPIResponse, error) {
-	form := map[string]string{
-		"_method":   "DELETE",
-		"name":      name,
-		"extension": extension,
-		"path":      path,
-	}
-
-	apiResp, err := s.client.FetchAPI(RequestOptions{
-		Method:      http.MethodPost,
-		Endpoint:    "/v1/editor-items/files",
-		ContentType: "application/x-www-form-urlencoded",
-		FormFields:  form,
+		FormFields: map[string]string{
+			"destination_path": destinationPath,
+		},
 	}, nil)
 	if err != nil {
-		return nil, fmt.Errorf("delete file error: %w", err)
+		return nil, fmt.Errorf("move editor item error: %w", err)
 	}
 	return apiResp, nil
 }
 
-// CreateFolder creates a new folder in the editor items
-func (s *EditorItemsService) CreateFolder(folder *irminModels.EditorItemsFolder) (*irminModels.EditorItemsFolder, *irminModels.IrminAPIResponse, error) {
-	form := map[string]string{
-		"name": folder.Name,
-		"path": folder.Path,
-	}
-
-	var createdFolder irminModels.EditorItemsFolder
+func (s *EditorItemsService) CopyEditorItem(workspace, path, destinationPath string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    "/v1/editor-items/folders",
+		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/editor/copy?path=%s", workspace, path),
 		ContentType: "application/x-www-form-urlencoded",
-		FormFields:  form,
-	}, &createdFolder)
-	if err != nil {
-		return nil, nil, fmt.Errorf("create folder error: %w", err)
-	}
-	return &createdFolder, apiResp, nil
-}
-
-// DeleteFolder deletes a folder from the editor items
-func (s *EditorItemsService) DeleteFolder(name, path string) (*irminModels.IrminAPIResponse, error) {
-	form := map[string]string{
-		"_method": "DELETE",
-		"name":    name,
-		"path":    path,
-	}
-
-	apiResp, err := s.client.FetchAPI(RequestOptions{
-		Method:      http.MethodPost,
-		Endpoint:    "/v1/editor-items/folders",
-		ContentType: "application/x-www-form-urlencoded",
-		FormFields:  form,
+		FormFields: map[string]string{
+			"destination_path": destinationPath,
+		},
 	}, nil)
 	if err != nil {
-		return nil, fmt.Errorf("delete folder error: %w", err)
+		return nil, fmt.Errorf("copy editor item error: %w", err)
+	}
+	return apiResp, nil
+}
+
+func (s *EditorItemsService) DeleteEditorItem(workspace, path string) (*irminModels.IrminAPIResponse, error) {
+	apiResp, err := s.client.FetchAPI(RequestOptions{
+		Method:   http.MethodDelete,
+		Endpoint: fmt.Sprintf("/v1/workspaces/%s/editor?path=%s", workspace, path),
+	}, nil)
+	if err != nil {
+		return nil, fmt.Errorf("delete editor item error: %w", err)
+	}
+	return apiResp, nil
+}
+
+func (s *EditorItemsService) SaveEditorItem(workspace, path, content string) (*irminModels.IrminAPIResponse, error) {
+	apiResp, err := s.client.FetchAPI(RequestOptions{
+		Method:      http.MethodPost,
+		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/editor?path=%s", workspace, path),
+		ContentType: "application/x-www-form-urlencoded",
+		FormFields: map[string]string{
+			"type":    "file",
+			"content": content,
+		},
+	}, nil)
+	if err != nil {
+		return nil, fmt.Errorf("save editor item error: %w", err)
+	}
+	return apiResp, nil
+}
+
+func (s *EditorItemsService) CreateEditorFolder(workspace, path string) (*irminModels.IrminAPIResponse, error) {
+	apiResp, err := s.client.FetchAPI(RequestOptions{
+		Method:      http.MethodPost,
+		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/editor?path=%s", workspace, path),
+		ContentType: "application/x-www-form-urlencoded",
+		FormFields: map[string]string{
+			"type": "folder",
+		},
+	}, nil)
+	if err != nil {
+		return nil, fmt.Errorf("create editor folder error: %w", err)
 	}
 	return apiResp, nil
 }
