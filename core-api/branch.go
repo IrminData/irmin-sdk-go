@@ -49,7 +49,7 @@ func (s *BranchService) CreateBranch(workspace, repository, name, from string, i
 	var branch irminModels.Branch
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/repositories/%s/branches", repository),
+		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/repositories/%s/branches", workspace, repository),
 		ContentType: "application/x-www-form-urlencoded",
 		FormFields: map[string]string{
 			"name":         name,

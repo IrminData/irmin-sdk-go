@@ -29,11 +29,11 @@ func (s *ConnectionService) ListConnections(workspace string) ([]irminModels.Con
 	return connections, apiResp, nil
 }
 
-func (s *ConnectionService) GetConnection(connectionID string) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+func (s *ConnectionService) GetConnection(workspace, connectionID string) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
 	var connection irminModels.Connection
 	apiResp, err := s.client.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
-		Endpoint: fmt.Sprintf("/v1/workspaces/%s/connections/%s", connectionID),
+		Endpoint: fmt.Sprintf("/v1/workspaces/%s/connections/%s", workspace, connectionID),
 	}, &connection)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch connection error: %w", err)
