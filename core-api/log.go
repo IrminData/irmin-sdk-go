@@ -58,3 +58,16 @@ func (c *Client) FetchLogEventsForConnection(workspace, connection_id string) ([
 	}
 	return logEvents, apiResp, nil
 }
+
+// FetchLogEventsForWorkflow retrieves general audit log events for a workflow
+func (c *Client) FetchLogEventsForWorkflow(workspace, workflow_id string) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
+	var logEvents []irminModels.LogEvent
+	apiResp, err := c.FetchAPI(RequestOptions{
+		Method:   http.MethodGet,
+		Endpoint: fmt.Sprintf("/v1/workspaces/%s/logs?workflow_id=%s", workspace, workflow_id),
+	}, &logEvents)
+	if err != nil {
+		return nil, nil, fmt.Errorf("fetch log events error: %w", err)
+	}
+	return logEvents, apiResp, nil
+}
