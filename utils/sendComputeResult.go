@@ -22,7 +22,7 @@ func SendComputeResult(data []byte, fileName string) error {
 	}
 
 	// Log that we've written the result file so it can be parsed from logs if needed
-	fmt.Printf("<RESULT_FILE_WRITTEN>%s</RESULT_FILE_WRITTEN>", fileName)
+	fmt.Fprintf(os.Stdout, "<RESULT_FILE_WRITTEN>%s</RESULT_FILE_WRITTEN>", fileName)
 
 	return nil
 }
