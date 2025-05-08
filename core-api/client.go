@@ -16,7 +16,6 @@ import (
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
-// Add these constants at the package level
 const (
 	defaultTimeout = 10 * time.Second
 )
@@ -118,10 +117,11 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 			}
 
 			var r io.Reader
-			if file.Reader != nil {
+			switch {
+			case file.Reader != nil:
 				// If a reader is provided, use it
 				r = file.Reader
-			} else if file.FilePath != "" {
+			case file.FilePath != "":
 				// Otherwise open the file from disk
 				f, err := os.Open(file.FilePath)
 				if err != nil {
@@ -129,7 +129,7 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 				}
 				defer f.Close()
 				r = f
-			} else {
+			default:
 				continue
 			}
 
