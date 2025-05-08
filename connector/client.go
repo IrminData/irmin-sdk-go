@@ -202,13 +202,19 @@ func (c *Client) doRequest(req *http.Request, allowedStatus []int) (*http.Respon
 	if len(allowedStatus) == 0 {
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			bodyBytes, _ := io.ReadAll(resp.Body)
-			resp.Body.Close()
+			closeErr := resp.Body.Close()
+			if closeErr != nil {
+				return nil, fmt.Errorf("failed to close response body: %w", closeErr)
+			}
 			return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, bodyBytes)
 		}
 	} else {
 		if !slices.Contains(allowedStatus, resp.StatusCode) {
 			bodyBytes, _ := io.ReadAll(resp.Body)
-			resp.Body.Close()
+			closeErr := resp.Body.Close()
+			if closeErr != nil {
+				return nil, fmt.Errorf("failed to close response body: %w", closeErr)
+			}
 			return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, bodyBytes)
 		}
 	}
