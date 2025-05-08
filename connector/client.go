@@ -285,6 +285,10 @@ func (c *Client) FetchAPI(opts RequestOptions, out any) error {
 // FetchStreamFiles sends a request based on the provided RequestOptions and returns a slice of PulledFile.
 // If the response is multipart, each part is parsed as a separate file. Otherwise, the response is treated as a single file.
 func (c *Client) FetchStreamFiles(opts RequestOptions) ([]PulledFile, error) {
+	// Create a context with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
 	// Construct full URL.
 	url := fmt.Sprintf("%s%s", c.BaseURL, opts.Endpoint)
 
@@ -295,7 +299,7 @@ func (c *Client) FetchStreamFiles(opts RequestOptions) ([]PulledFile, error) {
 	}
 
 	// Build the HTTP request.
-	req, err := http.NewRequest(opts.Method, url, bodyReader)
+	req, err := http.NewRequestWithContext(ctx, opts.Method, url, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -324,55 +328,37 @@ func (c *Client) FetchStreamFiles(opts RequestOptions) ([]PulledFile, error) {
 		return nil, fmt.Errorf("failed to parse Content-Type: %w", err)
 	}
 
-	var files []PulledFile
 	if strings.HasPrefix(mediaType, "multipart/") {
-		// Process as a multipart response.
-		boundary, ok := params["boundary"]
-		if !ok {
-			return nil, errors.New("missing boundary in multipart response")
-		}
-		mr := multipart.NewReader(resp.Body, boundary)
-		for {
-			part, err := mr.NextPart()
-			if errors.Is(err, io.EOF) {
-				break
-			}
-			if err != nil {
-				return nil, fmt.Errorf("error reading multipart: %w", err)
-			}
+		return c.handleMultipartResponse(resp, params)
+	}
+	return c.handleSingleFileResponse(resp)
+}
 
-			// Extract filename from part header.
-			var filename string
-			if disp := part.Header.Get("Content-Disposition"); disp != "" {
-				_, dispParams, err := mime.ParseMediaType(disp)
-				if err == nil {
-					filename = dispParams["filename"]
-				}
-			}
+// handleMultipartResponse processes a multipart response and returns a slice of PulledFile.
+func (c *Client) handleMultipartResponse(resp *http.Response, params map[string]string) ([]PulledFile, error) {
+	boundary, ok := params["boundary"]
+	if !ok {
+		return nil, errors.New("missing boundary in multipart response")
+	}
 
-			content, err := io.ReadAll(part)
-			if err != nil {
-				return nil, fmt.Errorf("failed to read multipart part: %w", err)
-			}
+	mr := multipart.NewReader(resp.Body, boundary)
+	var files []PulledFile
 
-			files = append(files, PulledFile{
-				Filename: filename,
-				Content:  content,
-			})
+	for {
+		part, err := mr.NextPart()
+		if errors.Is(err, io.EOF) {
+			break
 		}
-	} else {
-		// Process as a single file.
-		var filename string
-		if disp := resp.Header.Get("Content-Disposition"); disp != "" {
-			_, dispParams, err := mime.ParseMediaType(disp)
-			if err == nil {
-				filename = dispParams["filename"]
-			}
-		}
-		content, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, fmt.Errorf("failed to read response body: %w", err)
+			return nil, fmt.Errorf("error reading multipart: %w", err)
 		}
+
+		filename := extractFilenameFromPart(part)
+		content, err := io.ReadAll(part)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read multipart part: %w", err)
+		}
+
 		files = append(files, PulledFile{
 			Filename: filename,
 			Content:  content,
@@ -380,4 +366,40 @@ func (c *Client) FetchStreamFiles(opts RequestOptions) ([]PulledFile, error) {
 	}
 
 	return files, nil
+}
+
+// handleSingleFileResponse processes a single file response and returns a slice of PulledFile.
+func (c *Client) handleSingleFileResponse(resp *http.Response) ([]PulledFile, error) {
+	filename := extractFilenameFromResponse(resp)
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	return []PulledFile{{
+		Filename: filename,
+		Content:  content,
+	}}, nil
+}
+
+// extractFilenameFromPart extracts the filename from a multipart part's Content-Disposition header.
+func extractFilenameFromPart(part *multipart.Part) string {
+	if disp := part.Header.Get("Content-Disposition"); disp != "" {
+		_, dispParams, err := mime.ParseMediaType(disp)
+		if err == nil {
+			return dispParams["filename"]
+		}
+	}
+	return ""
+}
+
+// extractFilenameFromResponse extracts the filename from a response's Content-Disposition header.
+func extractFilenameFromResponse(resp *http.Response) string {
+	if disp := resp.Header.Get("Content-Disposition"); disp != "" {
+		_, dispParams, err := mime.ParseMediaType(disp)
+		if err == nil {
+			return dispParams["filename"]
+		}
+	}
+	return ""
 }
