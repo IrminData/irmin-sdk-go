@@ -18,7 +18,7 @@ type Operation struct {
 	ConnectorRegistrationID uint              `json:"connectorRegistrationID"`
 }
 
-// OperationStatus represents the response for an operation status check
+// OperationStatus represents the response for an operation status check.
 type OperationStatus struct {
 	OperationID   uint              `json:"operation_id"`
 	Details       map[string]string `json:"details"`
