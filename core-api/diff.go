@@ -1,18 +1,18 @@
-package irminCore
+package irmincore
 
 import (
 	"fmt"
 	"net/http"
 	"strconv"
 
-	irminModels "github.com/IrminData/irmin-sdk-go/models"
+	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // CompareRefs compares two refs in a repository and returns the differences.
 func (c *Client) CompareRefs(
 	workspace, repository, baseRef, compareRef string,
-) (*irminModels.Diff, *irminModels.IrminAPIResponse, error) {
-	var diff irminModels.Diff
+) (*irminmodels.Diff, *irminmodels.IrminAPIResponse, error) {
+	var diff irminmodels.Diff
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
@@ -33,8 +33,8 @@ func (c *Client) CompareRefs(
 func (c *Client) MergeRefs(
 	workspace, repository, baseRef, compareRef, description, strategy string,
 	squash, allowEmpty bool,
-) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
-	var mergeCommit irminModels.Commit
+) (*irminmodels.Commit, *irminmodels.IrminAPIResponse, error) {
+	var mergeCommit irminmodels.Commit
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/repositories/%s/merge", workspace, repository),

@@ -1,17 +1,17 @@
-package irminCore
+package irmincore
 
 import (
 	"fmt"
 	"net/http"
 
-	irminModels "github.com/IrminData/irmin-sdk-go/models"
+	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 func (c *Client) ListWorkflowRuns(
 	workspace, workflowID string,
 	page, perPage int,
-) ([]irminModels.WorkflowRun, *irminModels.IrminAPIResponse, error) {
-	var runs []irminModels.WorkflowRun
+) ([]irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error) {
+	var runs []irminmodels.WorkflowRun
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
@@ -30,8 +30,8 @@ func (c *Client) ListWorkflowRuns(
 
 func (c *Client) GetWorkflowRun(
 	workspace, workflowID, runID string,
-) (*irminModels.WorkflowRun, *irminModels.IrminAPIResponse, error) {
-	var run irminModels.WorkflowRun
+) (*irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error) {
+	var run irminmodels.WorkflowRun
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/workflows/%s/runs/%s", workspace, workflowID, runID),
@@ -44,8 +44,8 @@ func (c *Client) GetWorkflowRun(
 
 func (c *Client) CancelWorkflowRun(
 	workspace, workflowID, runID string,
-) (*irminModels.WorkflowRun, *irminModels.IrminAPIResponse, error) {
-	var run irminModels.WorkflowRun
+) (*irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error) {
+	var run irminmodels.WorkflowRun
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodDelete,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/workflows/%s/runs/%s", workspace, workflowID, runID),
@@ -58,8 +58,8 @@ func (c *Client) CancelWorkflowRun(
 
 func (c *Client) TriggerWorkflowRun(
 	workspace, workflowID string,
-) (*irminModels.WorkflowRun, *irminModels.IrminAPIResponse, error) {
-	var run irminModels.WorkflowRun
+) (*irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error) {
+	var run irminmodels.WorkflowRun
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodPost,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/workflows/%s/runs", workspace, workflowID),

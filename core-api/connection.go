@@ -1,14 +1,14 @@
-package irminCore
+package irmincore
 
 import (
 	"fmt"
 	"net/http"
 
-	irminModels "github.com/IrminData/irmin-sdk-go/models"
+	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
-func (c *Client) ListConnections(workspace string) ([]irminModels.Connection, *irminModels.IrminAPIResponse, error) {
-	var connections []irminModels.Connection
+func (c *Client) ListConnections(workspace string) ([]irminmodels.Connection, *irminmodels.IrminAPIResponse, error) {
+	var connections []irminmodels.Connection
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/connections", workspace),
@@ -21,8 +21,8 @@ func (c *Client) ListConnections(workspace string) ([]irminModels.Connection, *i
 
 func (c *Client) GetConnection(
 	workspace, connectionID string,
-) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
-	var connection irminModels.Connection
+) (*irminmodels.Connection, *irminmodels.IrminAPIResponse, error) {
+	var connection irminmodels.Connection
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/connections/%s", workspace, connectionID),
@@ -36,7 +36,7 @@ func (c *Client) GetConnection(
 func (c *Client) CreateConnection(
 	workspace, connectorID, name, description, documentation string,
 	connectionDetails, connectionSettings map[string]string,
-) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+) (*irminmodels.Connection, *irminmodels.IrminAPIResponse, error) {
 	fields := map[string]string{
 		"connector":     connectorID,
 		"name":          name,
@@ -50,7 +50,7 @@ func (c *Client) CreateConnection(
 		fields[fmt.Sprintf("settings[%s]", key)] = value
 	}
 
-	var newConnection irminModels.Connection
+	var newConnection irminmodels.Connection
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/connections", workspace),
@@ -66,7 +66,7 @@ func (c *Client) CreateConnection(
 func (c *Client) UpdateConnection(
 	workspace, connectionID, connectorID, name, description, documentation string,
 	connectionDetails, connectionSettings map[string]string,
-) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+) (*irminmodels.Connection, *irminmodels.IrminAPIResponse, error) {
 	fields := map[string]string{
 		"connector":     connectorID,
 		"name":          name,
@@ -79,7 +79,7 @@ func (c *Client) UpdateConnection(
 	for key, value := range connectionSettings {
 		fields[fmt.Sprintf("settings[%s]", key)] = value
 	}
-	var updatedConnection irminModels.Connection
+	var updatedConnection irminmodels.Connection
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPatch,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/connections/%s", workspace, connectionID),
@@ -95,8 +95,8 @@ func (c *Client) UpdateConnection(
 // TransferConnection reassigns a connection to a new owner.
 func (c *Client) TransferConnection(
 	workspace, connectionID, newOwnerID string,
-) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
-	var updatedConnection irminModels.Connection
+) (*irminmodels.Connection, *irminmodels.IrminAPIResponse, error) {
+	var updatedConnection irminmodels.Connection
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/connections/%s/transfer-ownership", workspace, connectionID),
@@ -112,7 +112,7 @@ func (c *Client) TransferConnection(
 }
 
 // DeleteConnection deletes a connection by its ID.
-func (c *Client) DeleteConnection(workspace, connectionID string) (*irminModels.IrminAPIResponse, error) {
+func (c *Client) DeleteConnection(workspace, connectionID string) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodDelete,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/connections/%s", workspace, connectionID),
@@ -127,8 +127,8 @@ func (c *Client) DeleteConnection(workspace, connectionID string) (*irminModels.
 // GetConnectionSchema retrieves the schema for a specific connection and operation method.
 func (c *Client) GetConnectionSchema(
 	workspace, connectionID, operation_method string,
-) (*irminModels.ObjectSchema, *irminModels.IrminAPIResponse, error) {
-	var connectionSchema irminModels.ObjectSchema
+) (*irminmodels.ObjectSchema, *irminmodels.IrminAPIResponse, error) {
+	var connectionSchema irminmodels.ObjectSchema
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(

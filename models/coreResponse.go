@@ -1,4 +1,4 @@
-package irminModels
+package irminmodels
 
 // IrminAPIPaginationMetadata represents the pagination metadata from the Irmin Core API.
 type IrminAPIPaginationMetadata struct {

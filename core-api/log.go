@@ -1,18 +1,18 @@
-package irminCore
+package irmincore
 
 import (
 	"fmt"
 	"net/http"
 
-	irminModels "github.com/IrminData/irmin-sdk-go/models"
+	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 // FetchLogEvents retrieves general audit log events for the current workspace.
 func (c *Client) FetchLogEvents(
 	workspace, search string,
 	page, perPage int,
-) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
-	var logEvents []irminModels.LogEvent
+) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error) {
+	var logEvents []irminmodels.LogEvent
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/logs?page=%d&per_page=%d&search=%s", workspace, page, perPage, search),
@@ -25,16 +25,16 @@ func (c *Client) FetchLogEvents(
 
 // FetchLogEventsForUser retrieves general audit log events for a user.
 func (c *Client) FetchLogEventsForUser(
-	workspace, user_id, search string,
+	workspace, userID, search string,
 	page, perPage int,
-) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
-	var logEvents []irminModels.LogEvent
+) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error) {
+	var logEvents []irminmodels.LogEvent
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
 			"/v1/workspaces/%s/logs?user_id=%s&page=%d&per_page=%d&search=%s",
 			workspace,
-			user_id,
+			userID,
 			page,
 			perPage,
 			search,
@@ -48,16 +48,16 @@ func (c *Client) FetchLogEventsForUser(
 
 // FetchLogEventsForRepository retrieves general audit log events for a repository.
 func (c *Client) FetchLogEventsForRepository(
-	workspace, repository_id, search string,
+	workspace, repositorySlug, search string,
 	page, perPage int,
-) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
-	var logEvents []irminModels.LogEvent
+) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error) {
+	var logEvents []irminmodels.LogEvent
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
-			"/v1/workspaces/%s/logs?repository_id=%s&page=%d&per_page=%d&search=%s",
+			"/v1/workspaces/%s/logs?repository=%s&page=%d&per_page=%d&search=%s",
 			workspace,
-			repository_id,
+			repositorySlug,
 			page,
 			perPage,
 			search,
@@ -71,16 +71,16 @@ func (c *Client) FetchLogEventsForRepository(
 
 // FetchLogEventsForConnection retrieves general audit log events for a connection.
 func (c *Client) FetchLogEventsForConnection(
-	workspace, connection_id, search string,
+	workspace, connectionID, search string,
 	page, perPage int,
-) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
-	var logEvents []irminModels.LogEvent
+) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error) {
+	var logEvents []irminmodels.LogEvent
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
 			"/v1/workspaces/%s/logs?connection_id=%s&page=%d&per_page=%d&search=%s",
 			workspace,
-			connection_id,
+			connectionID,
 			page,
 			perPage,
 			search,
@@ -94,16 +94,16 @@ func (c *Client) FetchLogEventsForConnection(
 
 // FetchLogEventsForWorkflow retrieves general audit log events for a workflow.
 func (c *Client) FetchLogEventsForWorkflow(
-	workspace, workflow_id, search string,
+	workspace, workflowID, search string,
 	page, perPage int,
-) ([]irminModels.LogEvent, *irminModels.IrminAPIResponse, error) {
-	var logEvents []irminModels.LogEvent
+) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error) {
+	var logEvents []irminmodels.LogEvent
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
 			"/v1/workspaces/%s/logs?workflow_id=%s&page=%d&per_page=%d&search=%s",
 			workspace,
-			workflow_id,
+			workflowID,
 			page,
 			perPage,
 			search,

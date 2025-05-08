@@ -1,17 +1,17 @@
-package irminCore
+package irmincore
 
 import (
 	"fmt"
 	"net/http"
 
-	irminModels "github.com/IrminData/irmin-sdk-go/models"
+	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 func (c *Client) ListCommits(
 	workspace, repository, ref, after string,
 	perPage int,
-) ([]irminModels.Commit, *irminModels.IrminAPIResponse, error) {
-	var commits []irminModels.Commit
+) ([]irminmodels.Commit, *irminmodels.IrminAPIResponse, error) {
+	var commits []irminmodels.Commit
 	endpoint := fmt.Sprintf(
 		"/v1/workspaces/%s/repositories/%s/commits?per_page=%d&after=%s",
 		workspace,
@@ -35,8 +35,8 @@ func (c *Client) ListCommits(
 
 func (c *Client) GetCommit(
 	workspace, repository, hash string,
-) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
-	var commit irminModels.Commit
+) (*irminmodels.Commit, *irminmodels.IrminAPIResponse, error) {
+	var commit irminmodels.Commit
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/repositories/%s/commits/%s", workspace, repository, hash),
@@ -49,8 +49,8 @@ func (c *Client) GetCommit(
 
 func (c *Client) CreateCommit(
 	workspace, repository, branch, message string,
-) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
-	var commit irminModels.Commit
+) (*irminmodels.Commit, *irminmodels.IrminAPIResponse, error) {
+	var commit irminmodels.Commit
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/repositories/%s/commits", workspace, repository),
@@ -68,7 +68,7 @@ func (c *Client) CreateCommit(
 
 func (c *Client) RevertChanges(
 	workspace, repository, branch, pathType, path string,
-) (*irminModels.IrminAPIResponse, error) {
+) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/repositories/%s/commits/revert", workspace, repository),

@@ -1,4 +1,4 @@
-package irminUtils
+package irminutils
 
 import (
 	"encoding/json"

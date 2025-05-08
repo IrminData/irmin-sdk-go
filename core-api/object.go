@@ -1,17 +1,17 @@
-package irminCore
+package irmincore
 
 import (
 	"bytes"
 	"fmt"
 	"net/http"
 
-	irminModels "github.com/IrminData/irmin-sdk-go/models"
+	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
 func (c *Client) GetObjectAtPath(
 	workspace, repository, path, ref string,
-) (*irminModels.Object, *irminModels.IrminAPIResponse, error) {
-	var objects irminModels.Object
+) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error) {
+	var objects irminmodels.Object
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
@@ -30,8 +30,8 @@ func (c *Client) GetObjectAtPath(
 
 func (c *Client) GetObjectHistory(
 	workspace, repository, path, ref string,
-) ([]irminModels.Commit, *irminModels.IrminAPIResponse, error) {
-	var commits []irminModels.Commit
+) ([]irminmodels.Commit, *irminmodels.IrminAPIResponse, error) {
+	var commits []irminmodels.Commit
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
@@ -50,8 +50,8 @@ func (c *Client) GetObjectHistory(
 
 func (c *Client) GetObjectSchema(
 	workspace, repository, path, ref string,
-) (*irminModels.ObjectSchema, *irminModels.IrminAPIResponse, error) {
-	var schema irminModels.ObjectSchema
+) (*irminmodels.ObjectSchema, *irminmodels.IrminAPIResponse, error) {
+	var schema irminmodels.ObjectSchema
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodGet,
 		Endpoint: fmt.Sprintf(
@@ -69,9 +69,9 @@ func (c *Client) GetObjectSchema(
 }
 
 func (c *Client) UploadObject(
-	workspace, repository, ref, path, name string,
+	workspace, repository, ref, path string,
 	files map[string][]byte,
-) (*irminModels.Object, *irminModels.IrminAPIResponse, error) {
+) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error) {
 	var formFiles []FormFile
 	for fileName, fileContent := range files {
 		// Use bytes.NewReader for in-memory file data
@@ -83,7 +83,7 @@ func (c *Client) UploadObject(
 		})
 	}
 
-	var object irminModels.Object
+	var object irminmodels.Object
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodPost,
 		Endpoint: fmt.Sprintf(
@@ -140,8 +140,8 @@ func (c *Client) DownloadObject(workspace, repository, path, ref string) ([]byte
 
 func (c *Client) MoveObject(
 	workspace, repository, path, ref, newPath string,
-) (*irminModels.Object, *irminModels.IrminAPIResponse, error) {
-	var object irminModels.Object
+) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error) {
+	var object irminmodels.Object
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodPost,
 		Endpoint: fmt.Sprintf(
@@ -164,8 +164,8 @@ func (c *Client) MoveObject(
 
 func (c *Client) CopyObject(
 	workspace, repository, path, ref, newPath string,
-) (*irminModels.Object, *irminModels.IrminAPIResponse, error) {
-	var object irminModels.Object
+) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error) {
+	var object irminmodels.Object
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodPost,
 		Endpoint: fmt.Sprintf(
@@ -186,7 +186,7 @@ func (c *Client) CopyObject(
 	return &object, apiResp, nil
 }
 
-func (c *Client) DeleteObject(workspace, repository, ref, path string) (*irminModels.IrminAPIResponse, error) {
+func (c *Client) DeleteObject(workspace, repository, ref, path string) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method: http.MethodDelete,
 		Endpoint: fmt.Sprintf(

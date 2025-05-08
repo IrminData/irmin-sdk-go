@@ -1,14 +1,14 @@
-package irminCore
+package irmincore
 
 import (
 	"fmt"
 	"net/http"
 
-	irminModels "github.com/IrminData/irmin-sdk-go/models"
+	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
-func (c *Client) ListStoredQueries(workspace string) ([]irminModels.StoredQuery, *irminModels.IrminAPIResponse, error) {
-	var storedQueries []irminModels.StoredQuery
+func (c *Client) ListStoredQueries(workspace string) ([]irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error) {
+	var storedQueries []irminmodels.StoredQuery
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/queries", workspace),
@@ -21,8 +21,8 @@ func (c *Client) ListStoredQueries(workspace string) ([]irminModels.StoredQuery,
 
 func (c *Client) GetStoredQuery(
 	workspace, queryID string,
-) (*irminModels.StoredQuery, *irminModels.IrminAPIResponse, error) {
-	var storedQuery irminModels.StoredQuery
+) (*irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error) {
+	var storedQuery irminmodels.StoredQuery
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/queries/%s", workspace, queryID),
@@ -35,8 +35,8 @@ func (c *Client) GetStoredQuery(
 
 func (c *Client) CreateStoredQuery(
 	workspace, name, description, sql string,
-) (*irminModels.StoredQuery, *irminModels.IrminAPIResponse, error) {
-	var storedQuery irminModels.StoredQuery
+) (*irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error) {
+	var storedQuery irminmodels.StoredQuery
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/queries", workspace),
@@ -55,8 +55,8 @@ func (c *Client) CreateStoredQuery(
 
 func (c *Client) UpdateStoredQuery(
 	workspace, queryID, name, description, sql string,
-) (*irminModels.StoredQuery, *irminModels.IrminAPIResponse, error) {
-	var storedQuery irminModels.StoredQuery
+) (*irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error) {
+	var storedQuery irminmodels.StoredQuery
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPatch,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/queries/%s", workspace, queryID),
@@ -73,7 +73,7 @@ func (c *Client) UpdateStoredQuery(
 	return &storedQuery, apiResp, nil
 }
 
-func (c *Client) DeleteStoredQuery(workspace, queryID string) (*irminModels.IrminAPIResponse, error) {
+func (c *Client) DeleteStoredQuery(workspace, queryID string) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodDelete,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/queries/%s", workspace, queryID),
@@ -86,8 +86,8 @@ func (c *Client) DeleteStoredQuery(workspace, queryID string) (*irminModels.Irmi
 
 func (c *Client) TransferStoredQuery(
 	workspace, queryID, newOwnerID string,
-) (*irminModels.StoredQuery, *irminModels.IrminAPIResponse, error) {
-	var storedQuery irminModels.StoredQuery
+) (*irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error) {
+	var storedQuery irminmodels.StoredQuery
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/queries/%s/transfer-ownership", workspace, queryID),
@@ -104,8 +104,8 @@ func (c *Client) TransferStoredQuery(
 
 func (c *Client) ExecuteStoredQuery(
 	workspace, queryID string,
-) (*irminModels.QueryResult, *irminModels.IrminAPIResponse, error) {
-	var result irminModels.QueryResult
+) (*irminmodels.QueryResult, *irminmodels.IrminAPIResponse, error) {
+	var result irminmodels.QueryResult
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/queries/%s/execute", workspace, queryID),
@@ -117,8 +117,8 @@ func (c *Client) ExecuteStoredQuery(
 	return &result, apiResp, nil
 }
 
-func (c *Client) ExecuteSQL(workspace, sql string) (*irminModels.QueryResult, *irminModels.IrminAPIResponse, error) {
-	var result irminModels.QueryResult
+func (c *Client) ExecuteSQL(workspace, sql string) (*irminmodels.QueryResult, *irminmodels.IrminAPIResponse, error) {
+	var result irminmodels.QueryResult
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/sql", workspace),
