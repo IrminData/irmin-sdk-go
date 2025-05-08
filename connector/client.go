@@ -18,7 +18,6 @@ import (
 	"time"
 )
 
-// Add these constants at the package level
 const (
 	defaultTimeout = 120 * time.Second
 )
@@ -125,10 +124,11 @@ func (c *Client) prepareBodyAndHeaders(opts RequestOptions) (io.Reader, map[stri
 			}
 
 			var r io.Reader
-			if file.Reader != nil {
+			switch {
+			case file.Reader != nil:
 				// Use the provided reader.
 				r = file.Reader
-			} else if file.FilePath != "" {
+			case file.FilePath != "":
 				// Otherwise open the file from disk.
 				f, err := os.Open(file.FilePath)
 				if err != nil {
@@ -136,7 +136,7 @@ func (c *Client) prepareBodyAndHeaders(opts RequestOptions) (io.Reader, map[stri
 				}
 				// Note: Not deferring f.Close() here since the file is read immediately.
 				r = f
-			} else {
+			default:
 				continue
 			}
 
@@ -198,27 +198,23 @@ func (c *Client) doRequest(req *http.Request, allowedStatus []int) (*http.Respon
 		return nil, fmt.Errorf("request to %s failed: %w", req.URL, err)
 	}
 
-	// Check if the response status code is allowed.
-	if len(allowedStatus) == 0 {
-		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			bodyBytes, _ := io.ReadAll(resp.Body)
-			closeErr := resp.Body.Close()
-			if closeErr != nil {
-				return nil, fmt.Errorf("failed to close response body: %w", closeErr)
-			}
-			return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, bodyBytes)
-		}
-	} else {
-		if !slices.Contains(allowedStatus, resp.StatusCode) {
-			bodyBytes, _ := io.ReadAll(resp.Body)
-			closeErr := resp.Body.Close()
-			if closeErr != nil {
-				return nil, fmt.Errorf("failed to close response body: %w", closeErr)
-			}
-			return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, bodyBytes)
-		}
+	// Read response body for error reporting
+	bodyBytes, _ := io.ReadAll(resp.Body)
+	closeErr := resp.Body.Close()
+	if closeErr != nil {
+		return nil, fmt.Errorf("failed to close response body: %w", closeErr)
 	}
 
+	// Check if the response status code is allowed
+	isAllowed := len(allowedStatus) == 0 && (resp.StatusCode >= 200 && resp.StatusCode < 300) ||
+		len(allowedStatus) > 0 && slices.Contains(allowedStatus, resp.StatusCode)
+
+	if !isAllowed {
+		return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, bodyBytes)
+	}
+
+	// Recreate the response body since we consumed it for error reporting
+	resp.Body = io.NopCloser(bytes.NewReader(bodyBytes))
 	return resp, nil
 }
 
