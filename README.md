@@ -30,6 +30,12 @@ curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/insta
 golangci-lint run
 ```
 
+**Run the linter with autofix**
+
+```bash
+golangci-lint run --fix
+```
+
 The linter is configured to be strict but practical, with a focus on code quality and maintainability. It includes checks for:
 
 - Code formatting (goimports, golines)
