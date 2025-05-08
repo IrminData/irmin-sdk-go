@@ -233,7 +233,8 @@ func (c *Client) FetchAPI(opts RequestOptions, out any) (*irminmodels.IrminAPIRe
 
 	// 2) Unmarshal the main response.
 	var apiResp irminmodels.IrminAPIResponse
-	if err := json.Unmarshal(body, &apiResp); err != nil {
+	err = json.Unmarshal(body, &apiResp)
+	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response JSON: %w", err)
 	}
 
@@ -250,7 +251,8 @@ func (c *Client) FetchAPI(opts RequestOptions, out any) (*irminmodels.IrminAPIRe
 			return nil, fmt.Errorf("failed to marshal Data field: %w", err)
 		}
 		// Unmarshal the byte map into the provided destination
-		if err := json.Unmarshal(dataBytes, out); err != nil {
+		err = json.Unmarshal(dataBytes, out)
+		if err != nil {
 			return nil, fmt.Errorf("failed to unmarshal Data field: %w", err)
 		}
 	}
