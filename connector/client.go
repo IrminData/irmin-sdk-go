@@ -274,7 +274,8 @@ func (c *Client) FetchAPI(opts RequestOptions, out any) error {
 
 	// If a destination was provided and the body is non-empty, unmarshal the JSON.
 	if out != nil && len(body) > 0 {
-		if err := json.Unmarshal(body, out); err != nil {
+		err = json.Unmarshal(body, out)
+		if err != nil {
 			return fmt.Errorf("failed to unmarshal Data field: %w", err)
 		}
 	}
