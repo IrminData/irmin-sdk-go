@@ -126,7 +126,7 @@ func (c *Client) DeleteConnection(workspace, connectionID string) (*irminmodels.
 
 // GetConnectionSchema retrieves the schema for a specific connection and operation method.
 func (c *Client) GetConnectionSchema(
-	workspace, connectionID, operation_method string,
+	workspace, connectionID, operationMethod string,
 ) (*irminmodels.ObjectSchema, *irminmodels.IrminAPIResponse, error) {
 	var connectionSchema irminmodels.ObjectSchema
 	apiResp, err := c.FetchAPI(RequestOptions{
@@ -135,7 +135,7 @@ func (c *Client) GetConnectionSchema(
 			"/v1/workspaces/%s/connections/%s/schema?operation_method=%s",
 			workspace,
 			connectionID,
-			operation_method,
+			operationMethod,
 		),
 	}, &connectionSchema)
 	if err != nil {
