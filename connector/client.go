@@ -77,10 +77,115 @@ type PulledFile struct {
 	Content []byte
 }
 
-// prepareBodyAndHeaders builds the request body (if applicable) and merges any custom headers.
-// It returns the body reader, a header map, and an error (if any).
+// prepareJSONBody prepares a JSON request body and sets appropriate headers.
+func prepareJSONBody(body any, headers map[string]string) (io.Reader, error) {
+	if body == nil {
+		return bytes.NewReader(nil), nil
+	}
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal JSON body: %w", err)
+	}
+	headers["Content-Type"] = "application/json"
+	return bytes.NewReader(jsonData), nil
+}
+
+// prepareMultipartBody prepares a multipart/form-data request body and sets appropriate headers.
+func prepareMultipartBody(
+	formFields map[string]string,
+	files []FormFile,
+	headers map[string]string,
+) (io.Reader, error) {
+	var b bytes.Buffer
+	writer := multipart.NewWriter(&b)
+
+	// Write form fields
+	for key, val := range formFields {
+		if err := writer.WriteField(key, val); err != nil {
+			return nil, fmt.Errorf("failed to write form field %q: %w", key, err)
+		}
+	}
+
+	// Write files
+	for _, file := range files {
+		if err := writeFormFile(writer, file); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := writer.Close(); err != nil {
+		return nil, fmt.Errorf("failed to close multipart writer: %w", err)
+	}
+
+	headers["Content-Type"] = writer.FormDataContentType()
+	return &b, nil
+}
+
+// writeFormFile writes a single file to the multipart writer.
+func writeFormFile(writer *multipart.Writer, file FormFile) error {
+	fileName := file.FileName
+	if fileName == "" {
+		fileName = filepath.Base(file.FilePath)
+	}
+
+	var r io.Reader
+	switch {
+	case file.Reader != nil:
+		r = file.Reader
+	case file.FilePath != "":
+		f, err := os.Open(file.FilePath)
+		if err != nil {
+			return fmt.Errorf("failed to open file %q: %w", file.FilePath, err)
+		}
+		r = f
+	default:
+		return nil
+	}
+
+	part, err := writer.CreateFormFile(file.FieldName, fileName)
+	if err != nil {
+		return fmt.Errorf("failed to create form file for field %q: %w", file.FieldName, err)
+	}
+	if _, err = io.Copy(part, r); err != nil {
+		return fmt.Errorf("failed to copy file data: %w", err)
+	}
+	return nil
+}
+
+// prepareURLEncodedBody prepares an application/x-www-form-urlencoded request body and sets appropriate headers.
+func prepareURLEncodedBody(formFields map[string]string, headers map[string]string) io.Reader {
+	var buf bytes.Buffer
+	firstField := true
+	for key, val := range formFields {
+		if !firstField {
+			buf.WriteByte('&')
+		}
+		encodedKey := url.QueryEscape(key)
+		encodedVal := url.QueryEscape(val)
+		buf.WriteString(fmt.Sprintf("%s=%s", encodedKey, encodedVal))
+		firstField = false
+	}
+	headers["Content-Type"] = "application/x-www-form-urlencoded"
+	return bytes.NewReader(buf.Bytes())
+}
+
+// prepareRawBody prepares a raw request body for other content types.
+func prepareRawBody(body any, contentType string) (io.Reader, error) {
+	if body == nil {
+		return bytes.NewReader(nil), nil
+	}
+	switch data := body.(type) {
+	case []byte:
+		return bytes.NewReader(data), nil
+	case string:
+		return bytes.NewReader([]byte(data)), nil
+	default:
+		return nil, fmt.Errorf("unsupported body type for content type %q", contentType)
+	}
+}
+
 func (c *Client) prepareBodyAndHeaders(opts RequestOptions) (io.Reader, map[string]string, error) {
-	// Initialise header map and copy extra headers if provided.
+	// Initialize header map and copy extra headers if provided
 	headers := make(map[string]string)
 	if opts.Headers != nil {
 		for k, v := range opts.Headers {
@@ -89,102 +194,21 @@ func (c *Client) prepareBodyAndHeaders(opts RequestOptions) (io.Reader, map[stri
 	}
 
 	var bodyReader io.Reader
+	var err error
 
 	switch opts.ContentType {
 	case "application/json":
-		// Encode Body as JSON if provided.
-		if opts.Body != nil {
-			jsonData, err := json.Marshal(opts.Body)
-			if err != nil {
-				return nil, nil, fmt.Errorf("failed to marshal JSON body: %w", err)
-			}
-			bodyReader = bytes.NewReader(jsonData)
-			headers["Content-Type"] = "application/json"
-		}
-
+		bodyReader, err = prepareJSONBody(opts.Body, headers)
 	case "multipart/form-data":
-		// Build a multipart form.
-		var b bytes.Buffer
-		writer := multipart.NewWriter(&b)
-
-		// Write form fields.
-		for key, val := range opts.FormFields {
-			if err := writer.WriteField(key, val); err != nil {
-				return nil, nil, fmt.Errorf("failed to write form field %q: %w", key, err)
-			}
-		}
-
-		// Write files.
-		for _, file := range opts.Files {
-			var fileName string
-			if file.FileName != "" {
-				fileName = file.FileName
-			} else {
-				fileName = filepath.Base(file.FilePath)
-			}
-
-			var r io.Reader
-			switch {
-			case file.Reader != nil:
-				// Use the provided reader.
-				r = file.Reader
-			case file.FilePath != "":
-				// Otherwise open the file from disk.
-				f, err := os.Open(file.FilePath)
-				if err != nil {
-					return nil, nil, fmt.Errorf("failed to open file %q: %w", file.FilePath, err)
-				}
-				// Note: Not deferring f.Close() here since the file is read immediately.
-				r = f
-			default:
-				continue
-			}
-
-			part, err := writer.CreateFormFile(file.FieldName, fileName)
-			if err != nil {
-				return nil, nil, fmt.Errorf("failed to create form file for field %q: %w", file.FieldName, err)
-			}
-			if _, err = io.Copy(part, r); err != nil {
-				return nil, nil, fmt.Errorf("failed to copy file data: %w", err)
-			}
-		}
-
-		if err := writer.Close(); err != nil {
-			return nil, nil, fmt.Errorf("failed to close multipart writer: %w", err)
-		}
-
-		bodyReader = &b
-		headers["Content-Type"] = writer.FormDataContentType()
-
+		bodyReader, err = prepareMultipartBody(opts.FormFields, opts.Files, headers)
 	case "application/x-www-form-urlencoded":
-		// Encode form fields as URL-encoded data.
-		var buf bytes.Buffer
-		firstField := true
-		for key, val := range opts.FormFields {
-			if !firstField {
-				buf.WriteByte('&')
-			}
-			// URL-encode the key and value.
-			encodedKey := url.QueryEscape(key)
-			encodedVal := url.QueryEscape(val)
-			buf.WriteString(fmt.Sprintf("%s=%s", encodedKey, encodedVal))
-			firstField = false
-		}
-		bodyReader = bytes.NewReader(buf.Bytes())
-		headers["Content-Type"] = "application/x-www-form-urlencoded"
-
+		bodyReader = prepareURLEncodedBody(opts.FormFields, headers)
 	default:
-		// For any other content type, let the user provide raw bytes or a string.
-		if opts.Body != nil {
-			switch data := opts.Body.(type) {
-			case []byte:
-				bodyReader = bytes.NewReader(data)
-			case string:
-				bodyReader = bytes.NewReader([]byte(data))
-			default:
-				return nil, nil, fmt.Errorf("unsupported body type for content type %q", opts.ContentType)
-			}
-		}
+		bodyReader, err = prepareRawBody(opts.Body, opts.ContentType)
+	}
+
+	if err != nil {
+		return nil, nil, err
 	}
 
 	return bodyReader, headers, nil
