@@ -2,6 +2,7 @@ package irminconnectorclient
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,6 +16,11 @@ import (
 	"slices"
 	"strings"
 	"time"
+)
+
+// Add these constants at the package level
+const (
+	defaultTimeout = 120 * time.Second
 )
 
 // Client represents the Connector API client.
@@ -39,7 +45,7 @@ func NewClient(baseURL, token, locale string) *Client {
 		Token:   token,
 		Locale:  locale,
 		HTTPClient: &http.Client{
-			Timeout: 120 * time.Second, // Default timeout of 120 seconds.
+			Timeout: defaultTimeout,
 		},
 	}
 }
@@ -213,6 +219,10 @@ func (c *Client) doRequest(req *http.Request, allowedStatus []int) (*http.Respon
 // Request sends requests to the REST API of the connector and returns the raw response data.
 // It utilises prepareBodyAndHeaders and doRequest to reduce code duplication.
 func (c *Client) Request(opts RequestOptions) ([]byte, error) {
+	// Create a context with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
 	// Construct the full URL.
 	url := fmt.Sprintf("%s%s", c.BaseURL, opts.Endpoint)
 
@@ -223,7 +233,7 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 	}
 
 	// Build the HTTP request.
-	req, err := http.NewRequest(opts.Method, url, bodyReader)
+	req, err := http.NewRequestWithContext(ctx, opts.Method, url, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}

@@ -2,6 +2,7 @@ package irmincore
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,6 +14,11 @@ import (
 	"time"
 
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
+)
+
+// Add these constants at the package level
+const (
+	defaultTimeout = 10 * time.Second
 )
 
 // Client represents the Irmin API client.
@@ -37,7 +43,7 @@ func NewClient(baseURL, token, locale string) *Client {
 		Token:   token,
 		Locale:  locale,
 		HTTPClient: &http.Client{
-			Timeout: 10 * time.Second,
+			Timeout: defaultTimeout,
 		},
 	}
 }
@@ -64,6 +70,10 @@ type FormFile struct {
 
 // Request is the main method that sends requests to the Irmin API and returns raw response data.
 func (c *Client) Request(opts RequestOptions) ([]byte, error) {
+	// Create a context with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
 	url := fmt.Sprintf("%s%s", c.BaseURL, opts.Endpoint)
 
 	var bodyReader io.Reader
@@ -169,7 +179,7 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error) {
 	}
 
 	// Build the HTTP request
-	req, err := http.NewRequest(opts.Method, url, bodyReader)
+	req, err := http.NewRequestWithContext(ctx, opts.Method, url, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
