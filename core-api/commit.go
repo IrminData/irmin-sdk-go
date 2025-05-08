@@ -20,7 +20,7 @@ func (c *Client) ListCommits(
 		after,
 	)
 	if ref != "" {
-		endpoint += fmt.Sprintf("?ref=%s", ref)
+		endpoint += fmt.Sprintf("&ref=%s", ref)
 	}
 
 	apiResp, err := c.FetchAPI(RequestOptions{
