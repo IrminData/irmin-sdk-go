@@ -35,7 +35,7 @@ func (c *Client) GetRepository(workspace, slug string) (*irminModels.Repository,
 func (c *Client) CreateRepository(
 	workspace, name, description, documentation, default_branch string,
 	isImmutable bool,
-	garbageDefaultRetentionDays, garbadeDefaultBranchRetentionDays int,
+	garbageDefaultRetentionDays, garbageDefaultBranchRetentionDays int,
 ) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
 	var repository irminModels.Repository
 	apiResp, err := c.FetchAPI(RequestOptions{
@@ -49,7 +49,7 @@ func (c *Client) CreateRepository(
 			"default_branch":                        default_branch,
 			"is_immutable":                          strconv.FormatBool(isImmutable),
 			"garbage_default_retention_days":        strconv.Itoa(garbageDefaultRetentionDays),
-			"garbage_default_branch_retention_days": strconv.Itoa(garbadeDefaultBranchRetentionDays),
+			"garbage_default_branch_retention_days": strconv.Itoa(garbageDefaultBranchRetentionDays),
 		},
 	}, &repository)
 	if err != nil {
@@ -62,7 +62,7 @@ func (c *Client) CreateRepository(
 func (c *Client) UpdateRepository(
 	workspace, slug, name, description, documentation, default_branch string,
 	isImmutable bool,
-	garbageDefaultRetentionDays, garbadeDefaultBranchRetentionDays int,
+	garbageDefaultRetentionDays, garbageDefaultBranchRetentionDays int,
 ) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
 	var repository irminModels.Repository
 	apiResp, err := c.FetchAPI(RequestOptions{
@@ -76,7 +76,7 @@ func (c *Client) UpdateRepository(
 			"default_branch":                        default_branch,
 			"is_immutable":                          strconv.FormatBool(isImmutable),
 			"garbage_default_retention_days":        strconv.Itoa(garbageDefaultRetentionDays),
-			"garbage_default_branch_retention_days": strconv.Itoa(garbadeDefaultBranchRetentionDays),
+			"garbage_default_branch_retention_days": strconv.Itoa(garbageDefaultBranchRetentionDays),
 		},
 	}, &repository)
 	if err != nil {
