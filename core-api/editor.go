@@ -7,7 +7,9 @@ import (
 	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
-func (c *Client) ListEditorItems(workspace, path string) ([]irminModels.EditorItem, *irminModels.IrminAPIResponse, error) {
+func (c *Client) ListEditorItems(
+	workspace, path string,
+) ([]irminModels.EditorItem, *irminModels.IrminAPIResponse, error) {
 	var editorItems []irminModels.EditorItem
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,

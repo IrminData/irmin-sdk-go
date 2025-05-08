@@ -19,7 +19,11 @@ import (
 // Returns:
 // - A list of DynamicField objects representing the configuration fields if the request is successful.
 // - An error if the request fails.
-func (c *Client) GetConfigFields(configType string, details map[string]string, settings map[string]string) (map[string]irminModels.DynamicField, error) {
+func (c *Client) GetConfigFields(
+	configType string,
+	details map[string]string,
+	settings map[string]string,
+) (map[string]irminModels.DynamicField, error) {
 	// Build the endpoint URL using the provided configuration type.
 	endpoint := fmt.Sprintf("/configuration/%s/fields", configType)
 
@@ -61,9 +65,11 @@ func (c *Client) GetConfigFields(configType string, details map[string]string, s
 //
 // Returns:
 // - A validation result from the connector if the request is successful.
-// - An error if there is a problem with the request
-func (c *Client) ValidateConfigFields(details map[string]string, settings map[string]string) (*irminModels.ConnectorConfigurationValidationResult, error) {
-
+// - An error if there is a problem with the request.
+func (c *Client) ValidateConfigFields(
+	details map[string]string,
+	settings map[string]string,
+) (*irminModels.ConnectorConfigurationValidationResult, error) {
 	// Prepare form fields by formatting keys with the appropriate prefixes.
 	formFields := make(map[string]string)
 	// Add details with keys in the format details[KEY].

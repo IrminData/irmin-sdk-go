@@ -18,7 +18,7 @@ func SendComputeResult(data []byte, fileName string) error {
 	err := os.WriteFile(fileName, data, 0644)
 
 	if err != nil {
-		return fmt.Errorf("failed to write result file: %v", err)
+		return fmt.Errorf("failed to write result file: %w", err)
 	}
 
 	// Log that we've written the result file so it can be parsed from logs if needed

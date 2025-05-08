@@ -67,7 +67,6 @@ func (c *Client) InitOperation(details map[string]string, settings map[string]st
 // Returns:
 // - An error if the operation cannot be cancelled.
 func (c *Client) CancelOperation(operation_id int) error {
-
 	// Prepare form fields by formatting keys with the appropriate prefixes.
 	formFields := map[string]string{
 		"operation_id": strconv.FormatInt(int64(operation_id), 10),

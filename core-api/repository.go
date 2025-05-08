@@ -32,7 +32,11 @@ func (c *Client) GetRepository(workspace, slug string) (*irminModels.Repository,
 	return &repository, apiResp, nil
 }
 
-func (c *Client) CreateRepository(workspace, name, description, documentation, default_branch string, isImmutable bool, garbageDefaultRetentionDays, garbadeDefaultBranchRetentionDays int) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
+func (c *Client) CreateRepository(
+	workspace, name, description, documentation, default_branch string,
+	isImmutable bool,
+	garbageDefaultRetentionDays, garbadeDefaultBranchRetentionDays int,
+) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
 	var repository irminModels.Repository
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
@@ -55,7 +59,11 @@ func (c *Client) CreateRepository(workspace, name, description, documentation, d
 	return &repository, apiResp, nil
 }
 
-func (c *Client) UpdateRepository(workspace, slug, name, description, documentation, default_branch string, isImmutable bool, garbageDefaultRetentionDays, garbadeDefaultBranchRetentionDays int) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
+func (c *Client) UpdateRepository(
+	workspace, slug, name, description, documentation, default_branch string,
+	isImmutable bool,
+	garbageDefaultRetentionDays, garbadeDefaultBranchRetentionDays int,
+) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
 	var repository irminModels.Repository
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPatch,
@@ -78,7 +86,9 @@ func (c *Client) UpdateRepository(workspace, slug, name, description, documentat
 	return &repository, apiResp, nil
 }
 
-func (c *Client) TransferRepository(workspace, slug, newOwnerID string) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
+func (c *Client) TransferRepository(
+	workspace, slug, newOwnerID string,
+) (*irminModels.Repository, *irminModels.IrminAPIResponse, error) {
 	var repository irminModels.Repository
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPatch,

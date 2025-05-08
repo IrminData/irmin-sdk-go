@@ -3,6 +3,7 @@ package irminConnectorClient
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime"
@@ -318,12 +319,12 @@ func (c *Client) FetchStreamFiles(opts RequestOptions) ([]PulledFile, error) {
 		// Process as a multipart response.
 		boundary, ok := params["boundary"]
 		if !ok {
-			return nil, fmt.Errorf("missing boundary in multipart response")
+			return nil, errors.New("missing boundary in multipart response")
 		}
 		mr := multipart.NewReader(resp.Body, boundary)
 		for {
 			part, err := mr.NextPart()
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 			if err != nil {

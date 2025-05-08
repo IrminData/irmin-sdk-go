@@ -31,7 +31,9 @@ func (c *Client) GetTag(workspace, repository, tag string) (*irminModels.Tag, *i
 	return &tagObj, apiResp, nil
 }
 
-func (c *Client) CreateTag(workspace, repository, tag, ref string) (*irminModels.Tag, *irminModels.IrminAPIResponse, error) {
+func (c *Client) CreateTag(
+	workspace, repository, tag, ref string,
+) (*irminModels.Tag, *irminModels.IrminAPIResponse, error) {
 	var tagObj irminModels.Tag
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,

@@ -32,7 +32,10 @@ func (c *Client) GetUser(workspace, userID string) (*irminModels.User, *irminMod
 	return &user, apiResp, nil
 }
 
-func (c *Client) UpdateUserRoles(workspace, userID string, roles []string) (*irminModels.User, *irminModels.IrminAPIResponse, error) {
+func (c *Client) UpdateUserRoles(
+	workspace, userID string,
+	roles []string,
+) (*irminModels.User, *irminModels.IrminAPIResponse, error) {
 	updatedRoles := strings.Join(roles, ",")
 	var user irminModels.User
 	apiResp, err := c.FetchAPI(RequestOptions{

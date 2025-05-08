@@ -8,7 +8,9 @@ import (
 	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
-func (c *Client) ListBranches(workspace, repository string) ([]irminModels.Branch, *irminModels.IrminAPIResponse, error) {
+func (c *Client) ListBranches(
+	workspace, repository string,
+) ([]irminModels.Branch, *irminModels.IrminAPIResponse, error) {
 	var branches []irminModels.Branch
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -20,7 +22,9 @@ func (c *Client) ListBranches(workspace, repository string) ([]irminModels.Branc
 	return branches, apiResp, nil
 }
 
-func (c *Client) GetBranch(workspace, repository, branchName string) (*irminModels.Branch, *irminModels.IrminAPIResponse, error) {
+func (c *Client) GetBranch(
+	workspace, repository, branchName string,
+) (*irminModels.Branch, *irminModels.IrminAPIResponse, error) {
 	var branch irminModels.Branch
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -33,7 +37,10 @@ func (c *Client) GetBranch(workspace, repository, branchName string) (*irminMode
 }
 
 // CreateBranch creates a new branch in the repository.
-func (c *Client) CreateBranch(workspace, repository, name, from string, isImmutable bool) (*irminModels.Branch, *irminModels.IrminAPIResponse, error) {
+func (c *Client) CreateBranch(
+	workspace, repository, name, from string,
+	isImmutable bool,
+) (*irminModels.Branch, *irminModels.IrminAPIResponse, error) {
 	var branch irminModels.Branch
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
@@ -67,7 +74,10 @@ func (c *Client) DeleteBranch(workspace, repository, branch string) (*irminModel
 }
 
 // UpdateBranch updates a branch name in the repository.
-func (c *Client) UpdateBranch(workspace, repository, oldName, newName string, isImmutable bool) (*irminModels.IrminAPIResponse, error) {
+func (c *Client) UpdateBranch(
+	workspace, repository, oldName, newName string,
+	isImmutable bool,
+) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPatch,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/repositories/%s/branches/%s", workspace, repository, oldName),
@@ -79,14 +89,16 @@ func (c *Client) UpdateBranch(workspace, repository, oldName, newName string, is
 	}, nil)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to update branch, status code: %d", err)
+		return nil, fmt.Errorf("failed to update branch, status code: %w", err)
 	}
 
 	return apiResp, nil
 }
 
 // GetUncommittedChanges retrieves the list of uncommitted changes in a branch.
-func (c *Client) GetUncommittedChanges(workspace, repository, branch string) (*irminModels.Diff, *irminModels.IrminAPIResponse, error) {
+func (c *Client) GetUncommittedChanges(
+	workspace, repository, branch string,
+) (*irminModels.Diff, *irminModels.IrminAPIResponse, error) {
 	var diff irminModels.Diff
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,

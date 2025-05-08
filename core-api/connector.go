@@ -84,7 +84,9 @@ func (c *Client) ValidateConnectorConfiguration(
 }
 
 // RegisterNewConnector registers a new connector with the system. Requests to this endpoint must be authenticated with a system token.
-func (c *Client) RegisterNewConnector(baseURL, systemToken string) (*irminModels.Connector, *irminModels.IrminAPIResponse, error) {
+func (c *Client) RegisterNewConnector(
+	baseURL, systemToken string,
+) (*irminModels.Connector, *irminModels.IrminAPIResponse, error) {
 	var connector irminModels.Connector
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
@@ -102,7 +104,9 @@ func (c *Client) RegisterNewConnector(baseURL, systemToken string) (*irminModels
 }
 
 // UpdateRegisteredConnector updates the details of a registered connector. Requests to this endpoint must be authenticated with a system token.
-func (c *Client) UpdateRegisteredConnector(connectorID, baseURL, systemToken string) (*irminModels.Connector, *irminModels.IrminAPIResponse, error) {
+func (c *Client) UpdateRegisteredConnector(
+	connectorID, baseURL, systemToken string,
+) (*irminModels.Connector, *irminModels.IrminAPIResponse, error) {
 	var connector irminModels.Connector
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPatch,

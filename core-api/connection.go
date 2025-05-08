@@ -19,7 +19,9 @@ func (c *Client) ListConnections(workspace string) ([]irminModels.Connection, *i
 	return connections, apiResp, nil
 }
 
-func (c *Client) GetConnection(workspace, connectionID string) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+func (c *Client) GetConnection(
+	workspace, connectionID string,
+) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
 	var connection irminModels.Connection
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -31,7 +33,10 @@ func (c *Client) GetConnection(workspace, connectionID string) (*irminModels.Con
 	return &connection, apiResp, nil
 }
 
-func (c *Client) CreateConnection(workspace, connectorID, name, description, documentation string, connectionDetails, connectionSettings map[string]string) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+func (c *Client) CreateConnection(
+	workspace, connectorID, name, description, documentation string,
+	connectionDetails, connectionSettings map[string]string,
+) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
 	fields := map[string]string{
 		"connector":     connectorID,
 		"name":          name,
@@ -58,7 +63,10 @@ func (c *Client) CreateConnection(workspace, connectorID, name, description, doc
 	return &newConnection, apiResp, nil
 }
 
-func (c *Client) UpdateConnection(workspace, connectionID, connectorID, name, description, documentation string, connectionDetails, connectionSettings map[string]string) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+func (c *Client) UpdateConnection(
+	workspace, connectionID, connectorID, name, description, documentation string,
+	connectionDetails, connectionSettings map[string]string,
+) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
 	fields := map[string]string{
 		"connector":     connectorID,
 		"name":          name,
@@ -84,8 +92,10 @@ func (c *Client) UpdateConnection(workspace, connectionID, connectorID, name, de
 	return &updatedConnection, apiResp, nil
 }
 
-// TransferConnection reassigns a connection to a new owner
-func (c *Client) TransferConnection(workspace, connectionID, newOwnerID string) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
+// TransferConnection reassigns a connection to a new owner.
+func (c *Client) TransferConnection(
+	workspace, connectionID, newOwnerID string,
+) (*irminModels.Connection, *irminModels.IrminAPIResponse, error) {
 	var updatedConnection irminModels.Connection
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
@@ -101,7 +111,7 @@ func (c *Client) TransferConnection(workspace, connectionID, newOwnerID string) 
 	return &updatedConnection, apiResp, nil
 }
 
-// DeleteConnection deletes a connection by its ID
+// DeleteConnection deletes a connection by its ID.
 func (c *Client) DeleteConnection(workspace, connectionID string) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodDelete,
@@ -114,12 +124,19 @@ func (c *Client) DeleteConnection(workspace, connectionID string) (*irminModels.
 	return apiResp, nil
 }
 
-// GetConnectionSchema retrieves the schema for a specific connection and operation method
-func (c *Client) GetConnectionSchema(workspace, connectionID, operation_method string) (*irminModels.ObjectSchema, *irminModels.IrminAPIResponse, error) {
+// GetConnectionSchema retrieves the schema for a specific connection and operation method.
+func (c *Client) GetConnectionSchema(
+	workspace, connectionID, operation_method string,
+) (*irminModels.ObjectSchema, *irminModels.IrminAPIResponse, error) {
 	var connectionSchema irminModels.ObjectSchema
 	apiResp, err := c.FetchAPI(RequestOptions{
-		Method:   http.MethodGet,
-		Endpoint: fmt.Sprintf("/v1/workspaces/%s/connections/%s/schema?operation_method=%s", workspace, connectionID, operation_method),
+		Method: http.MethodGet,
+		Endpoint: fmt.Sprintf(
+			"/v1/workspaces/%s/connections/%s/schema?operation_method=%s",
+			workspace,
+			connectionID,
+			operation_method,
+		),
 	}, &connectionSchema)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch connection schema error: %w", err)

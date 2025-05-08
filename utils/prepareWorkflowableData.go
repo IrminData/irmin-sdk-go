@@ -2,6 +2,7 @@ package irminUtils
 
 import (
 	"fmt"
+	"strconv"
 
 	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
@@ -30,12 +31,12 @@ func PrepareWorkflowableData(workflowable irminModels.Workflowable) (map[string]
 		fields["branch"] = workflowable.Branch
 		fields["path"] = workflowable.Path
 	case irminModels.WorkflowableTypePipeline:
-		fields["live"] = fmt.Sprintf("%t", workflowable.Live)
+		fields["live"] = strconv.FormatBool(workflowable.Live)
 		for i, stage := range workflowable.Stages {
 			fields[fmt.Sprintf("stages[%d].type", i)] = string(stage.Type)
 			fields[fmt.Sprintf("stages[%d].description", i)] = stage.Description
-			fields[fmt.Sprintf("stages[%d].read", i)] = fmt.Sprintf("%t", stage.Read)
-			fields[fmt.Sprintf("stages[%d].write", i)] = fmt.Sprintf("%t", stage.Write)
+			fields[fmt.Sprintf("stages[%d].read", i)] = strconv.FormatBool(stage.Read)
+			fields[fmt.Sprintf("stages[%d].write", i)] = strconv.FormatBool(stage.Write)
 			switch stage.Type {
 			case irminModels.PipelineStageTypeRepository:
 				fields[fmt.Sprintf("stages[%d].repository", i)] = *stage.Repository

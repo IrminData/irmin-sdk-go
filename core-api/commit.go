@@ -7,9 +7,18 @@ import (
 	irminModels "github.com/IrminData/irmin-sdk-go/models"
 )
 
-func (c *Client) ListCommits(workspace, repository, ref, after string, perPage int) ([]irminModels.Commit, *irminModels.IrminAPIResponse, error) {
+func (c *Client) ListCommits(
+	workspace, repository, ref, after string,
+	perPage int,
+) ([]irminModels.Commit, *irminModels.IrminAPIResponse, error) {
 	var commits []irminModels.Commit
-	endpoint := fmt.Sprintf("/v1/workspaces/%s/repositories/%s/commits?per_page=%d&after=%s", workspace, repository, perPage, after)
+	endpoint := fmt.Sprintf(
+		"/v1/workspaces/%s/repositories/%s/commits?per_page=%d&after=%s",
+		workspace,
+		repository,
+		perPage,
+		after,
+	)
 	if ref != "" {
 		endpoint += fmt.Sprintf("?ref=%s", ref)
 	}
@@ -24,7 +33,9 @@ func (c *Client) ListCommits(workspace, repository, ref, after string, perPage i
 	return commits, apiResp, nil
 }
 
-func (c *Client) GetCommit(workspace, repository, hash string) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
+func (c *Client) GetCommit(
+	workspace, repository, hash string,
+) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
 	var commit irminModels.Commit
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
@@ -36,7 +47,9 @@ func (c *Client) GetCommit(workspace, repository, hash string) (*irminModels.Com
 	return &commit, apiResp, nil
 }
 
-func (c *Client) CreateCommit(workspace, repository, branch, message string) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
+func (c *Client) CreateCommit(
+	workspace, repository, branch, message string,
+) (*irminModels.Commit, *irminModels.IrminAPIResponse, error) {
 	var commit irminModels.Commit
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
@@ -53,7 +66,9 @@ func (c *Client) CreateCommit(workspace, repository, branch, message string) (*i
 	return &commit, apiResp, nil
 }
 
-func (c *Client) RevertChanges(workspace, repository, branch, pathType, path string) (*irminModels.IrminAPIResponse, error) {
+func (c *Client) RevertChanges(
+	workspace, repository, branch, pathType, path string,
+) (*irminModels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/repositories/%s/commits/revert", workspace, repository),

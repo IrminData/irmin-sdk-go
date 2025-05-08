@@ -8,7 +8,7 @@ import (
 )
 
 // PrepareWorkflowScheduleData prepares a map of fields for a workflow schedule.
-// Returns an array of fields to be used in a form submission
+// Returns an array of fields to be used in a form submission.
 func PrepareWorkflowScheduleData(schedule irminModels.Schedule) (map[string]string, error) {
 	fields := make(map[string]string)
 

@@ -20,7 +20,10 @@ func (c *Client) GetProfile() (*irminModels.User, *irminModels.IrminAPIResponse,
 	return &profile, apiResp, nil
 }
 
-func (c *Client) UpdateProfile(firstName, lastName, email, phone, company string, profilePicture *os.File) (*irminModels.User, *irminModels.IrminAPIResponse, error) {
+func (c *Client) UpdateProfile(
+	firstName, lastName, email, phone, company string,
+	profilePicture *os.File,
+) (*irminModels.User, *irminModels.IrminAPIResponse, error) {
 	var files []FormFile
 	if profilePicture != nil {
 		files = append(files, FormFile{
