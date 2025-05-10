@@ -105,7 +105,10 @@ func (c *Client) CreateEditorFolder(workspace, path string) (*irminmodels.IrminA
 	return apiResp, nil
 }
 
-func (c *Client) RunScript(workspace, path string, inputs []irminmodels.ActionInputData) (*irminmodels.ScriptResult, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) RunScript(
+	workspace, path string,
+	inputs []irminmodels.ActionInputData,
+) (*irminmodels.ScriptResult, *irminmodels.IrminAPIResponse, error) {
 	// Initialize the form fields
 	formFields := make(map[string]string)
 
