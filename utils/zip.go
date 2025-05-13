@@ -4,12 +4,13 @@ import (
 	"archive/zip"
 	"bytes"
 	"io"
+	"path"
 )
 
 // ZipFiles compresses the given map of files into a ZIP archive.
 //
-// files map keys are the paths within the archive, and values are
-// the corresponding file contents.
+// files map keys are the full paths within the archive (e.g. "path/to/file.json"),
+// and values are the corresponding file contents.
 //
 // It returns a byte slice containing the complete ZIP archive,
 // or an error if any step fails.
@@ -21,9 +22,9 @@ func ZipFiles(files map[string][]byte) ([]byte, error) {
 	zw := zip.NewWriter(&buf)
 
 	// iterate over all files to add to the archive
-	for path, content := range files {
+	for filePath, content := range files {
 		// create a new entry for this file path
-		entryWriter, err := zw.Create(path)
+		entryWriter, err := zw.Create(filePath)
 		if err != nil {
 			// ensure writer is closed on error
 			zw.Close()
@@ -49,8 +50,13 @@ func ZipFiles(files map[string][]byte) ([]byte, error) {
 // UnzipFiles decompresses a ZIP archive from a byte slice into a map of file paths to contents.
 //
 // The input is a byte slice containing a ZIP archive.
-// Returns a map where keys are the file paths within the archive and values are the file contents,
-// or an error if the decompression fails.
+// Returns a map where keys are the full paths within the archive (e.g. "path/to/file.json")
+// and values are the file contents, or an error if the decompression fails.
+//
+// Example paths in the returned map:
+//   - "config/settings.json"
+//   - "src/main.go"
+//   - "docs/README.md"
 func UnzipFiles(zipData []byte) (map[string][]byte, error) {
 	// create a bytes reader for the ZIP data
 	zipReader, err := zip.NewReader(bytes.NewReader(zipData), int64(len(zipData)))
@@ -68,6 +74,9 @@ func UnzipFiles(zipData []byte) (map[string][]byte, error) {
 			continue
 		}
 
+		// get the full path, ensuring it's clean and normalized
+		filePath := path.Clean(file.Name)
+
 		// open the file in the archive
 		rc, err := file.Open()
 		if err != nil {
@@ -81,8 +90,8 @@ func UnzipFiles(zipData []byte) (map[string][]byte, error) {
 			return nil, err
 		}
 
-		// store the file contents in the map
-		files[file.Name] = content
+		// store the file contents in the map with the full path
+		files[filePath] = content
 	}
 
 	return files, nil
