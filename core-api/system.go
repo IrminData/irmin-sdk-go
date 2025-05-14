@@ -28,3 +28,25 @@ func (c *Client) CallSystemWebhook(
 	}
 	return apiResp, nil
 }
+
+// CallSystemDispatch calls the system dispatch endpoint.
+// The body is expected to be an that will be marshaled to JSON.
+//
+// Usable only with a system token.
+func (c *Client) CallSystemDispatch(
+	queryParams map[string]string,
+	headers map[string]string,
+	body any,
+) (*irminmodels.IrminAPIResponse, error) {
+	apiResp, err := c.FetchAPI(RequestOptions{
+		Method:      http.MethodPost,
+		Endpoint:    "/v1/system/dispatch",
+		ContentType: "application/json",
+		Body:        body,
+		Headers:     headers,
+	}, nil)
+	if err != nil {
+		return nil, fmt.Errorf("call system dispatch error: %w", err)
+	}
+	return apiResp, nil
+}
