@@ -3,6 +3,7 @@ package irmincore
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
@@ -16,9 +17,16 @@ func (c *Client) CallSystemWebhook(
 	headers map[string]string,
 	body any,
 ) (*irminmodels.IrminAPIResponse, error) {
+	// Build the query params string
+	queryParamsString := url.Values{}
+	for k, v := range queryParams {
+		queryParamsString.Add(k, v)
+	}
+
+	// Call the endpoint
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    "/v1/system/webhook",
+		Endpoint:    fmt.Sprintf("/v1/system/webhook?%s", queryParamsString.Encode()),
 		ContentType: "application/json",
 		Body:        body,
 		Headers:     headers,
@@ -38,9 +46,16 @@ func (c *Client) CallSystemDispatch(
 	headers map[string]string,
 	body any,
 ) (*irminmodels.IrminAPIResponse, error) {
+	// Build the query params string
+	queryParamsString := url.Values{}
+	for k, v := range queryParams {
+		queryParamsString.Add(k, v)
+	}
+
+	// Call the endpoint
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    "/v1/system/dispatch",
+		Endpoint:    fmt.Sprintf("/v1/system/dispatch?%s", queryParamsString.Encode()),
 		ContentType: "application/json",
 		Body:        body,
 		Headers:     headers,
