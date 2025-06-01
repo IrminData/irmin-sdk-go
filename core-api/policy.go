@@ -3,8 +3,6 @@ package irmincore
 import (
 	"fmt"
 	"net/http"
-	"reflect"
-	"strconv"
 
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
@@ -33,55 +31,6 @@ type PolicyUpdateParams struct {
 	ResourceID      *string                      `form:"resource_id,omitempty"`       // ID of the specific resource
 	RoleID          *string                      `form:"role_id,omitempty"`           // ID of the role if principal is role
 	WorkspaceUserID *string                      `form:"workspace_user_id,omitempty"` // ID of the user if principal is user
-}
-
-// toFormFields converts a struct to a map[string]string using form tags.
-func toFormFields(v interface{}) map[string]string {
-	fields := make(map[string]string)
-	val := reflect.ValueOf(v)
-	typ := val.Type()
-
-	for i := 0; i < val.NumField(); i++ {
-		field := typ.Field(i)
-		tag := field.Tag.Get("form")
-		if tag == "" || tag == "-" {
-			continue
-		}
-
-		// Remove omitempty from tag
-		if idx := field.Tag.Get("form"); idx != "" {
-			tag = idx[:len(idx)-9] // remove ",omitempty"
-		}
-
-		value := val.Field(i)
-		if value.Kind() == reflect.Ptr {
-			if value.IsNil() {
-				continue
-			}
-			value = value.Elem()
-		}
-
-		// Convert value to string
-		var strValue string
-		switch value.Kind() {
-		case reflect.String:
-			strValue = value.String()
-		case reflect.Bool:
-			strValue = strconv.FormatBool(value.Bool())
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			strValue = strconv.FormatInt(value.Int(), 10)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			strValue = strconv.FormatUint(value.Uint(), 10)
-		case reflect.Float32, reflect.Float64:
-			strValue = strconv.FormatFloat(value.Float(), 'f', -1, 64)
-		default:
-			continue
-		}
-
-		fields[tag] = strValue
-	}
-
-	return fields
 }
 
 // ListPolicies returns a list of all policies for a workspace.
@@ -115,12 +64,29 @@ func (c *Client) CreatePolicy(
 	workspace string,
 	params PolicyCreateParams,
 ) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error) {
+	fields := map[string]string{
+		"effect":    string(params.Effect),
+		"action":    string(params.Action),
+		"resource":  string(params.Resource),
+		"principal": string(params.Principal),
+	}
+
+	if params.ResourceID != nil {
+		fields["resource_id"] = *params.ResourceID
+	}
+	if params.RoleID != nil {
+		fields["role_id"] = *params.RoleID
+	}
+	if params.WorkspaceUserID != nil {
+		fields["workspace_user_id"] = *params.WorkspaceUserID
+	}
+
 	var policy irminmodels.Policy
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/policies", workspace),
 		ContentType: "application/x-www-form-urlencoded",
-		FormFields:  toFormFields(params),
+		FormFields:  fields,
 	}, &policy)
 	if err != nil {
 		return nil, nil, fmt.Errorf("create policy error: %w", err)
@@ -133,12 +99,36 @@ func (c *Client) UpdatePolicy(
 	workspace, policyID string,
 	params PolicyUpdateParams,
 ) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error) {
+	fields := make(map[string]string)
+
+	if params.Effect != nil {
+		fields["effect"] = string(*params.Effect)
+	}
+	if params.Action != nil {
+		fields["action"] = string(*params.Action)
+	}
+	if params.Resource != nil {
+		fields["resource"] = string(*params.Resource)
+	}
+	if params.Principal != nil {
+		fields["principal"] = string(*params.Principal)
+	}
+	if params.ResourceID != nil {
+		fields["resource_id"] = *params.ResourceID
+	}
+	if params.RoleID != nil {
+		fields["role_id"] = *params.RoleID
+	}
+	if params.WorkspaceUserID != nil {
+		fields["workspace_user_id"] = *params.WorkspaceUserID
+	}
+
 	var policy irminmodels.Policy
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPatch,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/policies/%s", workspace, policyID),
 		ContentType: "application/x-www-form-urlencoded",
-		FormFields:  toFormFields(params),
+		FormFields:  fields,
 	}, &policy)
 	if err != nil {
 		return nil, nil, fmt.Errorf("update policy error: %w", err)
