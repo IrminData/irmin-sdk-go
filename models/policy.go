@@ -6,9 +6,9 @@ import "time"
 type PolicyEffect string
 
 const (
-	// PolicyEffectAllow represents a policy that allows an action
+	// PolicyEffectAllow represents a policy that allows an action.
 	PolicyEffectAllow PolicyEffect = "allow"
-	// PolicyEffectDeny represents a policy that denies an action
+	// PolicyEffectDeny represents a policy that denies an action.
 	PolicyEffectDeny PolicyEffect = "deny"
 )
 
@@ -16,13 +16,13 @@ const (
 type PolicyAction string
 
 const (
-	// PolicyActionCreate represents the create action
+	// PolicyActionCreate represents the create action.
 	PolicyActionCreate PolicyAction = "create"
-	// PolicyActionRead represents the read action
+	// PolicyActionRead represents the read action.
 	PolicyActionRead PolicyAction = "read"
-	// PolicyActionUpdate represents the update action
+	// PolicyActionUpdate represents the update action.
 	PolicyActionUpdate PolicyAction = "update"
-	// PolicyActionDelete represents the delete action
+	// PolicyActionDelete represents the delete action.
 	PolicyActionDelete PolicyAction = "delete"
 )
 
@@ -30,29 +30,29 @@ const (
 type PolicyResource string
 
 const (
-	// PolicyResourceWorkspace represents a workspace resource
+	// PolicyResourceWorkspace represents a workspace resource.
 	PolicyResourceWorkspace PolicyResource = "workspace"
-	// PolicyResourceWorkspaceOwnership represents workspace ownership resource
+	// PolicyResourceWorkspaceOwnership represents workspace ownership resource.
 	PolicyResourceWorkspaceOwnership PolicyResource = "workspace_ownership"
-	// PolicyResourceWorkflow represents a workflow resource
+	// PolicyResourceWorkflow represents a workflow resource.
 	PolicyResourceWorkflow PolicyResource = "workflow"
-	// PolicyResourceConnection represents a connection resource
+	// PolicyResourceConnection represents a connection resource.
 	PolicyResourceConnection PolicyResource = "connection"
-	// PolicyResourceRepository represents a repository resource
+	// PolicyResourceRepository represents a repository resource.
 	PolicyResourceRepository PolicyResource = "repository"
-	// PolicyResourceRepositoryObject represents a repository object resource
+	// PolicyResourceRepositoryObject represents a repository object resource.
 	PolicyResourceRepositoryObject PolicyResource = "repository_object"
-	// PolicyResourceUser represents a user resource
+	// PolicyResourceUser represents a user resource.
 	PolicyResourceUser PolicyResource = "user"
-	// PolicyResourceRole represents a role resource
+	// PolicyResourceRole represents a role resource.
 	PolicyResourceRole PolicyResource = "role"
-	// PolicyResourcePolicy represents a policy resource
+	// PolicyResourcePolicy represents a policy resource.
 	PolicyResourcePolicy PolicyResource = "policy"
-	// PolicyResourceInvite represents an invite resource
+	// PolicyResourceInvite represents an invite resource.
 	PolicyResourceInvite PolicyResource = "invite"
-	// PolicyResourceAuditLog represents an audit log resource
+	// PolicyResourceAuditLog represents an audit log resource.
 	PolicyResourceAuditLog PolicyResource = "audit_log"
-	// PolicyResourceDocumentation represents a documentation resource
+	// PolicyResourceDocumentation represents a documentation resource.
 	PolicyResourceDocumentation PolicyResource = "documentation"
 )
 
@@ -60,11 +60,11 @@ const (
 type PolicyPrincipal string
 
 const (
-	// PolicyPrincipalWorkspaceUser represents a policy applied to a specific workspace user
+	// PolicyPrincipalWorkspaceUser represents a policy applied to a specific workspace user.
 	PolicyPrincipalWorkspaceUser PolicyPrincipal = "workspace_user"
-	// PolicyPrincipalRole represents a policy applied to a specific role
+	// PolicyPrincipalRole represents a policy applied to a specific role.
 	PolicyPrincipalRole PolicyPrincipal = "role"
-	// PolicyPrincipalEveryone represents a policy applied to everyone
+	// PolicyPrincipalEveryone represents a policy applied to everyone.
 	PolicyPrincipalEveryone PolicyPrincipal = "everyone"
 )
 
