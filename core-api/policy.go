@@ -201,7 +201,9 @@ func (c *Client) CheckPermission(
 }
 
 // GetPolicyResourceOptions returns all possible policy resource options for a given workspace.
-func (c *Client) GetPolicyResourceOptions(workspace string) (*irminmodels.PolicyResourceOptions, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetPolicyResourceOptions(
+	workspace string,
+) (*irminmodels.PolicyResourceOptions, *irminmodels.IrminAPIResponse, error) {
 	var policyResourceOptions irminmodels.PolicyResourceOptions
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
