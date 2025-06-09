@@ -11,7 +11,10 @@ import (
 )
 
 // Search performs a workspace-wide search using the provided filters.
-func (c *Client) Search(workspace string, params irminmodels.SearchFilters) (*irminmodels.SearchResponse, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) Search(
+	workspace string,
+	params irminmodels.SearchFilters,
+) (*irminmodels.SearchResponse, *irminmodels.IrminAPIResponse, error) {
 	// Build query parameters
 	queryParams := url.Values{}
 	if params.Query != "" {
