@@ -100,7 +100,6 @@ func (c *Client) CreatePolicy(
 	workspace string,
 	req CreatePolicyRequest,
 ) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error) {
-
 	var policy irminmodels.Policy
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
