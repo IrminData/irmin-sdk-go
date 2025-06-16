@@ -54,7 +54,10 @@ func (c *Client) ListInvitesToWorkspace(workspace string) ([]irminmodels.Invite,
 	return invites, apiResp, nil
 }
 
-func (c *Client) SendInvite(workspace string, req SendInviteRequest) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) SendInvite(
+	workspace string,
+	req SendInviteRequest,
+) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
 	var invite irminmodels.Invite
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
@@ -91,7 +94,10 @@ func (c *Client) DeleteInvite(inviteID string) (*irminmodels.IrminAPIResponse, e
 	return apiResp, nil
 }
 
-func (c *Client) UpdateInvite(inviteID string, req UpdateInviteRequest) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) UpdateInvite(
+	inviteID string,
+	req UpdateInviteRequest,
+) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
 	var invite irminmodels.Invite
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPatch,
