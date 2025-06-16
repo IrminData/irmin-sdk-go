@@ -25,7 +25,9 @@ func (c *Client) ListTokens() ([]irminmodels.APIToken, *irminmodels.IrminAPIResp
 	return tokens, apiResp, nil
 }
 
-func (c *Client) CreateToken(req CreateCredentialRequest) (*irminmodels.APIToken, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) CreateToken(
+	req CreateCredentialRequest,
+) (*irminmodels.APIToken, *irminmodels.IrminAPIResponse, error) {
 	var token irminmodels.APIToken
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
