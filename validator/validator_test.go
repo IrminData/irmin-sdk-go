@@ -10,12 +10,14 @@ import (
 )
 
 func TestValidator_Validate(t *testing.T) {
-	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyz0123456789")
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	validator := validator.NewValidator(sqidManager)
 
 	t.Run("valid user", func(t *testing.T) {
+		userID, _ := sqidManager.Encode("users", 123)
+		roleID, _ := sqidManager.Encode("roles", 123)
 		user := models.User{
-			ID:             "user-123",
+			ID:             userID,
 			FirstName:      "John",
 			LastName:       "Doe",
 			Email:          "john.doe@example.com",
@@ -23,7 +25,7 @@ func TestValidator_Validate(t *testing.T) {
 			Company:        "Example Inc.",
 			ProfilePicture: "https://example.com/profile.jpg",
 			Roles: []models.Role{
-				{ID: "role-123", Role: "admin"},
+				{ID: roleID, Role: "admin"},
 			},
 		}
 
@@ -48,8 +50,9 @@ func TestValidator_Validate(t *testing.T) {
 	})
 
 	t.Run("valid API token", func(t *testing.T) {
+		tokenID, _ := sqidManager.Encode("api_tokens", 123)
 		token := models.APIToken{
-			ID:        "token-123",
+			ID:        tokenID,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 			Name:      "My Token",
@@ -266,7 +269,7 @@ func TestValidator_Validate(t *testing.T) {
 }
 
 func TestValidator_ValidateVar(t *testing.T) {
-	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyz0123456789")
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	validator := validator.NewValidator(sqidManager)
 
 	tests := []struct {
@@ -294,7 +297,7 @@ func TestValidator_ValidateVar(t *testing.T) {
 }
 
 func TestStartsWithValidation(t *testing.T) {
-	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyz0123456789")
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	validator := validator.NewValidator(sqidManager)
 
 	tests := []struct {
