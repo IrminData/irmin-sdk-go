@@ -1,7 +1,6 @@
 package irminsdkvalidator
 
 import (
-	"reflect"
 	"strings"
 	"time"
 
@@ -17,6 +16,14 @@ type Validator struct {
 	sqidManager *irminsqids.SQIDManager
 }
 
+// Constants.
+const (
+	TokenPrefix   = "cred_"
+	TokenLength   = 64
+	SlugMinLength = 1
+	SlugMaxLength = 100
+)
+
 // NewValidator creates a new validator instance.
 func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	v := validator.New()
@@ -27,20 +34,35 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	}
 
 	// Register custom validation functions
-	v.RegisterValidation("validtoken", validateToken)
-	v.RegisterValidation("validslug", validateSlug)
-	v.RegisterValidation("validsqid", validator.validateSQID)
-	v.RegisterValidation("validrrule", validateRRule)
-	v.RegisterValidation("validcron", validateCron)
+	err := v.RegisterValidation("validtoken", validateToken)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validslug", validateSlug)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validsqid", validator.validateSQID)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validrrule", validateRRule)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validcron", validateCron)
+	if err != nil {
+		panic(err)
+	}
 
-	// Use JSON field names in error messages
-	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-		if name == "-" {
-			return ""
-		}
-		return name
-	})
+	// // Use JSON field names in error messages
+	// v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+	// 	name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+	// 	if name == "-" {
+	// 		return ""
+	// 	}
+	// 	return name
+	// })
 
 	return validator
 }
@@ -54,17 +76,17 @@ func validateToken(fl validator.FieldLevel) bool {
 	token := fl.Field().String()
 
 	// Must start with "cred_"
-	if !strings.HasPrefix(token, "cred_") {
+	if !strings.HasPrefix(token, TokenPrefix) {
 		return false
 	}
 
 	// Must be at least 64 characters (this is also checked by min=64)
-	if len(token) < 64 {
+	if len(token) < TokenLength {
 		return false
 	}
 
 	// Check that the rest of the token contains only alphanumeric and underscores
-	suffix := token[5:] // Remove "cred_" prefix
+	suffix := token[len(TokenPrefix):]
 	for _, char := range suffix {
 		isAlphaNumeric := (char >= 'a' && char <= 'z') ||
 			(char >= 'A' && char <= 'Z') ||
@@ -135,12 +157,12 @@ func validateSlug(fl validator.FieldLevel) bool {
 	branchName := fl.Field().String()
 
 	// Must be at least 1 character
-	if len(branchName) < 1 {
+	if len(branchName) < SlugMinLength {
 		return false
 	}
 
 	// Must be at most 100 characters
-	if len(branchName) > 100 {
+	if len(branchName) > SlugMaxLength {
 		return false
 	}
 
