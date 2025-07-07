@@ -25,7 +25,7 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 
 	// Register custom validation functions
 	v.RegisterValidation("validtoken", validateToken)
-	v.RegisterValidation("validbranchname", validateBranchName)
+	v.RegisterValidation("validslug", validateSlug)
 	v.RegisterValidation("validsqid", validator.validateSQID)
 
 	// Use JSON field names in error messages
@@ -79,7 +79,7 @@ func validateToken(fl validator.FieldLevel) bool {
 // - Be at least 1 character
 // - Be at most 100 characters
 // - Contain only alphanumeric characters, underscores and hyphens
-func validateBranchName(fl validator.FieldLevel) bool {
+func validateSlug(fl validator.FieldLevel) bool {
 	branchName := fl.Field().String()
 
 	// Must be at least 1 character
