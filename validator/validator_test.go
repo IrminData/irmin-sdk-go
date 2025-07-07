@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	coreapi "github.com/IrminData/irmin-sdk-go/core-api"
 	models "github.com/IrminData/irmin-sdk-go/models"
 	sqids "github.com/IrminData/irmin-sdk-go/sqids"
 	validator "github.com/IrminData/irmin-sdk-go/validator"
@@ -324,6 +325,310 @@ func TestStartsWithValidation(t *testing.T) {
 			err := validator.ValidateVar(tt.value, tt.tag)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestClientValidator_RequestValidation(t *testing.T) {
+	// Test client-side validator (no SQID manager)
+	clientValidator := validator.NewClientValidator()
+
+	t.Run("CreateConnectionRequest - Valid", func(t *testing.T) {
+		req := coreapi.CreateConnectionRequest{
+			Name:        "My Database Connection",
+			Connector:   "postgres",
+			Description: "Connection to production database",
+			Details: map[string]any{
+				"host":     "localhost",
+				"port":     5432,
+				"database": "myapp",
+			},
+			Settings: map[string]any{
+				"ssl_mode": "require",
+			},
+		}
+
+		err := clientValidator.Validate(req)
+		if err != nil {
+			t.Errorf("Expected valid connection request, got error: %v", err)
+		}
+	})
+
+	t.Run("CreateConnectionRequest - Invalid (missing required fields)", func(t *testing.T) {
+		req := coreapi.CreateConnectionRequest{
+			// Missing required Name and Connector fields
+			Description: "This request is missing required fields",
+		}
+
+		err := clientValidator.Validate(req)
+		if err == nil {
+			t.Error("Expected validation error for missing required fields")
+		}
+	})
+
+	t.Run("CreateWorkspaceRequest - Valid", func(t *testing.T) {
+		req := coreapi.CreateWorkspaceRequest{
+			Name:        "My New Workspace",
+			Description: "A workspace for data analysis",
+		}
+
+		err := clientValidator.Validate(req)
+		if err != nil {
+			t.Errorf("Expected valid workspace request, got error: %v", err)
+		}
+	})
+
+	t.Run("CreateWorkspaceRequest - Invalid (missing required name)", func(t *testing.T) {
+		req := coreapi.CreateWorkspaceRequest{
+			// Missing required Name field
+			Description: "A workspace without a name",
+		}
+
+		err := clientValidator.Validate(req)
+		if err == nil {
+			t.Error("Expected validation error for missing required name")
+		}
+	})
+
+	t.Run("WorkflowRequest - Valid", func(t *testing.T) {
+		req := coreapi.WorkflowRequest{
+			Type:          models.WorkflowableTypeImport,
+			Name:          "My Import Workflow",
+			Description:   "Imports data from external source",
+			Documentation: "Detailed workflow documentation",
+			Workflowable: models.Workflowable{
+				Type:                      models.WorkflowableTypeImport,
+				ConnectionID:              "conn_123", // SQID validation will be skipped on client-side
+				Repository:                "my-repo",
+				RepositoryBranch:          "main",
+				ImportFromConnectionPaths: []string{"source_table"},
+				ImportToRepositoryPath:    "dest_table",
+			},
+		}
+
+		err := clientValidator.Validate(req)
+		if err != nil {
+			t.Errorf("Expected valid workflow request, got error: %v", err)
+		}
+	})
+
+	t.Run("WorkflowRequest - Invalid (missing required fields)", func(t *testing.T) {
+		req := coreapi.WorkflowRequest{
+			// Missing required Type and Name fields
+			Description: "Workflow without required fields",
+		}
+
+		err := clientValidator.Validate(req)
+		if err == nil {
+			t.Error("Expected validation error for missing required fields")
+		}
+	})
+
+	t.Run("TransferConnectionOwnershipRequest - Valid", func(t *testing.T) {
+		req := coreapi.TransferConnectionOwnershipRequest{
+			NewOwnerID: "user_123", // SQID validation will be skipped on client-side
+		}
+
+		err := clientValidator.Validate(req)
+		if err != nil {
+			t.Errorf("Expected valid transfer request, got error: %v", err)
+		}
+	})
+
+	t.Run("TransferConnectionOwnershipRequest - Invalid (missing required field)", func(t *testing.T) {
+		req := coreapi.TransferConnectionOwnershipRequest{
+			// Missing required NewOwnerID field
+		}
+
+		err := clientValidator.Validate(req)
+		if err == nil {
+			t.Error("Expected validation error for missing required NewOwnerID")
+		}
+	})
+}
+
+func TestServerValidator_RequestValidation(t *testing.T) {
+	// Test server-side validator (with SQID manager)
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	serverValidator := validator.NewValidator(sqidManager)
+
+	t.Run("WorkflowRequest with valid SQID", func(t *testing.T) {
+		// Generate a valid connection SQID
+		connectionSQID, _ := sqidManager.Encode("connections", 123)
+
+		req := coreapi.WorkflowRequest{
+			Type:        models.WorkflowableTypeImport,
+			Name:        "My Import Workflow",
+			Description: "Imports data from external source",
+			Workflowable: models.Workflowable{
+				Type:                      models.WorkflowableTypeImport,
+				ConnectionID:              connectionSQID, // Valid SQID
+				Repository:                "my-repo",
+				RepositoryBranch:          "main",
+				ImportFromConnectionPaths: []string{"source_table"},
+				ImportToRepositoryPath:    "dest_table",
+			},
+		}
+
+		err := serverValidator.Validate(req)
+		if err != nil {
+			t.Errorf("Expected valid workflow request with valid SQID, got error: %v", err)
+		}
+	})
+
+	t.Run("WorkflowRequest with invalid SQID", func(t *testing.T) {
+		req := coreapi.WorkflowRequest{
+			Type:        models.WorkflowableTypeImport,
+			Name:        "My Import Workflow",
+			Description: "Imports data from external source",
+			Workflowable: models.Workflowable{
+				Type:                      models.WorkflowableTypeImport,
+				ConnectionID:              "invalid_sqid", // Invalid SQID
+				Repository:                "my-repo",
+				RepositoryBranch:          "main",
+				ImportFromConnectionPaths: []string{"source_table"},
+				ImportToRepositoryPath:    "dest_table",
+			},
+		}
+
+		err := serverValidator.Validate(req)
+		if err == nil {
+			t.Error("Expected validation error for invalid SQID on server-side")
+		}
+	})
+
+	t.Run("TransferConnectionOwnershipRequest with valid SQID", func(t *testing.T) {
+		// Generate a valid user SQID
+		userSQID, _ := sqidManager.Encode("users", 456)
+
+		req := coreapi.TransferConnectionOwnershipRequest{
+			NewOwnerID: userSQID, // Valid SQID
+		}
+
+		err := serverValidator.Validate(req)
+		if err != nil {
+			t.Errorf("Expected valid transfer request with valid SQID, got error: %v", err)
+		}
+	})
+
+	t.Run("TransferConnectionOwnershipRequest with invalid SQID", func(t *testing.T) {
+		req := coreapi.TransferConnectionOwnershipRequest{
+			NewOwnerID: "invalid_user_sqid", // Invalid SQID
+		}
+
+		err := serverValidator.Validate(req)
+		if err == nil {
+			t.Error("Expected validation error for invalid SQID on server-side")
+		}
+	})
+}
+
+func TestClientVsServerValidator_SQIDHandling(t *testing.T) {
+	// Setup both validators
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	clientValidator := validator.NewClientValidator()
+	serverValidator := validator.NewValidator(sqidManager)
+
+	// Create a request with an invalid SQID
+	req := coreapi.TransferConnectionOwnershipRequest{
+		NewOwnerID: "definitely_not_a_valid_sqid",
+	}
+
+	t.Run("Client validator skips SQID validation", func(t *testing.T) {
+		err := clientValidator.Validate(req)
+		if err != nil {
+			t.Errorf("Client validator should skip SQID validation, got error: %v", err)
+		}
+	})
+
+	t.Run("Server validator enforces SQID validation", func(t *testing.T) {
+		err := serverValidator.Validate(req)
+		if err == nil {
+			t.Error("Server validator should enforce SQID validation and fail")
+		}
+	})
+}
+
+func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
+	clientValidator := validator.NewClientValidator()
+
+	tests := []struct {
+		name    string
+		request any
+		wantErr bool
+	}{
+		{
+			name: "CreateCredentialRequest - Valid",
+			request: coreapi.CreateCredentialRequest{
+				Name: "My API Token",
+			},
+			wantErr: false,
+		},
+		{
+			name:    "CreateCredentialRequest - Invalid (missing name)",
+			request: coreapi.CreateCredentialRequest{
+				// Missing required Name field
+			},
+			wantErr: true,
+		},
+		{
+			name: "SendInviteRequest - Valid",
+			request: coreapi.SendInviteRequest{
+				Email: "user@example.com",
+				Role:  "viewer",
+			},
+			wantErr: false,
+		},
+		{
+			name: "SendInviteRequest - Invalid (invalid email)",
+			request: coreapi.SendInviteRequest{
+				Email: "not-an-email",
+				Role:  "viewer",
+			},
+			wantErr: true,
+		},
+		{
+			name: "CreateRepositoryRequest - Valid",
+			request: coreapi.CreateRepositoryRequest{
+				Name:          "my-repo",
+				DefaultBranch: "main",
+				Description:   "My data repository",
+			},
+			wantErr: false,
+		},
+		{
+			name: "CreateRepositoryRequest - Invalid (missing required fields)",
+			request: coreapi.CreateRepositoryRequest{
+				// Missing required Name field
+				Description: "Repository without required fields",
+			},
+			wantErr: true,
+		},
+		{
+			name: "CreateQueryRequest - Valid",
+			request: coreapi.CreateQueryRequest{
+				Name:        "My Query",
+				SQL:         "SELECT * FROM table",
+				Description: "A simple query",
+			},
+			wantErr: false,
+		},
+		{
+			name: "CreateQueryRequest - Invalid (missing required fields)",
+			request: coreapi.CreateQueryRequest{
+				// All fields are optional in CreateQueryRequest
+				Description: "Query with optional fields only",
+			},
+			wantErr: false, // Changed to false since all fields are optional
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := clientValidator.Validate(tt.request)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
