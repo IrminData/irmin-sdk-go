@@ -5,11 +5,13 @@ import (
 	"time"
 
 	models "github.com/IrminData/irmin-sdk-go/models"
+	sqids "github.com/IrminData/irmin-sdk-go/sqids"
 	validator "github.com/IrminData/irmin-sdk-go/validator"
 )
 
 func TestValidator_Validate(t *testing.T) {
-	validator := validator.NewValidator()
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyz0123456789")
+	validator := validator.NewValidator(sqidManager)
 
 	t.Run("valid user", func(t *testing.T) {
 		user := models.User{
@@ -79,7 +81,8 @@ func TestValidator_Validate(t *testing.T) {
 }
 
 func TestValidator_ValidateVar(t *testing.T) {
-	validator := validator.NewValidator()
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyz0123456789")
+	validator := validator.NewValidator(sqidManager)
 
 	tests := []struct {
 		name    string
@@ -106,7 +109,8 @@ func TestValidator_ValidateVar(t *testing.T) {
 }
 
 func TestStartsWithValidation(t *testing.T) {
-	validator := validator.NewValidator()
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyz0123456789")
+	validator := validator.NewValidator(sqidManager)
 
 	tests := []struct {
 		name    string
