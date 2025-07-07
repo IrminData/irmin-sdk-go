@@ -72,6 +72,46 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	return validator
 }
 
+// NewClientValidator creates a new validator instance for client-side use.
+// This validator skips SQID validation since clients don't have access to the SQID alphabet.
+func NewClientValidator() *Validator {
+	v := validator.New()
+
+	validator := &Validator{
+		validate:    v,
+		sqidManager: nil, // No SQID manager for client-side validation
+	}
+
+	// Register custom validation functions (excluding SQID validation)
+	err := v.RegisterValidation("validtoken", validateToken)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validslug", validateSlug)
+	if err != nil {
+		panic(err)
+	}
+	// Register SQID validation but it will be skipped when sqidManager is nil
+	err = v.RegisterValidation("validsqid", validator.validateSQID)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validrrule", validateRRule)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validcron", validateCron)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validschedule", validateScheduleTrigger)
+	if err != nil {
+		panic(err)
+	}
+
+	return validator
+}
+
 // validateTokenPrefix is a custom validation function for API token prefixes
 // Token prefixes must:
 // - Start with "cred_"
@@ -227,6 +267,11 @@ func validateSlug(fl validator.FieldLevel) bool {
 }
 
 func (v *Validator) validateSQID(fl validator.FieldLevel) bool {
+	// Skip SQID validation if no SQID manager is available (client-side scenario)
+	if v.sqidManager == nil {
+		return true
+	}
+
 	// Get the value of the field
 	field := fl.Field()
 
