@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -317,16 +318,16 @@ func (c *Client) FetchAPI(opts RequestOptions, out any) (*irminmodels.IrminAPIRe
 // This is useful for testing or pre-validation of request data.
 func (c *Client) ValidateRequest(req any) error {
 	if c.Validator == nil {
-		return fmt.Errorf("validator not initialized")
+		return errors.New("validator not initialized")
 	}
 	return c.Validator.Validate(req)
 }
 
 // ValidateVar validates a single variable against validation tags.
-// Example: client.ValidateVar("test@example.com", "email")
+// Example: client.ValidateVar("test@example.com", "email").
 func (c *Client) ValidateVar(field any, tag string) error {
 	if c.Validator == nil {
-		return fmt.Errorf("validator not initialized")
+		return errors.New("validator not initialized")
 	}
 	return c.Validator.ValidateVar(field, tag)
 }
