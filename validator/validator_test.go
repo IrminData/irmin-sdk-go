@@ -9,7 +9,7 @@ import (
 	validator "github.com/IrminData/irmin-sdk-go/validator"
 )
 
-func TestValidator_Validate(t *testing.T) {
+func TestValidator_ValidateUser(t *testing.T) {
 	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	validator := validator.NewValidator(sqidManager)
 
@@ -48,6 +48,11 @@ func TestValidator_Validate(t *testing.T) {
 			t.Error("Expected validation error for invalid user")
 		}
 	})
+}
+
+func TestValidator_ValidateAPIToken(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
 
 	t.Run("valid API token", func(t *testing.T) {
 		tokenID, _ := sqidManager.Encode("api_tokens", 123)
@@ -81,190 +86,193 @@ func TestValidator_Validate(t *testing.T) {
 			t.Error("Expected validation error for invalid token")
 		}
 	})
+}
 
-	t.Run("schedule validation", func(t *testing.T) {
-		// valid schedule with rrule
-		t.Run("valid rrule time trigger", func(t *testing.T) {
-			rrule := "FREQ=DAILY;COUNT=5"
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type:  models.TimeTriggerType,
-						RRule: &rrule,
-					},
-				},
-				MaxRetries: 5,
-			}
-			err := validator.Validate(schedule)
-			if err != nil {
-				t.Errorf("Expected valid schedule, got error: %v", err)
-			}
-		})
+func TestValidator_ValidateSchedule(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
 
-		// valid schedule with cron
-		t.Run("valid cron time trigger", func(t *testing.T) {
-			cron := "0 0 * * *"
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type: models.TimeTriggerType,
-						Cron: &cron,
-					},
+	// valid schedule with rrule
+	t.Run("valid rrule time trigger", func(t *testing.T) {
+		rrule := "FREQ=DAILY;COUNT=5"
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type:  models.TimeTriggerType,
+					RRule: &rrule,
 				},
-			}
-			err := validator.Validate(schedule)
-			if err != nil {
-				t.Errorf("Expected valid schedule, got error: %v", err)
-			}
-		})
+			},
+			MaxRetries: 5,
+		}
+		err := validator.Validate(schedule)
+		if err != nil {
+			t.Errorf("Expected valid schedule, got error: %v", err)
+		}
+	})
 
-		// valid schedule with repository event
-		t.Run("valid repository event trigger", func(t *testing.T) {
-			repoEvent := models.PostMerge
-			repoSlug := "my-repo"
-			repoRef := "main"
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type:            models.RepositoryTriggerType,
-						RepositoryEvent: &repoEvent,
-						Repository:      &repoSlug,
-						RepositoryRef:   &repoRef,
-					},
+	// valid schedule with cron
+	t.Run("valid cron time trigger", func(t *testing.T) {
+		cron := "0 0 * * *"
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type: models.TimeTriggerType,
+					Cron: &cron,
 				},
-			}
-			err := validator.Validate(schedule)
-			if err != nil {
-				t.Errorf("Expected valid schedule, got error: %v", err)
-			}
-		})
+			},
+		}
+		err := validator.Validate(schedule)
+		if err != nil {
+			t.Errorf("Expected valid schedule, got error: %v", err)
+		}
+	})
 
-		// valid schedule with workflow run event
-		t.Run("valid workflow run event trigger", func(t *testing.T) {
-			workflowEvent := models.PostWorkflowRun
-			workflowSqid, _ := sqidManager.Encode("workflows", 1)
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type:             models.WorkflowRunTriggerType,
-						WorkflowRunEvent: &workflowEvent,
-						WorkflowID:       &workflowSqid,
-					},
+	// valid schedule with repository event
+	t.Run("valid repository event trigger", func(t *testing.T) {
+		repoEvent := models.PostMerge
+		repoSlug := "my-repo"
+		repoRef := "main"
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type:            models.RepositoryTriggerType,
+					RepositoryEvent: &repoEvent,
+					Repository:      &repoSlug,
+					RepositoryRef:   &repoRef,
 				},
-			}
-			err := validator.Validate(schedule)
-			if err != nil {
-				t.Errorf("Expected valid schedule, got error: %v", err)
-			}
-		})
+			},
+		}
+		err := validator.Validate(schedule)
+		if err != nil {
+			t.Errorf("Expected valid schedule, got error: %v", err)
+		}
+	})
 
-		// invalid time trigger - neither rrule nor cron
-		t.Run("invalid time trigger - neither rrule nor cron", func(t *testing.T) {
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type: models.TimeTriggerType,
-					},
+	// valid schedule with workflow run event
+	t.Run("valid workflow run event trigger", func(t *testing.T) {
+		workflowEvent := models.PostWorkflowRun
+		workflowSqid, _ := sqidManager.Encode("workflows", 1)
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type:             models.WorkflowRunTriggerType,
+					WorkflowRunEvent: &workflowEvent,
+					WorkflowID:       &workflowSqid,
 				},
-			}
-			err := validator.Validate(schedule)
-			if err == nil {
-				t.Error("Expected validation error for time trigger with no rrule or cron")
-			}
-		})
+			},
+		}
+		err := validator.Validate(schedule)
+		if err != nil {
+			t.Errorf("Expected valid schedule, got error: %v", err)
+		}
+	})
 
-		// invalid repository event - missing repository
-		t.Run("invalid repository event - missing repository", func(t *testing.T) {
-			repoEvent := models.PostMerge
-			repoRef := "main"
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type:            models.RepositoryTriggerType,
-						RepositoryEvent: &repoEvent,
-						RepositoryRef:   &repoRef,
-						// Missing Repository
-					},
+	// invalid time trigger - neither rrule nor cron
+	t.Run("invalid time trigger - neither rrule nor cron", func(t *testing.T) {
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type: models.TimeTriggerType,
 				},
-			}
-			err := validator.Validate(schedule)
-			if err == nil {
-				t.Error("Expected validation error for repository event with missing repository")
-			}
-		})
+			},
+		}
+		err := validator.Validate(schedule)
+		if err == nil {
+			t.Error("Expected validation error for time trigger with no rrule or cron")
+		}
+	})
 
-		// invalid repository event - missing repository ref
-		t.Run("invalid repository event - missing repository ref", func(t *testing.T) {
-			repoEvent := models.PostMerge
-			repoSlug := "my-repo"
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type:            models.RepositoryTriggerType,
-						RepositoryEvent: &repoEvent,
-						Repository:      &repoSlug,
-						// Missing RepositoryRef
-					},
+	// invalid repository event - missing repository
+	t.Run("invalid repository event - missing repository", func(t *testing.T) {
+		repoEvent := models.PostMerge
+		repoRef := "main"
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type:            models.RepositoryTriggerType,
+					RepositoryEvent: &repoEvent,
+					RepositoryRef:   &repoRef,
+					// Missing Repository
 				},
-			}
-			err := validator.Validate(schedule)
-			if err == nil {
-				t.Error("Expected validation error for repository event with missing repository ref")
-			}
-		})
+			},
+		}
+		err := validator.Validate(schedule)
+		if err == nil {
+			t.Error("Expected validation error for repository event with missing repository")
+		}
+	})
 
-		// invalid workflow run event - missing workflow id
-		t.Run("invalid workflow run event - missing workflow id", func(t *testing.T) {
-			workflowEvent := models.PostWorkflowRun
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type:             models.WorkflowRunTriggerType,
-						WorkflowRunEvent: &workflowEvent,
-						// Missing WorkflowID
-					},
+	// invalid repository event - missing repository ref
+	t.Run("invalid repository event - missing repository ref", func(t *testing.T) {
+		repoEvent := models.PostMerge
+		repoSlug := "my-repo"
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type:            models.RepositoryTriggerType,
+					RepositoryEvent: &repoEvent,
+					Repository:      &repoSlug,
+					// Missing RepositoryRef
 				},
-			}
-			err := validator.Validate(schedule)
-			if err == nil {
-				t.Error("Expected validation error for workflow run event with missing workflow id")
-			}
-		})
+			},
+		}
+		err := validator.Validate(schedule)
+		if err == nil {
+			t.Error("Expected validation error for repository event with missing repository ref")
+		}
+	})
 
-		// invalid schedule - maxretries too high
-		t.Run("invalid schedule - maxretries too high", func(t *testing.T) {
-			cron := "0 0 * * *"
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type: models.TimeTriggerType,
-						Cron: &cron,
-					},
+	// invalid workflow run event - missing workflow id
+	t.Run("invalid workflow run event - missing workflow id", func(t *testing.T) {
+		workflowEvent := models.PostWorkflowRun
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type:             models.WorkflowRunTriggerType,
+					WorkflowRunEvent: &workflowEvent,
+					// Missing WorkflowID
 				},
-				MaxRetries: 11,
-			}
-			err := validator.Validate(schedule)
-			if err == nil {
-				t.Error("Expected validation error for max retries > 10")
-			}
-		})
+			},
+		}
+		err := validator.Validate(schedule)
+		if err == nil {
+			t.Error("Expected validation error for workflow run event with missing workflow id")
+		}
+	})
 
-		// invalid trigger type
-		t.Run("invalid trigger type", func(t *testing.T) {
-			cron := "0 0 * * *"
-			schedule := models.Schedule{
-				Triggers: []models.ScheduleTrigger{
-					{
-						Type: "invalid-trigger-type",
-						Cron: &cron,
-					},
+	// invalid schedule - maxretries too high
+	t.Run("invalid schedule - maxretries too high", func(t *testing.T) {
+		cron := "0 0 * * *"
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type: models.TimeTriggerType,
+					Cron: &cron,
 				},
-			}
-			err := validator.Validate(schedule)
-			if err == nil {
-				t.Error("Expected validation error for invalid trigger type")
-			}
-		})
+			},
+			MaxRetries: 11,
+		}
+		err := validator.Validate(schedule)
+		if err == nil {
+			t.Error("Expected validation error for max retries > 10")
+		}
+	})
+
+	// invalid trigger type
+	t.Run("invalid trigger type", func(t *testing.T) {
+		cron := "0 0 * * *"
+		schedule := models.Schedule{
+			Triggers: []models.ScheduleTrigger{
+				{
+					Type: "invalid-trigger-type",
+					Cron: &cron,
+				},
+			},
+		}
+		err := validator.Validate(schedule)
+		if err == nil {
+			t.Error("Expected validation error for invalid trigger type")
+		}
 	})
 }
 
