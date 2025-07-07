@@ -11,13 +11,13 @@ import (
 	"github.com/teambition/rrule-go"
 )
 
-// Validator provides validation functionality for Irmin models
+// Validator provides validation functionality for Irmin models.
 type Validator struct {
 	validate    *validator.Validate
 	sqidManager *irminsqids.SQIDManager
 }
 
-// NewValidator creates a new validator instance
+// NewValidator creates a new validator instance.
 func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	v := validator.New()
 
@@ -49,7 +49,7 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 // Token prefixes must:
 // - Start with "cred_"
 // - Be at least 64 characters total
-// - Contain only alphanumeric characters and underscores after the prefix
+// - Contain only alphanumeric characters and underscores after the prefix.
 func validateToken(fl validator.FieldLevel) bool {
 	token := fl.Field().String()
 
@@ -130,7 +130,7 @@ func validateCron(fl validator.FieldLevel) bool {
 // Branch names must:
 // - Be at least 1 character
 // - Be at most 100 characters
-// - Contain only alphanumeric characters, underscores and hyphens
+// - Contain only alphanumeric characters, underscores and hyphens.
 func validateSlug(fl validator.FieldLevel) bool {
 	branchName := fl.Field().String()
 
@@ -186,12 +186,12 @@ func (v *Validator) validateSQID(fl validator.FieldLevel) bool {
 	return true
 }
 
-// Validate validates a struct and returns validation errors
+// Validate validates a struct and returns validation errors.
 func (v *Validator) Validate(s any) error {
 	return v.validate.Struct(s)
 }
 
-// ValidateVar validates a single variable
+// ValidateVar validates a single variable.
 func (v *Validator) ValidateVar(field any, tag string) error {
 	return v.validate.Var(field, tag)
 }
