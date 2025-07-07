@@ -4,21 +4,29 @@ import (
 	"reflect"
 	"strings"
 
+	irminsqids "github.com/IrminData/irmin-sdk-go/sqids"
 	"github.com/go-playground/validator/v10"
 )
 
 // Validator provides validation functionality for Irmin models
 type Validator struct {
-	validate *validator.Validate
+	validate    *validator.Validate
+	sqidManager *irminsqids.SQIDManager
 }
 
 // NewValidator creates a new validator instance
-func NewValidator() *Validator {
+func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	v := validator.New()
+
+	validator := &Validator{
+		validate:    v,
+		sqidManager: sqidManager,
+	}
 
 	// Register custom validation functions
 	v.RegisterValidation("validtoken", validateToken)
 	v.RegisterValidation("validbranchname", validateBranchName)
+	v.RegisterValidation("validsqid", validator.validateSQID)
 
 	// Use JSON field names in error messages
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
@@ -29,7 +37,7 @@ func NewValidator() *Validator {
 		return name
 	})
 
-	return &Validator{validate: v}
+	return validator
 }
 
 // validateTokenPrefix is a custom validation function for API token prefixes
@@ -95,6 +103,32 @@ func validateBranchName(fl validator.FieldLevel) bool {
 		if !isAlphaNumeric && !isUnderscore && !isHyphen {
 			return false
 		}
+	}
+
+	return true
+}
+
+func (v *Validator) validateSQID(fl validator.FieldLevel) bool {
+	// Get the value of the field
+	field := fl.Field()
+	sqidValue := field.String()
+	typeParam := fl.Param()
+
+	// Get the type of the sqid
+	typeParam = strings.TrimSpace(typeParam)
+
+	// Get the sqid manager
+	sqidManager := v.sqidManager
+
+	// Decode the sqid
+	decoded, err := sqidManager.Decode(typeParam, sqidValue)
+	if err != nil {
+		return false
+	}
+
+	// Check if the decoded value is a valid uint64
+	if decoded == 0 {
+		return false
 	}
 
 	return true
