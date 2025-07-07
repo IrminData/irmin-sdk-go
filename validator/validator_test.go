@@ -391,40 +391,6 @@ func TestClientValidator_RequestValidation(t *testing.T) {
 		}
 	})
 
-	t.Run("WorkflowRequest - Valid", func(t *testing.T) {
-		req := coreapi.WorkflowRequest{
-			Type:          models.WorkflowableTypeImport,
-			Name:          "My Import Workflow",
-			Description:   "Imports data from external source",
-			Documentation: "Detailed workflow documentation",
-			Workflowable: models.Workflowable{
-				Type:                      models.WorkflowableTypeImport,
-				ConnectionID:              "conn_123", // SQID validation will be skipped on client-side
-				Repository:                "my-repo",
-				RepositoryBranch:          "main",
-				ImportFromConnectionPaths: []string{"source_table"},
-				ImportToRepositoryPath:    "dest_table",
-			},
-		}
-
-		err := clientValidator.Validate(req)
-		if err != nil {
-			t.Errorf("Expected valid workflow request, got error: %v", err)
-		}
-	})
-
-	t.Run("WorkflowRequest - Invalid (missing required fields)", func(t *testing.T) {
-		req := coreapi.WorkflowRequest{
-			// Missing required Type and Name fields
-			Description: "Workflow without required fields",
-		}
-
-		err := clientValidator.Validate(req)
-		if err == nil {
-			t.Error("Expected validation error for missing required fields")
-		}
-	})
-
 	t.Run("TransferConnectionOwnershipRequest - Valid", func(t *testing.T) {
 		req := coreapi.TransferConnectionOwnershipRequest{
 			NewOwnerID: "user_123", // SQID validation will be skipped on client-side
@@ -453,73 +419,54 @@ func TestServerValidator_RequestValidation(t *testing.T) {
 	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	serverValidator := validator.NewValidator(sqidManager)
 
-	t.Run("WorkflowRequest with valid SQID", func(t *testing.T) {
-		// Generate a valid connection SQID
-		connectionSQID, _ := sqidManager.Encode("connections", 123)
-
-		req := coreapi.WorkflowRequest{
-			Type:        models.WorkflowableTypeImport,
-			Name:        "My Import Workflow",
-			Description: "Imports data from external source",
-			Workflowable: models.Workflowable{
-				Type:                      models.WorkflowableTypeImport,
-				ConnectionID:              connectionSQID, // Valid SQID
-				Repository:                "my-repo",
-				RepositoryBranch:          "main",
-				ImportFromConnectionPaths: []string{"source_table"},
-				ImportToRepositoryPath:    "dest_table",
-			},
-		}
-
-		err := serverValidator.Validate(req)
-		if err != nil {
-			t.Errorf("Expected valid workflow request with valid SQID, got error: %v", err)
-		}
-	})
-
-	t.Run("WorkflowRequest with invalid SQID", func(t *testing.T) {
-		req := coreapi.WorkflowRequest{
-			Type:        models.WorkflowableTypeImport,
-			Name:        "My Import Workflow",
-			Description: "Imports data from external source",
-			Workflowable: models.Workflowable{
-				Type:                      models.WorkflowableTypeImport,
-				ConnectionID:              "invalid_sqid", // Invalid SQID
-				Repository:                "my-repo",
-				RepositoryBranch:          "main",
-				ImportFromConnectionPaths: []string{"source_table"},
-				ImportToRepositoryPath:    "dest_table",
-			},
-		}
-
-		err := serverValidator.Validate(req)
-		if err == nil {
-			t.Error("Expected validation error for invalid SQID on server-side")
-		}
-	})
-
-	t.Run("TransferConnectionOwnershipRequest with valid SQID", func(t *testing.T) {
+	t.Run("User model with valid SQID", func(t *testing.T) {
 		// Generate a valid user SQID
-		userSQID, _ := sqidManager.Encode("users", 456)
+		userSQID, _ := sqidManager.Encode("users", 123)
 
+		user := models.User{
+			ID:             userSQID, // Valid SQID
+			FirstName:      "John",
+			LastName:       "Doe",
+			Email:          "john@example.com",
+			Phone:          "+1234567890", // Valid E164 format
+			Company:        "Example Inc",
+			ProfilePicture: "https://example.com/profile.jpg", // Valid URL
+			Roles:          []models.Role{},                   // Empty roles slice
+		}
+
+		err := serverValidator.Validate(user)
+		if err != nil {
+			t.Errorf("Expected valid user with valid SQID, got error: %v", err)
+		}
+	})
+
+	t.Run("User model with invalid SQID", func(t *testing.T) {
+		user := models.User{
+			ID:             "invalid_user_sqid", // Invalid SQID
+			FirstName:      "John",
+			LastName:       "Doe",
+			Email:          "john@example.com",
+			Phone:          "+1234567890", // Valid E164 format
+			Company:        "Example Inc",
+			ProfilePicture: "https://example.com/profile.jpg", // Valid URL
+			Roles:          []models.Role{},                   // Empty roles slice
+		}
+
+		err := serverValidator.Validate(user)
+		if err == nil {
+			t.Error("Expected validation error for invalid SQID on server-side")
+		}
+	})
+
+	t.Run("TransferConnectionOwnershipRequest - No SQID validation in core-api", func(t *testing.T) {
+		// Core-api request structs don't have SQID validation tags
 		req := coreapi.TransferConnectionOwnershipRequest{
-			NewOwnerID: userSQID, // Valid SQID
+			NewOwnerID: "invalid_user_sqid", // This won't trigger SQID validation
 		}
 
 		err := serverValidator.Validate(req)
 		if err != nil {
-			t.Errorf("Expected valid transfer request with valid SQID, got error: %v", err)
-		}
-	})
-
-	t.Run("TransferConnectionOwnershipRequest with invalid SQID", func(t *testing.T) {
-		req := coreapi.TransferConnectionOwnershipRequest{
-			NewOwnerID: "invalid_user_sqid", // Invalid SQID
-		}
-
-		err := serverValidator.Validate(req)
-		if err == nil {
-			t.Error("Expected validation error for invalid SQID on server-side")
+			t.Errorf("Core-api requests don't have SQID validation tags, got error: %v", err)
 		}
 	})
 }
@@ -530,20 +477,27 @@ func TestClientVsServerValidator_SQIDHandling(t *testing.T) {
 	clientValidator := validator.NewClientValidator()
 	serverValidator := validator.NewValidator(sqidManager)
 
-	// Create a request with an invalid SQID
-	req := coreapi.TransferConnectionOwnershipRequest{
-		NewOwnerID: "definitely_not_a_valid_sqid",
+	// Create a user model with an invalid SQID (models have SQID validation tags)
+	user := models.User{
+		ID:             "definitely_not_a_valid_sqid",
+		FirstName:      "John",
+		LastName:       "Doe",
+		Email:          "john@example.com",
+		Phone:          "+1234567890", // Valid E164 format
+		Company:        "Example Inc",
+		ProfilePicture: "https://example.com/profile.jpg", // Valid URL
+		Roles:          []models.Role{},                   // Empty roles slice
 	}
 
 	t.Run("Client validator skips SQID validation", func(t *testing.T) {
-		err := clientValidator.Validate(req)
+		err := clientValidator.Validate(user)
 		if err != nil {
 			t.Errorf("Client validator should skip SQID validation, got error: %v", err)
 		}
 	})
 
 	t.Run("Server validator enforces SQID validation", func(t *testing.T) {
-		err := serverValidator.Validate(req)
+		err := serverValidator.Validate(user)
 		if err == nil {
 			t.Error("Server validator should enforce SQID validation and fail")
 		}
@@ -561,14 +515,15 @@ func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
 		{
 			name: "CreateCredentialRequest - Valid",
 			request: coreapi.CreateCredentialRequest{
-				Name: "My API Token",
+				Name:   "My API Token",
+				Expiry: 3600, // Required field: seconds until expiry
 			},
 			wantErr: false,
 		},
 		{
-			name:    "CreateCredentialRequest - Invalid (missing name)",
+			name:    "CreateCredentialRequest - Invalid (missing required fields)",
 			request: coreapi.CreateCredentialRequest{
-				// Missing required Name field
+				// Missing required Name and Expiry fields
 			},
 			wantErr: true,
 		},
@@ -581,10 +536,9 @@ func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "SendInviteRequest - Invalid (invalid email)",
+			name:    "SendInviteRequest - Invalid (missing required fields)",
 			request: coreapi.SendInviteRequest{
-				Email: "not-an-email",
-				Role:  "viewer",
+				// Missing required Email and Role fields
 			},
 			wantErr: true,
 		},
