@@ -3,9 +3,12 @@ package irminsdkvalidator
 import (
 	"reflect"
 	"strings"
+	"time"
 
 	irminsqids "github.com/IrminData/irmin-sdk-go/sqids"
 	"github.com/go-playground/validator/v10"
+	"github.com/robfig/cron/v3"
+	"github.com/teambition/rrule-go"
 )
 
 // Validator provides validation functionality for Irmin models
@@ -27,6 +30,8 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	v.RegisterValidation("validtoken", validateToken)
 	v.RegisterValidation("validslug", validateSlug)
 	v.RegisterValidation("validsqid", validator.validateSQID)
+	v.RegisterValidation("validrrule", validateRRule)
+	v.RegisterValidation("validcron", validateCron)
 
 	// Use JSON field names in error messages
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
@@ -72,6 +77,53 @@ func validateToken(fl validator.FieldLevel) bool {
 	}
 
 	return true
+}
+
+func validateRRule(fl validator.FieldLevel) bool {
+	rruleValue := fl.Field().String()
+
+	// Empty string is considered valid (optional field)
+	if rruleValue == "" {
+		return true
+	}
+
+	// Prepare the RRule string following the same logic as orchestrator
+	ruleStr := rruleValue
+	ruleStr = strings.TrimPrefix(ruleStr, "RRULE:")
+	ruleStr = strings.TrimSpace(ruleStr)
+	ruleStr = strings.TrimSuffix(ruleStr, ";")
+
+	// If the RRule string doesn't contain DTSTART, add it
+	if !strings.Contains(ruleStr, "DTSTART") {
+		// Format with newlines between components
+		now := time.Now()
+		ruleStr = "DTSTART:" + now.UTC().Format("20060102T150405Z") + "\n" + ruleStr
+	} else {
+		// Replace semicolons with newlines for existing DTSTART
+		ruleStr = strings.ReplaceAll(ruleStr, ";", "\n")
+	}
+
+	// Try to parse the RRule string
+	_, err := rrule.StrToRRule(ruleStr)
+	return err == nil
+}
+
+func validateCron(fl validator.FieldLevel) bool {
+	cronValue := fl.Field().String()
+
+	// Empty string is considered valid (optional field)
+	if cronValue == "" {
+		return true
+	}
+
+	// Prepare the cron expression following the same logic as orchestrator
+	cronStr := cronValue
+	cronStr = strings.TrimPrefix(cronStr, "CRON:")
+	cronStr = strings.TrimSpace(cronStr)
+
+	// Try to parse the cron expression
+	_, err := cron.ParseStandard(cronStr)
+	return err == nil
 }
 
 // validateBranchName is a custom validation function for branch names
