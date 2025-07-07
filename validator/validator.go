@@ -1,6 +1,7 @@
 package irminsdkvalidator
 
 import (
+	"reflect"
 	"strings"
 	"time"
 
@@ -54,6 +55,10 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	if err != nil {
 		panic(err)
 	}
+	err = v.RegisterValidation("validschedule", validateScheduleTrigger)
+	if err != nil {
+		panic(err)
+	}
 
 	// // Use JSON field names in error messages
 	// v.RegisterTagNameFunc(func(fld reflect.StructField) string {
@@ -102,7 +107,20 @@ func validateToken(fl validator.FieldLevel) bool {
 }
 
 func validateRRule(fl validator.FieldLevel) bool {
-	rruleValue := fl.Field().String()
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var rruleValue string
+	if field.Kind() == reflect.Ptr {
+		rruleValue = field.Elem().String()
+	} else {
+		rruleValue = field.String()
+	}
 
 	// Empty string is considered valid (optional field)
 	if rruleValue == "" {
@@ -131,7 +149,20 @@ func validateRRule(fl validator.FieldLevel) bool {
 }
 
 func validateCron(fl validator.FieldLevel) bool {
-	cronValue := fl.Field().String()
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var cronValue string
+	if field.Kind() == reflect.Ptr {
+		cronValue = field.Elem().String()
+	} else {
+		cronValue = field.String()
+	}
 
 	// Empty string is considered valid (optional field)
 	if cronValue == "" {
@@ -154,7 +185,20 @@ func validateCron(fl validator.FieldLevel) bool {
 // - Be at most 100 characters
 // - Contain only alphanumeric characters, underscores and hyphens.
 func validateSlug(fl validator.FieldLevel) bool {
-	branchName := fl.Field().String()
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var branchName string
+	if field.Kind() == reflect.Ptr {
+		branchName = field.Elem().String()
+	} else {
+		branchName = field.String()
+	}
 
 	// Must be at least 1 character
 	if len(branchName) < SlugMinLength {
@@ -185,7 +229,20 @@ func validateSlug(fl validator.FieldLevel) bool {
 func (v *Validator) validateSQID(fl validator.FieldLevel) bool {
 	// Get the value of the field
 	field := fl.Field()
-	sqidValue := field.String()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var sqidValue string
+	if field.Kind() == reflect.Ptr {
+		sqidValue = field.Elem().String()
+	} else {
+		sqidValue = field.String()
+	}
+
 	typeParam := fl.Param()
 
 	// Get the type of the sqid
@@ -206,6 +263,107 @@ func (v *Validator) validateSQID(fl validator.FieldLevel) bool {
 	}
 
 	return true
+}
+
+func validateScheduleTrigger(fl validator.FieldLevel) bool {
+	// Get the parent struct (ScheduleTrigger) from the Type field
+	parentStruct := fl.Parent()
+
+	// Make sure we're working with a struct
+	if parentStruct.Kind() != reflect.Struct {
+		return true // Let other validators handle non-struct cases
+	}
+
+	// Get the Type field value (this is the current field being validated)
+	triggerType := fl.Field().String()
+
+	// Only validate time triggers with this function
+	if triggerType != "time" {
+		return true
+	}
+
+	return validateTimeTrigger(parentStruct)
+}
+
+// validateTimeTrigger validates that time triggers have proper RRule or Cron configuration.
+func validateTimeTrigger(parentStruct reflect.Value) bool {
+	rruleField := parentStruct.FieldByName("RRule")
+	cronField := parentStruct.FieldByName("Cron")
+
+	rruleIsEmpty := isFieldEmpty(rruleField)
+	cronIsEmpty := isFieldEmpty(cronField)
+
+	// At least one must be provided
+	if rruleIsEmpty && cronIsEmpty {
+		return false
+	}
+
+	// Validate RRule if present
+	if !rruleIsEmpty {
+		rruleValue := rruleField.Elem().String()
+		if !isValidRRule(rruleValue) {
+			return false
+		}
+	}
+
+	// Validate Cron if present
+	if !cronIsEmpty {
+		cronValue := cronField.Elem().String()
+		if !isValidCron(cronValue) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// isFieldEmpty checks if a pointer field is nil or contains an empty string.
+func isFieldEmpty(field reflect.Value) bool {
+	return !field.IsValid() || field.IsNil() ||
+		(field.Elem().IsValid() && field.Elem().String() == "")
+}
+
+// Helper function to validate RRule.
+func isValidRRule(rruleValue string) bool {
+	if rruleValue == "" {
+		return true
+	}
+
+	// Prepare the RRule string following the same logic as orchestrator
+	ruleStr := rruleValue
+	ruleStr = strings.TrimPrefix(ruleStr, "RRULE:")
+	ruleStr = strings.TrimSpace(ruleStr)
+	ruleStr = strings.TrimSuffix(ruleStr, ";")
+
+	// If the RRule string doesn't contain DTSTART, add it
+	if !strings.Contains(ruleStr, "DTSTART") {
+		// Format with newlines between components
+		now := time.Now()
+		ruleStr = "DTSTART:" + now.UTC().Format("20060102T150405Z") + "\n" + ruleStr
+	} else {
+		// Replace semicolons with newlines for existing DTSTART
+		ruleStr = strings.ReplaceAll(ruleStr, ";", "\n")
+	}
+
+	// Try to parse the RRule string
+	_, err := rrule.StrToRRule(ruleStr)
+	return err == nil
+}
+
+// Helper function to validate Cron.
+func isValidCron(cronValue string) bool {
+	if cronValue == "" {
+		return true
+	}
+
+	// Prepare the cron expression following the same logic as orchestrator
+	cronStr := cronValue
+	cronStr = strings.TrimPrefix(cronStr, "CRON:")
+	cronStr = strings.TrimSpace(cronStr)
+
+	// Try to parse the cron expression
+	_, err := cron.ParseStandard(cronStr)
+	return err == nil
 }
 
 // Validate validates a struct and returns validation errors.
