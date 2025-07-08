@@ -10,7 +10,7 @@ import (
 // CreateConnectionRequest represents the JSON request body for creating connections.
 type CreateConnectionRequest struct {
 	Name          string         `json:"name"                    validate:"required"`
-	Connector     string         `json:"connector"               validate:"required"`
+	Connector     string         `json:"connector"               validate:"required,validsqid=connectors"`
 	Description   string         `json:"description,omitempty"`
 	Documentation string         `json:"documentation,omitempty"`
 	Details       map[string]any `json:"details"`
@@ -20,7 +20,7 @@ type CreateConnectionRequest struct {
 // UpdateConnectionRequest represents the JSON request body for updating connections.
 type UpdateConnectionRequest struct {
 	Name          string         `json:"name,omitempty"`
-	Connector     string         `json:"connector,omitempty"`
+	Connector     string         `json:"connector"               validate:"required,validsqid=connectors"`
 	Description   string         `json:"description,omitempty"`
 	Documentation string         `json:"documentation,omitempty"`
 	Details       map[string]any `json:"details,omitempty"`
@@ -29,7 +29,7 @@ type UpdateConnectionRequest struct {
 
 // TransferConnectionOwnershipRequest represents the JSON request body for transferring connection ownership.
 type TransferConnectionOwnershipRequest struct {
-	NewOwnerID string `json:"new_owner_id" validate:"required"`
+	NewOwnerID string `json:"new_owner_id" validate:"required,validsqid=users"`
 }
 
 func (c *Client) ListConnections(workspace string) ([]irminmodels.Connection, *irminmodels.IrminAPIResponse, error) {
