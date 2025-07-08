@@ -9,16 +9,16 @@ import (
 
 // CreateTagRequest represents the JSON request body for creating a tag.
 type CreateTagRequest struct {
-	Name        string `json:"name"                  validate:"required"`
-	Color       string `json:"color,omitempty"`
-	Description string `json:"description,omitempty"`
+	Name        string `json:"name"                  validate:"required,min=1,max=100"`
+	Color       string `json:"color,omitempty"       validate:"required,hexcolor"`
+	Description string `json:"description,omitempty" validate:"required,min=1,max=1000"`
 }
 
 // UpdateTagRequest represents the JSON request body for updating a tag.
 type UpdateTagRequest struct {
-	Name        string `json:"name,omitempty"`
-	Color       string `json:"color,omitempty"`
-	Description string `json:"description,omitempty"`
+	Name        string `json:"name,omitempty"        validate:"omitempty,min=1,max=100"`
+	Color       string `json:"color,omitempty"       validate:"omitempty,hexcolor"`
+	Description string `json:"description,omitempty" validate:"omitempty,min=1,max=1000"`
 }
 
 // ListWorkspaceTags retrieves all workspace tags for a workspace.
