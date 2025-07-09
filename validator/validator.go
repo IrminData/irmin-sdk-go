@@ -221,7 +221,7 @@ func (v *Validator) getFieldName(fieldError validator.FieldError) string {
 	fieldName := fieldError.Field()
 
 	// Convert PascalCase to snake_case for better readability
-	result := make([]rune, 0, len(fieldName)+5)
+	result := make([]rune, 0, len(fieldName)+FieldNameConversionBuffer)
 	for i, r := range fieldName {
 		if i > 0 && 'A' <= r && r <= 'Z' {
 			result = append(result, '_')
