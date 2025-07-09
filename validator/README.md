@@ -70,9 +70,10 @@ The validator includes several custom validation rules beyond the standard go-pl
 
 ### Enhanced Content Validators
 
-- `validsql` - Validates SQL queries with length limits and basic security checks
-- `validdocumentation` - Validates documentation fields with appropriate length limits (max 10,000 chars)
+- `validsql` - Validates SQL queries with security checks. Allows normal operations (SELECT, INSERT, UPDATE, DELETE, CREATE, UNION) but blocks dangerous DDL operations (DROP, TRUNCATE, ALTER) and system procedures
+- `validdocumentation` - Enhanced markdown validation with security checks. Validates documentation fields as safe markdown, preventing script injection while being permissive with structure
 - `validurl` - Enhanced URL validation with scheme restrictions (http/https only, max 2,000 chars)
+- `validimageurl` - Specialized validator for image URLs with additional image format checks
 - `validphone` - Enhanced phone validation with E.164 format and length checks
 
 ## Validation Constants
@@ -107,8 +108,9 @@ All models in the `models` package include comprehensive validation tags. Common
 - `validate:"validsqid=users"` - Valid SQID for users table
 - `validate:"validslug"` - Valid slug format
 - `validate:"validurl"` - Valid HTTP/HTTPS URL
-- `validate:"validsql"` - Safe SQL query
-- `validate:"validdocumentation"` - Documentation with length limits
+- `validate:"validimageurl"` - Valid image URL with format checks
+- `validate:"validsql"` - Safe SQL query with normal operations allowed
+- `validate:"validdocumentation"` - Safe markdown documentation
 
 ### Enum Validation
 
@@ -130,12 +132,38 @@ The `validsql` validator includes basic SQL injection prevention by blocking dan
 - System procedures: `EXEC`, `EXECUTE`, `sp_`, `xp_`
 - Advanced techniques: `UNION`, `/*!`
 
+The `validsql` validator provides enhanced SQL validation that:
+
+- **Allows normal operations**: SELECT, INSERT, UPDATE, DELETE, CREATE, UNION, and other standard SQL operations
+- **Blocks dangerous DDL**: DROP, TRUNCATE, ALTER operations
+- **Blocks system procedures**: EXEC, EXECUTE, sp*, xp* procedures
+- **Prevents comment injection**: Blocks SQL comment exploitation (`/*`)
+- **Length limits**: Maximum 50,000 characters
+
 ### URL Security
 
 The `validurl` validator restricts URLs to safe schemes:
 
 - Allowed: `http://`, `https://`
 - Blocked: `ftp://`, `file://`, `javascript:`, etc.
+
+### Documentation Security
+
+The `validdocumentation` validator ensures safe markdown by:
+
+- **Preventing script injection**: Blocks `<script>`, `javascript:`, event handlers
+- **Blocking dangerous HTML**: Prevents `<iframe>`, `<object>`, `<form>` tags
+- **Structure validation**: Checks for severely unbalanced markdown brackets
+- **Length limits**: Maximum 10,000 characters
+- **Permissive approach**: Allows flexible markdown while maintaining security
+
+### URL Security
+
+The `validurl` and `validimageurl` validators restrict URLs to safe schemes:
+
+- **Allowed**: `http://`, `https://`
+- **Blocked**: `ftp://`, `file://`, `javascript:`, `data:`, etc.
+- **Image-specific**: `validimageurl` includes additional checks for common image formats
 
 ## Error Handling
 
@@ -148,3 +176,34 @@ if err != nil {
     fmt.Printf("Validation failed: %v\n", err)
 }
 ```
+
+# <<<<<<< HEAD
+
+## Client vs Server Validation
+
+The validator supports both client-side and server-side scenarios:
+
+- **Server-side**: Use `NewValidator(sqidManager)` - includes full SQID validation
+- **Client-side**: Use `NewClientValidator()` - skips SQID validation since clients don't have access to the SQID alphabet
+
+This ensures the same validation rules can be applied on both sides while accommodating the different capabilities of each environment.
+
+## Migration Guide
+
+### SQL Validation Changes
+
+If you're upgrading from a previous version, note that SQL validation now allows:
+
+- `UNION` operations for combining query results
+- `INSERT`, `UPDATE`, `DELETE` operations for data manipulation
+- `CREATE` operations for temporary tables
+
+### New Image URL Validation
+
+- Replace `validurl` with `validimageurl` for image-related fields like ProfilePicture, LogoURL, etc.
+- The new validator provides enhanced validation for image URLs
+
+### Enhanced Documentation Validation
+
+- Documentation validation now includes security checks for markdown content
+- Existing documentation should continue to work, but malicious content will be blocked

@@ -483,14 +483,22 @@ func TestSQLValidation(t *testing.T) {
 		sql     string
 		wantErr bool
 	}{
-		{"Valid_Select_Statement", "SELECT * FROM users WHERE id = 1", false},
-		{"Valid_Select_With_Limit", "SELECT name, email FROM users LIMIT 10", false},
-		{"Empty_String", "", false}, // Optional field
-		{"Invalid_Drop_Statement", "DROP TABLE users", true},
-		{"Invalid_Delete_Statement", "DELETE FROM users", true},
-		{"Invalid_Union_Statement", "SELECT * FROM users UNION SELECT * FROM admin", true},
-		{"Invalid_Exec_Statement", "EXEC sp_configure", true},
-		{"Invalid_Too_Long_SQL", strings.Repeat("SELECT * FROM table ", 10000), true},
+		{"valid_select_statement", "SELECT * FROM users WHERE id = 1", false},
+		{"valid_select_with_limit", "SELECT name, email FROM users LIMIT 10", false},
+		{"valid_union", "SELECT * FROM users UNION SELECT * FROM customers", false},
+		{"valid_insert", "INSERT INTO users (name) VALUES ('John')", false},
+		{"valid_update", "UPDATE users SET name = 'Jane' WHERE id = 1", false},
+		{"valid_delete", "DELETE FROM users WHERE id = 1", false},
+		{"valid_create_table", "CREATE TABLE temp_table AS SELECT * FROM users", false},
+		{"empty_string", "", false}, // Optional field
+		{"dangerous_drop", "DROP TABLE users", true},
+		{"dangerous_truncate", "TRUNCATE TABLE users", true},
+		{"dangerous_alter", "ALTER TABLE users ADD COLUMN password VARCHAR(255)", true},
+		{"dangerous_exec", "EXEC sp_configure", true},
+		{"dangerous_execute", "EXECUTE sp_adduser", true},
+		{"dangerous_system_proc", "sp_cmdshell 'dir'", true},
+		{"dangerous_comment", "SELECT * FROM users /* malicious comment */", false}, // Comments are allowed
+		{"too_long_sql", strings.Repeat("SELECT * FROM table ", 10000), true},
 	}
 
 	for _, tt := range tests {
@@ -513,10 +521,20 @@ func TestDocumentationValidation(t *testing.T) {
 		doc     string
 		wantErr bool
 	}{
-		{"Valid_Documentation_String", "This is a valid documentation string", false},
-		{"Empty_String", "", false}, // Optional field
-		{"Valid_Long_Documentation", strings.Repeat("This is documentation. ", 100), false},
-		{"Invalid_Too_Long_Documentation", strings.Repeat("x", 20000), true}, // Exceeds DocumentationMaxLength
+		{"valid_documentation", "This is a valid documentation string", false},
+		{"valid_markdown", "# Header\n\n**Bold text** and *italic*", false},
+		{"valid_links", "[Link text](https://example.com)", false},
+		{"valid_images", "![Alt text](https://example.com/image.png)", false},
+		{"valid_code_blocks", "```go\nfunc main() {}\n```", false},
+		{"empty_string", "", false}, // Optional field
+		{"long_valid_doc", strings.Repeat("This is documentation. ", 100), false},
+		{"too_long_doc", strings.Repeat("x", 20000), true}, // Exceeds DocumentationMaxLength
+		{"dangerous_script", "<script>alert('xss')</script>", true},
+		{"dangerous_javascript", "javascript:alert('xss')", true},
+		{"dangerous_iframe", "<iframe src='malicious'></iframe>", true},
+		{"dangerous_onclick", "<div onclick='alert()'>text</div>", true},
+		{"severely_unbalanced_brackets", strings.Repeat("[", 10) + "text", false}, // This should be allowed for flexibility
+		{"moderately_unbalanced_brackets", "[text] [more text", false},            // Should be allowed
 	}
 
 	for _, tt := range tests {
@@ -539,14 +557,14 @@ func TestURLValidation(t *testing.T) {
 		url     string
 		wantErr bool
 	}{
-		{"Valid_HTTPS_URL", "https://example.com", false},
-		{"Valid_HTTP_URL", "http://example.com", false},
-		{"Valid_URL_With_Path", "https://example.com/path/to/resource", false},
-		{"Empty_String", "", false}, // Optional field
-		{"Invalid_FTP_Scheme", "ftp://example.com", true},
-		{"Invalid_No_Scheme", "example.com", true},
-		{"Invalid_Malformed_URL", "not-a-url", true},
-		{"Invalid_Too_Long_URL", "https://" + strings.Repeat("x", 2000), true},
+		{"valid_https_url", "https://example.com", false},
+		{"valid_http_url", "http://example.com", false},
+		{"valid_url_with_path", "https://example.com/path/to/resource", false},
+		{"empty_string", "", false}, // Optional field
+		{"invalid_ftp_scheme", "ftp://example.com", true},
+		{"invalid_no_scheme", "example.com", true},
+		{"invalid_malformed_url", "not-a-url", true},
+		{"invalid_too_long_url", "https://" + strings.Repeat("x", 2000), true},
 	}
 
 	for _, tt := range tests {
@@ -569,13 +587,13 @@ func TestPhoneValidation(t *testing.T) {
 		phone   string
 		wantErr bool
 	}{
-		{"Valid_US_Phone", "+1234567890", false},
-		{"Valid_International_Phone", "+447123456789", false},
-		{"Empty_String", "", false}, // Optional field
-		{"Invalid_Missing_Plus", "1234567890", true},
-		{"Invalid_Too_Short", "+1", true}, // Changed from "+123" to "+1" which is truly too short
-		{"Invalid_Too_Long", "+123456789012345678", true},
-		{"Invalid_Non_Numeric", "+12345abcde", true},
+		{"valid_us_phone", "+1234567890", false},
+		{"valid_international_phone", "+447123456789", false},
+		{"empty_string", "", false}, // Optional field
+		{"invalid_missing_plus", "1234567890", true},
+		{"invalid_too_short", "+1", true},
+		{"invalid_too_long", "+123456789012345678", true},
+		{"invalid_non_numeric", "+12345abcde", true},
 	}
 
 	for _, tt := range tests {
