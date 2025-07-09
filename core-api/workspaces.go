@@ -21,7 +21,7 @@ type UpdateWorkspaceRequest struct {
 
 // TransferOwnershipRequest represents the JSON request body for transferring workspace ownership.
 type TransferOwnershipRequest struct {
-	NewOwnerID string `json:"new_owner_id" validate:"required,min=1"`
+	NewOwnerID string `json:"new_owner_id" validate:"required,validsqid=users"`
 }
 
 func (c *Client) ListWorkspaces() ([]irminmodels.Workspace, *irminmodels.IrminAPIResponse, error) {

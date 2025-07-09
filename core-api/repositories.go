@@ -30,7 +30,7 @@ type UpdateRepositoryRequest struct {
 
 // TransferRepositoryOwnershipRequest represents the JSON request body for transferring repository ownership.
 type TransferRepositoryOwnershipRequest struct {
-	NewOwnerID string `json:"new_owner_id" validate:"required,min=1"`
+	NewOwnerID string `json:"new_owner_id" validate:"required,validsqid=users"`
 }
 
 func (c *Client) ListRepositories(workspace string) ([]irminmodels.Repository, *irminmodels.IrminAPIResponse, error) {
