@@ -20,7 +20,7 @@ type CreateConnectionRequest struct {
 // UpdateConnectionRequest represents the JSON request body for updating connections.
 type UpdateConnectionRequest struct {
 	Name          string         `json:"name,omitempty"          validate:"min=1,max=100"`
-	Connector     string         `json:"connector"               validate:"required,validsqid=connectors"`
+	Connector     string         `json:"connector,omitempty"     validate:"validsqid=connectors"`
 	Description   string         `json:"description,omitempty"   validate:"max=500"`
 	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation"`
 	Details       map[string]any `json:"details,omitempty"`
