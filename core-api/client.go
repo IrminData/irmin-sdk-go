@@ -335,9 +335,9 @@ func (c *Client) ValidateVar(field any, tag string) error {
 // - A single user-friendly message
 // - A map of field-specific error messages
 // - The original validation errors.
-func (c *Client) ValidateRequestEnhanced(req any) *irminvalidator.ValidationResult {
+func (c *Client) ValidateRequestEnhanced(req any) *irminvalidator.ValidationResultError {
 	if c.Validator == nil {
-		return &irminvalidator.ValidationResult{
+		return &irminvalidator.ValidationResultError{
 			IsValid:     false,
 			UserMessage: "validator not initialized",
 			FieldErrors: make(map[string]string),
@@ -349,9 +349,9 @@ func (c *Client) ValidateRequestEnhanced(req any) *irminvalidator.ValidationResu
 
 // ValidateVarEnhanced validates a single variable and returns detailed validation results.
 // Example: client.ValidateVarEnhanced("test@example.com", "email").
-func (c *Client) ValidateVarEnhanced(field any, tag string) *irminvalidator.ValidationResult {
+func (c *Client) ValidateVarEnhanced(field any, tag string) *irminvalidator.ValidationResultError {
 	if c.Validator == nil {
-		return &irminvalidator.ValidationResult{
+		return &irminvalidator.ValidationResultError{
 			IsValid:     false,
 			UserMessage: "validator not initialized",
 			FieldErrors: make(map[string]string),
@@ -366,9 +366,9 @@ func (c *Client) ValidateVarEnhanced(field any, tag string) *irminvalidator.Vali
 func (c *Client) FetchAPIEnhanced(
 	opts RequestOptions,
 	out any,
-) (*irminmodels.IrminAPIResponse, *irminvalidator.ValidationResult, error) {
+) (*irminmodels.IrminAPIResponse, *irminvalidator.ValidationResultError, error) {
 	// Enhanced validation of the request body if it exists and has validation tags
-	var validationResult *irminvalidator.ValidationResult
+	var validationResult *irminvalidator.ValidationResultError
 	if opts.Body != nil && c.Validator != nil {
 		validationResult = c.Validator.ValidateEnhanced(opts.Body)
 		if validationResult.HasErrors() {
@@ -376,7 +376,7 @@ func (c *Client) FetchAPIEnhanced(
 		}
 	} else {
 		// No validation needed or validator not available
-		validationResult = &irminvalidator.ValidationResult{
+		validationResult = &irminvalidator.ValidationResultError{
 			IsValid:     true,
 			UserMessage: "",
 			FieldErrors: make(map[string]string),
