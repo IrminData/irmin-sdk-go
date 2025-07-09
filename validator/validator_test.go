@@ -791,3 +791,273 @@ func TestEnhancedModelValidation(t *testing.T) {
 		}
 	})
 }
+
+func TestEnhancedValidation_ValidationResult(t *testing.T) {
+	clientValidator := validator.NewClientValidator()
+
+	t.Run("ValidateEnhanced - Valid request", func(t *testing.T) {
+		req := coreapi.CreateConnectionRequest{
+			Name:        "My Database Connection",
+			Connector:   "postgres",
+			Description: "Connection to production database",
+			Details: map[string]any{
+				"host":     "localhost",
+				"port":     5432,
+				"database": "myapp",
+			},
+		}
+
+		result := clientValidator.ValidateEnhanced(req)
+		
+		if !result.IsValid {
+			t.Errorf("Expected valid request, got invalid")
+		}
+		
+		if result.HasErrors() {
+			t.Errorf("Expected no errors, but HasErrors() returned true")
+		}
+		
+		if result.GetUserMessage() != "" {
+			t.Errorf("Expected empty user message for valid request, got: %s", result.GetUserMessage())
+		}
+		
+		if len(result.GetFieldErrors()) != 0 {
+			t.Errorf("Expected no field errors for valid request, got: %v", result.GetFieldErrors())
+		}
+		
+		if result.GetRawErrors() != nil {
+			t.Errorf("Expected no raw errors for valid request, got: %v", result.GetRawErrors())
+		}
+	})
+
+	t.Run("ValidateEnhanced - Invalid request with missing required fields", func(t *testing.T) {
+		req := coreapi.CreateConnectionRequest{
+			// Missing required Name and Connector fields
+			Description: "This request is missing required fields",
+		}
+
+		result := clientValidator.ValidateEnhanced(req)
+		
+		if result.IsValid {
+			t.Errorf("Expected invalid request, got valid")
+		}
+		
+		if !result.HasErrors() {
+			t.Errorf("Expected errors, but HasErrors() returned false")
+		}
+		
+		userMessage := result.GetUserMessage()
+		if userMessage == "" {
+			t.Errorf("Expected non-empty user message for invalid request")
+		}
+		
+		fieldErrors := result.GetFieldErrors()
+		if len(fieldErrors) == 0 {
+			t.Errorf("Expected field errors for invalid request")
+		}
+		
+		// Check that we have errors for the missing required fields
+		if _, exists := fieldErrors["name"]; !exists {
+			t.Errorf("Expected field error for 'name', but not found in: %v", fieldErrors)
+		}
+		
+		if _, exists := fieldErrors["connector"]; !exists {
+			t.Errorf("Expected field error for 'connector', but not found in: %v", fieldErrors)
+		}
+		
+		if result.GetRawErrors() == nil {
+			t.Errorf("Expected raw errors for invalid request")
+		}
+		
+		// Test the Error() method for backward compatibility
+		if result.Error() == "" {
+			t.Errorf("Expected non-empty error string from Error() method")
+		}
+	})
+
+	t.Run("ValidateVarEnhanced - Valid email", func(t *testing.T) {
+		result := clientValidator.ValidateVarEnhanced("test@example.com", "email")
+		
+		if !result.IsValid {
+			t.Errorf("Expected valid email, got invalid")
+		}
+		
+		if result.HasErrors() {
+			t.Errorf("Expected no errors for valid email")
+		}
+	})
+
+	t.Run("ValidateVarEnhanced - Invalid email", func(t *testing.T) {
+		result := clientValidator.ValidateVarEnhanced("not-an-email", "email")
+		
+		if result.IsValid {
+			t.Errorf("Expected invalid email, got valid")
+		}
+		
+		if !result.HasErrors() {
+			t.Errorf("Expected errors for invalid email")
+		}
+		
+		userMessage := result.GetUserMessage()
+		if !strings.Contains(userMessage, "email") {
+			t.Errorf("Expected user message to mention email validation, got: %s", userMessage)
+		}
+	})
+
+	t.Run("ValidateEnhanced - Multiple field errors", func(t *testing.T) {
+		// Create a struct with multiple validation errors
+		req := coreapi.CreateWorkspaceRequest{
+			// Missing required Name field
+			Description: strings.Repeat("x", 1001), // Assuming there's a max length validation
+		}
+
+		result := clientValidator.ValidateEnhanced(req)
+		
+		if result.IsValid {
+			t.Errorf("Expected invalid request with multiple errors, got valid")
+		}
+		
+		userMessage := result.GetUserMessage()
+		fieldErrors := result.GetFieldErrors()
+		
+		// Should have a generic message for multiple errors
+		if len(fieldErrors) > 1 && !strings.Contains(userMessage, "Multiple validation errors") {
+			t.Errorf("Expected generic message for multiple errors, got: %s", userMessage)
+		}
+		
+		// Should have field-specific errors
+		if len(fieldErrors) == 0 {
+			t.Errorf("Expected field errors for invalid request")
+		}
+	})
+}
+
+func TestEnhancedValidation_CustomValidators(t *testing.T) {
+	clientValidator := validator.NewClientValidator()
+
+	t.Run("ValidateEnhanced - Custom token validation", func(t *testing.T) {
+		// Test valid token
+		validToken := "cred_1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+		result := clientValidator.ValidateVarEnhanced(validToken, "validtoken")
+		
+		if !result.IsValid {
+			t.Errorf("Expected valid token, got invalid: %s", result.GetUserMessage())
+		}
+
+		// Test invalid token
+		invalidToken := "invalid_token"
+		result = clientValidator.ValidateVarEnhanced(invalidToken, "validtoken")
+		
+		if result.IsValid {
+			t.Errorf("Expected invalid token, got valid")
+		}
+		
+		userMessage := result.GetUserMessage()
+		if !strings.Contains(userMessage, "API token") {
+			t.Errorf("Expected user message to mention API token validation, got: %s", userMessage)
+		}
+	})
+
+	t.Run("ValidateEnhanced - Custom slug validation", func(t *testing.T) {
+		// Test valid slug
+		result := clientValidator.ValidateVarEnhanced("valid-slug_123", "validslug")
+		
+		if !result.IsValid {
+			t.Errorf("Expected valid slug, got invalid: %s", result.GetUserMessage())
+		}
+
+		// Test invalid slug (contains invalid characters)
+		result = clientValidator.ValidateVarEnhanced("invalid slug with spaces", "validslug")
+		
+		if result.IsValid {
+			t.Errorf("Expected invalid slug, got valid")
+		}
+		
+		userMessage := result.GetUserMessage()
+		if !strings.Contains(userMessage, "slug") {
+			t.Errorf("Expected user message to mention slug validation, got: %s", userMessage)
+		}
+	})
+
+	t.Run("ValidateEnhanced - Custom URL validation", func(t *testing.T) {
+		// Test valid URL
+		result := clientValidator.ValidateVarEnhanced("https://example.com", "validurl")
+		
+		if !result.IsValid {
+			t.Errorf("Expected valid URL, got invalid: %s", result.GetUserMessage())
+		}
+
+		// Test invalid URL
+		result = clientValidator.ValidateVarEnhanced("not-a-url", "validurl")
+		
+		if result.IsValid {
+			t.Errorf("Expected invalid URL, got valid")
+		}
+		
+		userMessage := result.GetUserMessage()
+		if !strings.Contains(userMessage, "URL") {
+			t.Errorf("Expected user message to mention URL validation, got: %s", userMessage)
+		}
+	})
+
+	t.Run("ValidateEnhanced - Custom phone validation", func(t *testing.T) {
+		// Test valid phone number
+		result := clientValidator.ValidateVarEnhanced("+1234567890", "validphone")
+		
+		if !result.IsValid {
+			t.Errorf("Expected valid phone number, got invalid: %s", result.GetUserMessage())
+		}
+
+		// Test invalid phone number
+		result = clientValidator.ValidateVarEnhanced("123-456-7890", "validphone")
+		
+		if result.IsValid {
+			t.Errorf("Expected invalid phone number, got valid")
+		}
+		
+		userMessage := result.GetUserMessage()
+		if !strings.Contains(userMessage, "phone number") {
+			t.Errorf("Expected user message to mention phone number validation, got: %s", userMessage)
+		}
+	})
+}
+
+func TestEnhancedValidation_ErrorMessages(t *testing.T) {
+	clientValidator := validator.NewClientValidator()
+
+	testCases := []struct {
+		name          string
+		value         any
+		tag           string
+		expectedInMsg string
+	}{
+		{"required validation", "", "required", "required"},
+		{"email validation", "invalid", "email", "email"},
+		{"min length validation", "ab", "min=5", "at least"},
+		{"max length validation", "toolongstring", "max=5", "at most"},
+		{"numeric validation", "abc", "numeric", "number"},
+		{"alpha validation", "abc123", "alpha", "letters"},
+		{"alphanum validation", "abc-123", "alphanum", "letters and numbers"},
+		{"url validation", "invalid-url", "url", "url"},
+		{"startswith validation", "wrongprefix", "startswith=test", "start with"},
+		{"endswith validation", "wrongsuffix", "endswith=test", "end with"},
+		{"contains validation", "nomatch", "contains=test", "contain"},
+		{"oneof validation", "invalid", "oneof=valid option", "one of"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := clientValidator.ValidateVarEnhanced(tc.value, tc.tag)
+			
+			if result.IsValid {
+				t.Errorf("Expected validation to fail for %s", tc.name)
+				return
+			}
+			
+			userMessage := result.GetUserMessage()
+			if !strings.Contains(strings.ToLower(userMessage), tc.expectedInMsg) {
+				t.Errorf("Expected user message to contain '%s', got: %s", tc.expectedInMsg, userMessage)
+			}
+		})
+	}
+}
