@@ -717,42 +717,19 @@ func (v *Validator) validateWorkflowable(fl validator.FieldLevel) bool {
 
 // validateImportWorkflowable validates import workflowables.
 func (v *Validator) validateImportWorkflowable(parentStruct reflect.Value) bool {
-	// For import workflowables, these fields are required:
-	// FieldMappings, ConnectionID, Repository, RepositoryBranch, ImportFromConnectionPaths, ImportToRepositoryPath
-
-	fieldMappingsField := parentStruct.FieldByName("FieldMappings")
-	connectionIDField := parentStruct.FieldByName("ConnectionID")
-	repositoryField := parentStruct.FieldByName("Repository")
-	repositoryBranchField := parentStruct.FieldByName("RepositoryBranch")
-	importFromConnectionPathsField := parentStruct.FieldByName("ImportFromConnectionPaths")
-	importToRepositoryPathField := parentStruct.FieldByName("ImportToRepositoryPath")
-
-	// Check FieldMappings
-	if !fieldMappingsField.IsValid() || fieldMappingsField.Len() == 0 {
-		return false
-	}
-
-	// Check ConnectionID and validate SQID
-	if !v.validateConnectionID(connectionIDField) {
-		return false
-	}
-
-	// Check Repository
-	if !repositoryField.IsValid() || repositoryField.String() == "" {
-		return false
-	}
-
-	// Check RepositoryBranch
-	if !repositoryBranchField.IsValid() || repositoryBranchField.String() == "" {
+	// Validate common workflowable fields
+	if !v.validateCommonWorkflowableFields(parentStruct) {
 		return false
 	}
 
 	// Check ImportFromConnectionPaths
+	importFromConnectionPathsField := parentStruct.FieldByName("ImportFromConnectionPaths")
 	if !importFromConnectionPathsField.IsValid() || importFromConnectionPathsField.Len() == 0 {
 		return false
 	}
 
 	// Check ImportToRepositoryPath
+	importToRepositoryPathField := parentStruct.FieldByName("ImportToRepositoryPath")
 	if !importToRepositoryPathField.IsValid() || importToRepositoryPathField.String() == "" {
 		return false
 	}
@@ -762,43 +739,49 @@ func (v *Validator) validateImportWorkflowable(parentStruct reflect.Value) bool 
 
 // validateExportWorkflowable validates export workflowables.
 func (v *Validator) validateExportWorkflowable(parentStruct reflect.Value) bool {
-	// For export workflowables, these fields are required:
-	// FieldMappings, ConnectionID, Repository, RepositoryBranch, ExportFromRepositoryPaths, ExportToConnectionPath
-
-	fieldMappingsField := parentStruct.FieldByName("FieldMappings")
-	connectionIDField := parentStruct.FieldByName("ConnectionID")
-	repositoryField := parentStruct.FieldByName("Repository")
-	repositoryBranchField := parentStruct.FieldByName("RepositoryBranch")
-	exportFromRepositoryPathsField := parentStruct.FieldByName("ExportFromRepositoryPaths")
-	exportToConnectionPathField := parentStruct.FieldByName("ExportToConnectionPath")
-
-	// Check FieldMappings
-	if !fieldMappingsField.IsValid() || fieldMappingsField.Len() == 0 {
-		return false
-	}
-
-	// Check ConnectionID and validate SQID
-	if !v.validateConnectionID(connectionIDField) {
-		return false
-	}
-
-	// Check Repository
-	if !repositoryField.IsValid() || repositoryField.String() == "" {
-		return false
-	}
-
-	// Check RepositoryBranch
-	if !repositoryBranchField.IsValid() || repositoryBranchField.String() == "" {
+	// Validate common workflowable fields
+	if !v.validateCommonWorkflowableFields(parentStruct) {
 		return false
 	}
 
 	// Check ExportFromRepositoryPaths
+	exportFromRepositoryPathsField := parentStruct.FieldByName("ExportFromRepositoryPaths")
 	if !exportFromRepositoryPathsField.IsValid() || exportFromRepositoryPathsField.Len() == 0 {
 		return false
 	}
 
 	// Check ExportToConnectionPath
+	exportToConnectionPathField := parentStruct.FieldByName("ExportToConnectionPath")
 	if !exportToConnectionPathField.IsValid() || exportToConnectionPathField.String() == "" {
+		return false
+	}
+
+	return true
+}
+
+// validateCommonWorkflowableFields validates fields common to import and export workflowables.
+func (v *Validator) validateCommonWorkflowableFields(parentStruct reflect.Value) bool {
+	// Check FieldMappings
+	fieldMappingsField := parentStruct.FieldByName("FieldMappings")
+	if !fieldMappingsField.IsValid() || fieldMappingsField.Len() == 0 {
+		return false
+	}
+
+	// Check ConnectionID and validate SQID
+	connectionIDField := parentStruct.FieldByName("ConnectionID")
+	if !v.validateConnectionID(connectionIDField) {
+		return false
+	}
+
+	// Check Repository
+	repositoryField := parentStruct.FieldByName("Repository")
+	if !repositoryField.IsValid() || repositoryField.String() == "" {
+		return false
+	}
+
+	// Check RepositoryBranch
+	repositoryBranchField := parentStruct.FieldByName("RepositoryBranch")
+	if !repositoryBranchField.IsValid() || repositoryBranchField.String() == "" {
 		return false
 	}
 
