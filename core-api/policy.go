@@ -21,24 +21,24 @@ type ListPoliciesParams struct {
 
 // CreatePolicyRequest represents the JSON request body for creating a policy.
 type CreatePolicyRequest struct {
-	Effect     irminmodels.PolicyEffect    `json:"effect"                validate:"required"`
-	Action     irminmodels.PolicyAction    `json:"action"                validate:"required"`
-	Resource   irminmodels.PolicyResource  `json:"resource"              validate:"required"`
-	Principal  irminmodels.PolicyPrincipal `json:"principal"             validate:"required"`
-	ResourceID *string                     `json:"resource_id,omitempty"`
-	RoleID     *string                     `json:"role_id,omitempty"`
-	UserID     *string                     `json:"user_id,omitempty"`
+	Effect     irminmodels.PolicyEffect    `json:"effect"                validate:"required,oneof=allow deny"`
+	Action     irminmodels.PolicyAction    `json:"action"                validate:"required,oneof=create read update delete"`
+	Resource   irminmodels.PolicyResource  `json:"resource"              validate:"required,oneof=workspace editor_script query workflow workflow_run connection repository repository_branch repository_tag repository_commit repository_object user policy invite audit_log documentation billing workspace_tag"`
+	Principal  irminmodels.PolicyPrincipal `json:"principal"             validate:"required,oneof=workspace_user role everyone"`
+	ResourceID *string                     `json:"resource_id,omitempty" validate:"min=1"`
+	RoleID     *string                     `json:"role_id,omitempty"     validate:"min=1"`
+	UserID     *string                     `json:"user_id,omitempty"     validate:"min=1"`
 }
 
 // UpdatePolicyRequest represents the JSON request body for updating a policy.
 type UpdatePolicyRequest struct {
-	Effect     irminmodels.PolicyEffect    `json:"effect,omitempty"`
-	Action     irminmodels.PolicyAction    `json:"action,omitempty"`
-	Resource   irminmodels.PolicyResource  `json:"resource,omitempty"`
-	Principal  irminmodels.PolicyPrincipal `json:"principal,omitempty"`
-	ResourceID *string                     `json:"resource_id,omitempty"`
-	RoleID     *string                     `json:"role_id,omitempty"`
-	UserID     *string                     `json:"user_id,omitempty"`
+	Effect     irminmodels.PolicyEffect    `json:"effect,omitempty"      validate:"omitempty,oneof=allow deny"`
+	Action     irminmodels.PolicyAction    `json:"action,omitempty"      validate:"omitempty,oneof=create read update delete"`
+	Resource   irminmodels.PolicyResource  `json:"resource,omitempty"    validate:"omitempty,oneof=workspace editor_script query workflow workflow_run connection repository repository_branch repository_tag repository_commit repository_object user policy invite audit_log documentation billing workspace_tag"`
+	Principal  irminmodels.PolicyPrincipal `json:"principal,omitempty"   validate:"omitempty,oneof=workspace_user role everyone"`
+	ResourceID *string                     `json:"resource_id,omitempty" validate:"min=1"`
+	RoleID     *string                     `json:"role_id,omitempty"     validate:"min=1"`
+	UserID     *string                     `json:"user_id,omitempty"     validate:"min=1"`
 }
 
 // ListPolicies returns a list of all policies for a workspace.

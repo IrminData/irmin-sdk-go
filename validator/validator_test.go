@@ -1,6 +1,7 @@
 package irminsdkvalidator_test
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -586,4 +587,207 @@ func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestNewCustomValidators tests all the new custom validation functions
+func TestNewCustomValidators(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
+
+	t.Run("SQL Validation", func(t *testing.T) {
+		tests := []struct {
+			name    string
+			sql     string
+			wantErr bool
+		}{
+			{"valid select", "SELECT * FROM users WHERE id = 1", false},
+			{"valid with limit", "SELECT name, email FROM users LIMIT 10", false},
+			{"empty string", "", false}, // Optional field
+			{"dangerous drop", "DROP TABLE users", true},
+			{"dangerous delete", "DELETE FROM users", true},
+			{"dangerous union", "SELECT * FROM users UNION SELECT * FROM admin", true},
+			{"dangerous exec", "EXEC sp_configure", true},
+			{"too long sql", strings.Repeat("SELECT * FROM table ", 10000), true},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				err := validator.ValidateVar(tt.sql, "validsql")
+				if (err != nil) != tt.wantErr {
+					t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			})
+		}
+	})
+
+	t.Run("Documentation Validation", func(t *testing.T) {
+		tests := []struct {
+			name    string
+			doc     string
+			wantErr bool
+		}{
+			{"valid documentation", "This is a valid documentation string", false},
+			{"empty string", "", false}, // Optional field
+			{"long valid doc", strings.Repeat("This is documentation. ", 100), false},
+			{"too long doc", strings.Repeat("x", 20000), true}, // Exceeds DocumentationMaxLength
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				err := validator.ValidateVar(tt.doc, "validdocumentation")
+				if (err != nil) != tt.wantErr {
+					t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			})
+		}
+	})
+
+	t.Run("URL Validation", func(t *testing.T) {
+		tests := []struct {
+			name    string
+			url     string
+			wantErr bool
+		}{
+			{"valid https url", "https://example.com", false},
+			{"valid http url", "http://example.com", false},
+			{"valid with path", "https://example.com/path/to/resource", false},
+			{"empty string", "", false}, // Optional field
+			{"invalid scheme", "ftp://example.com", true},
+			{"no scheme", "example.com", true},
+			{"malformed url", "not-a-url", true},
+			{"too long url", "https://" + strings.Repeat("x", 2000), true},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				err := validator.ValidateVar(tt.url, "validurl")
+				if (err != nil) != tt.wantErr {
+					t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			})
+		}
+	})
+
+	t.Run("Phone Validation", func(t *testing.T) {
+		tests := []struct {
+			name    string
+			phone   string
+			wantErr bool
+		}{
+			{"valid US phone", "+1234567890", false},
+			{"valid international", "+447123456789", false},
+			{"empty string", "", false}, // Optional field
+			{"missing plus", "1234567890", true},
+			{"too short", "+1", true}, // Changed from "+123" to "+1" which is truly too short
+			{"too long", "+123456789012345678", true},
+			{"non-numeric", "+12345abcde", true},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				err := validator.ValidateVar(tt.phone, "validphone")
+				if (err != nil) != tt.wantErr {
+					t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			})
+		}
+	})
+}
+
+// TestEnhancedModelValidation tests models with improved validation
+func TestEnhancedModelValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
+
+	t.Run("User with enhanced validations", func(t *testing.T) {
+		userID, _ := sqidManager.Encode("users", 123)
+		user := models.User{
+			ID:             userID,
+			FirstName:      "John",
+			LastName:       "Doe",
+			Email:          "john.doe@example.com",
+			Phone:          "+1234567890",
+			Company:        "Example Inc.",
+			ProfilePicture: "https://example.com/profile.jpg",
+			Roles:          []models.Role{},
+		}
+
+		err := validator.Validate(user)
+		if err != nil {
+			t.Errorf("Expected valid user with enhanced validation, got error: %v", err)
+		}
+	})
+
+	t.Run("User with invalid phone", func(t *testing.T) {
+		userID, _ := sqidManager.Encode("users", 123)
+		user := models.User{
+			ID:             userID,
+			FirstName:      "John",
+			LastName:       "Doe",
+			Email:          "john.doe@example.com",
+			Phone:          "invalid-phone", // Invalid phone format
+			Company:        "Example Inc.",
+			ProfilePicture: "https://example.com/profile.jpg",
+			Roles:          []models.Role{},
+		}
+
+		err := validator.Validate(user)
+		if err == nil {
+			t.Error("Expected validation error for invalid phone format")
+		}
+	})
+
+	t.Run("StoredQuery with SQL validation", func(t *testing.T) {
+		queryID, _ := sqidManager.Encode("queries", 123)
+		userID, _ := sqidManager.Encode("users", 123)
+		
+		query := models.StoredQuery{
+			ID:          queryID,
+			Name:        "Test Query",
+			Description: "A test query",
+			SQL:         "SELECT * FROM users WHERE id = 1",
+			Owner: models.User{
+				ID:        userID,
+				FirstName: "John",
+				LastName:  "Doe",
+				Email:     "john@example.com",
+				Roles:     []models.Role{},
+			},
+			Tags:      []models.Tag{},
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+
+		err := validator.Validate(query)
+		if err != nil {
+			t.Errorf("Expected valid query with SQL validation, got error: %v", err)
+		}
+	})
+
+	t.Run("StoredQuery with dangerous SQL", func(t *testing.T) {
+		queryID, _ := sqidManager.Encode("queries", 123)
+		userID, _ := sqidManager.Encode("users", 123)
+		
+		query := models.StoredQuery{
+			ID:          queryID,
+			Name:        "Dangerous Query",
+			Description: "A dangerous query",
+			SQL:         "DROP TABLE users", // Dangerous SQL
+			Owner: models.User{
+				ID:        userID,
+				FirstName: "John",
+				LastName:  "Doe",
+				Email:     "john@example.com",
+				Roles:     []models.Role{},
+			},
+			Tags:      []models.Tag{},
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+
+		err := validator.Validate(query)
+		if err == nil {
+			t.Error("Expected validation error for dangerous SQL")
+		}
+	})
 }
