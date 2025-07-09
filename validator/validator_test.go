@@ -591,18 +591,52 @@ func TestPhoneValidation(t *testing.T) {
 		phone   string
 		wantErr bool
 	}{
-		{"valid_us_phone", "+1234567890", false},
-		{"valid_international_phone", "+447123456789", false},
-		{"empty_string", "", false}, // Optional field
-		{"invalid_missing_plus", "1234567890", true},
-		{"invalid_too_short", "+1", true},
-		{"invalid_too_long", "+123456789012345678", true},
-		{"invalid_non_numeric", "+12345abcde", true},
+		{"Valid_US_Phone", "+1234567890", false},
+		{"Valid_International_Phone", "+447123456789", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Invalid_Missing_Plus", "1234567890", true},
+		{"Invalid_Too_Short", "+1", true}, // Changed from "+123" to "+1" which is truly too short
+		{"Invalid_Too_Long", "+123456789012345678", true},
+		{"Invalid_Non_Numeric", "+12345abcde", true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := validator.ValidateVar(tt.phone, "validphone")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+// TestImageURLValidation tests the validimageurl custom validation function.
+func TestImageURLValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
+
+	tests := []struct {
+		name    string
+		url     string
+		wantErr bool
+	}{
+		{"Valid_Image_URL_JPG", "https://example.com/image.jpg", false},
+		{"Valid_Image_URL_PNG", "https://example.com/profile.png", false},
+		{"Valid_Dynamic_Image_URL", "https://api.example.com/users/123/avatar", false},
+		{"Valid_HTTP_Image_URL", "http://example.com/logo.svg", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Invalid_Non_Image_Extension", "https://example.com/document.pdf", true},
+		{"Invalid_Text_File", "https://example.com/readme.txt", true},
+		{"Invalid_Video_File", "https://example.com/video.mp4", true},
+		{"Invalid_FTP_Scheme", "ftp://example.com/image.jpg", true},
+		{"Invalid_No_Scheme", "example.com/image.jpg", true},
+		{"Invalid_Malformed_URL", "not-a-url", true},
+		{"Invalid_Too_Long_URL", "https://" + strings.Repeat("x", 2000), true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.url, "validimageurl")
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
 			}

@@ -7,6 +7,6 @@ type User struct {
 	Email          string `json:"email"           validate:"required,email"`
 	Phone          string `json:"phone"           validate:"validphone"`
 	Company        string `json:"company"         validate:"max=100"`
-	ProfilePicture string `json:"profile_picture" validate:"validurl"`
+	ProfilePicture string `json:"profile_picture" validate:"validimageurl"`
 	Roles          []Role `json:"roles"           validate:"dive"`
 }
