@@ -791,3 +791,288 @@ func TestEnhancedModelValidation(t *testing.T) {
 		}
 	})
 }
+
+func TestValidator_ValidatePipelineStages(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
+
+	// Test valid action stage
+	t.Run("valid action stage", func(t *testing.T) {
+		executable := "/bin/sh"
+		stage := models.PipelineStage{
+			Description:   "Run script",
+			Write:         false,
+			Read:          true,
+			OrderSequence: 1,
+			Type:          models.PipelineStageTypeAction,
+			Executable:    &executable,
+		}
+
+		err := validator.Validate(stage)
+		if err != nil {
+			t.Errorf("Expected valid action stage, got error: %v", err)
+		}
+	})
+
+	// Test invalid action stage - missing executable
+	t.Run("invalid action stage - missing executable", func(t *testing.T) {
+		stage := models.PipelineStage{
+			Description:   "Run script",
+			Write:         false,
+			Read:          true,
+			OrderSequence: 1,
+			Type:          models.PipelineStageTypeAction,
+			// Missing Executable
+		}
+
+		err := validator.Validate(stage)
+		if err == nil {
+			t.Error("Expected validation error for action stage with missing executable")
+		}
+	})
+
+	// Test valid connection stage
+	t.Run("valid connection stage", func(t *testing.T) {
+		connectionID, _ := sqidManager.Encode("connections", 123)
+		stage := models.PipelineStage{
+			Description:   "Connection stage",
+			Write:         true,
+			Read:          false,
+			OrderSequence: 2,
+			Type:          models.PipelineStageTypeConnection,
+			ConnectionID:  &connectionID,
+		}
+
+		err := validator.Validate(stage)
+		if err != nil {
+			t.Errorf("Expected valid connection stage, got error: %v", err)
+		}
+	})
+
+	// Test invalid connection stage - missing connection ID
+	t.Run("invalid connection stage - missing connection ID", func(t *testing.T) {
+		stage := models.PipelineStage{
+			Description:   "Connection stage",
+			Write:         true,
+			Read:          false,
+			OrderSequence: 2,
+			Type:          models.PipelineStageTypeConnection,
+			// Missing ConnectionID
+		}
+
+		err := validator.Validate(stage)
+		if err == nil {
+			t.Error("Expected validation error for connection stage with missing connection ID")
+		}
+	})
+
+	// Test valid repository stage
+	t.Run("valid repository stage", func(t *testing.T) {
+		repository := "my-repo"
+		stage := models.PipelineStage{
+			Description:   "Repository stage",
+			Write:         false,
+			Read:          true,
+			OrderSequence: 3,
+			Type:          models.PipelineStageTypeRepository,
+			Repository:    &repository,
+		}
+
+		err := validator.Validate(stage)
+		if err != nil {
+			t.Errorf("Expected valid repository stage, got error: %v", err)
+		}
+	})
+
+	// Test invalid repository stage - missing repository
+	t.Run("invalid repository stage - missing repository", func(t *testing.T) {
+		stage := models.PipelineStage{
+			Description:   "Repository stage",
+			Write:         false,
+			Read:          true,
+			OrderSequence: 3,
+			Type:          models.PipelineStageTypeRepository,
+			// Missing Repository
+		}
+
+		err := validator.Validate(stage)
+		if err == nil {
+			t.Error("Expected validation error for repository stage with missing repository")
+		}
+	})
+}
+
+func TestValidator_ValidateWorkflowable(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
+
+	// Test valid pipeline workflowable
+	t.Run("valid pipeline workflowable", func(t *testing.T) {
+		executable := "/bin/sh"
+		workflowable := models.Workflowable{
+			Type: models.WorkflowableTypePipeline,
+			Live: true,
+			Stages: []models.PipelineStage{
+				{
+					Description:   "Run script",
+					Write:         false,
+					Read:          true,
+					OrderSequence: 1,
+					Type:          models.PipelineStageTypeAction,
+					Executable:    &executable,
+				},
+			},
+		}
+
+		err := validator.Validate(workflowable)
+		if err != nil {
+			t.Errorf("Expected valid pipeline workflowable, got error: %v", err)
+		}
+	})
+
+	// Test invalid pipeline workflowable - missing stages
+	t.Run("invalid pipeline workflowable - missing stages", func(t *testing.T) {
+		workflowable := models.Workflowable{
+			Type: models.WorkflowableTypePipeline,
+			Live: true,
+			// Missing Stages
+		}
+
+		err := validator.Validate(workflowable)
+		if err == nil {
+			t.Error("Expected validation error for pipeline workflowable with missing stages")
+		}
+	})
+
+	// Test valid action workflowable
+	t.Run("valid action workflowable", func(t *testing.T) {
+		workflowable := models.Workflowable{
+			Type:       models.WorkflowableTypeAction,
+			Executable: "my-executable",
+			Input: []models.ActionInputData{
+				{
+					Repository:     "my-repo",
+					RepositoryRef:  "main",
+					RepositoryPath: "/path/to/file",
+				},
+			},
+			ResultsRepositoryPath: "/results",
+		}
+
+		err := validator.Validate(workflowable)
+		if err != nil {
+			t.Errorf("Expected valid action workflowable, got error: %v", err)
+		}
+	})
+
+	// Test invalid action workflowable - missing executable
+	t.Run("invalid action workflowable - missing executable", func(t *testing.T) {
+		workflowable := models.Workflowable{
+			Type: models.WorkflowableTypeAction,
+			// Missing Executable
+			Input: []models.ActionInputData{
+				{
+					Repository:     "my-repo",
+					RepositoryRef:  "main",
+					RepositoryPath: "/path/to/file",
+				},
+			},
+			ResultsRepositoryPath: "/results",
+		}
+
+		err := validator.Validate(workflowable)
+		if err == nil {
+			t.Error("Expected validation error for action workflowable with missing executable")
+		}
+	})
+
+	// Test valid import workflowable
+	t.Run("valid import workflowable", func(t *testing.T) {
+		connectionID, _ := sqidManager.Encode("connections", 123)
+		workflowable := models.Workflowable{
+			Type: models.WorkflowableTypeImport,
+			FieldMappings: []models.FieldMapping{
+				{
+					SourcePath:      "/source",
+					DestinationPath: "/dest",
+				},
+			},
+			ConnectionID:              connectionID,
+			Repository:                "my-repo",
+			RepositoryBranch:          "main",
+			ImportFromConnectionPaths: []string{"/import/path"},
+			ImportToRepositoryPath:    "/repo/path",
+		}
+
+		err := validator.Validate(workflowable)
+		if err != nil {
+			t.Errorf("Expected valid import workflowable, got error: %v", err)
+		}
+	})
+
+	// Test invalid import workflowable - missing connection ID
+	t.Run("invalid import workflowable - missing connection ID", func(t *testing.T) {
+		workflowable := models.Workflowable{
+			Type: models.WorkflowableTypeImport,
+			FieldMappings: []models.FieldMapping{
+				{
+					SourcePath:      "/source",
+					DestinationPath: "/dest",
+				},
+			},
+			// Missing ConnectionID
+			Repository:                "my-repo",
+			RepositoryBranch:          "main",
+			ImportFromConnectionPaths: []string{"/import/path"},
+			ImportToRepositoryPath:    "/repo/path",
+		}
+
+		err := validator.Validate(workflowable)
+		if err == nil {
+			t.Error("Expected validation error for import workflowable with missing connection ID")
+		}
+	})
+
+	// Test valid export workflowable
+	t.Run("valid export workflowable", func(t *testing.T) {
+		connectionID, _ := sqidManager.Encode("connections", 123)
+		workflowable := models.Workflowable{
+			Type: models.WorkflowableTypeExport,
+			FieldMappings: []models.FieldMapping{
+				{
+					SourcePath:      "/source",
+					DestinationPath: "/dest",
+				},
+			},
+			ConnectionID:              connectionID,
+			Repository:                "my-repo",
+			RepositoryBranch:          "main",
+			ExportFromRepositoryPaths: []string{"/repo/path"},
+			ExportToConnectionPath:    "/export/path",
+		}
+
+		err := validator.Validate(workflowable)
+		if err != nil {
+			t.Errorf("Expected valid export workflowable, got error: %v", err)
+		}
+	})
+
+	// Test invalid export workflowable - missing field mappings
+	t.Run("invalid export workflowable - missing field mappings", func(t *testing.T) {
+		connectionID, _ := sqidManager.Encode("connections", 123)
+		workflowable := models.Workflowable{
+			Type: models.WorkflowableTypeExport,
+			// Missing FieldMappings
+			ConnectionID:              connectionID,
+			Repository:                "my-repo",
+			RepositoryBranch:          "main",
+			ExportFromRepositoryPaths: []string{"/repo/path"},
+			ExportToConnectionPath:    "/export/path",
+		}
+
+		err := validator.Validate(workflowable)
+		if err == nil {
+			t.Error("Expected validation error for export workflowable with missing field mappings")
+		}
+	})
+}

@@ -71,6 +71,18 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 		panic(err)
 	}
 
+	// Register custom pipeline stage validation
+	err = v.RegisterValidation("validpipelinestage", validator.validatePipelineStage)
+	if err != nil {
+		panic(err)
+	}
+
+	// Register custom workflowable validation
+	err = v.RegisterValidation("validworkflowable", validator.validateWorkflowable)
+	if err != nil {
+		panic(err)
+	}
+
 	// // Use JSON field names in error messages
 	// v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 	// 	name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
@@ -132,6 +144,18 @@ func NewClientValidator() *Validator {
 		panic(err)
 	}
 	err = v.RegisterValidation("validphone", validatePhone)
+	if err != nil {
+		panic(err)
+	}
+
+	// Register custom pipeline stage validation
+	err = v.RegisterValidation("validpipelinestage", validator.validatePipelineStage)
+	if err != nil {
+		panic(err)
+	}
+
+	// Register custom workflowable validation
+	err = v.RegisterValidation("validworkflowable", validator.validateWorkflowable)
 	if err != nil {
 		panic(err)
 	}
@@ -604,6 +628,200 @@ func validatePhone(fl validator.FieldLevel) bool {
 		if char < '0' || char > '9' {
 			return false
 		}
+	}
+
+	return true
+}
+
+// validatePipelineStage validates that pipeline stages have the correct required fields based on their type.
+func (v *Validator) validatePipelineStage(fl validator.FieldLevel) bool {
+	// This validator should be applied to the Type field of a PipelineStage
+	// Get the parent struct (PipelineStage)
+	parentStruct := fl.Parent()
+
+	// Make sure we're working with a struct
+	if parentStruct.Kind() != reflect.Struct {
+		return true // Let other validators handle non-struct cases
+	}
+
+	// Get the Type field value (this is the current field being validated)
+	stageType := fl.Field().String()
+
+	// Get all the relevant fields from the parent struct
+	executableField := parentStruct.FieldByName("Executable")
+	connectionIDField := parentStruct.FieldByName("ConnectionID")
+	repositoryField := parentStruct.FieldByName("Repository")
+
+	switch stageType {
+	case "action":
+		// For action stages, Executable is required
+		if !executableField.IsValid() || executableField.IsNil() {
+			return false
+		}
+		executableValue := executableField.Elem().String()
+		if executableValue == "" {
+			return false
+		}
+
+	case "connection":
+		// For connection stages, ConnectionID is required
+		if !connectionIDField.IsValid() || connectionIDField.IsNil() {
+			return false
+		}
+		connectionIDValue := connectionIDField.Elem().String()
+		if connectionIDValue == "" {
+			return false
+		}
+		// Validate SQID if we have a SQID manager
+		if v.sqidManager != nil {
+			decoded, err := v.sqidManager.Decode("connections", connectionIDValue)
+			if err != nil || decoded == 0 {
+				return false
+			}
+		}
+
+	case "repository":
+		// For repository stages, Repository is required
+		if !repositoryField.IsValid() || repositoryField.IsNil() {
+			return false
+		}
+		repositoryValue := repositoryField.Elem().String()
+		if repositoryValue == "" {
+			return false
+		}
+
+	default:
+		// Unknown stage type
+		return false
+	}
+
+	return true
+}
+
+// validateWorkflowable validates that workflowables have the correct required fields based on their type.
+func (v *Validator) validateWorkflowable(fl validator.FieldLevel) bool {
+	// This validator should be applied to the Type field of a Workflowable
+	// Get the parent struct (Workflowable)
+	parentStruct := fl.Parent()
+
+	// Make sure we're working with a struct
+	if parentStruct.Kind() != reflect.Struct {
+		return true // Let other validators handle non-struct cases
+	}
+
+	// Get the Type field value (this is the current field being validated)
+	workflowableType := fl.Field().String()
+
+	// Get all the relevant fields from the parent struct
+	fieldMappingsField := parentStruct.FieldByName("FieldMappings")
+	connectionIDField := parentStruct.FieldByName("ConnectionID")
+	repositoryField := parentStruct.FieldByName("Repository")
+	repositoryBranchField := parentStruct.FieldByName("RepositoryBranch")
+	importFromConnectionPathsField := parentStruct.FieldByName("ImportFromConnectionPaths")
+	importToRepositoryPathField := parentStruct.FieldByName("ImportToRepositoryPath")
+	exportFromRepositoryPathsField := parentStruct.FieldByName("ExportFromRepositoryPaths")
+	exportToConnectionPathField := parentStruct.FieldByName("ExportToConnectionPath")
+	stagesField := parentStruct.FieldByName("Stages")
+	executableField := parentStruct.FieldByName("Executable")
+
+	switch workflowableType {
+	case "import":
+		// For import workflowables, these fields are required:
+		// FieldMappings, ConnectionID, Repository, RepositoryBranch, ImportFromConnectionPaths, ImportToRepositoryPath
+
+		// Check FieldMappings
+		if !fieldMappingsField.IsValid() || fieldMappingsField.Len() == 0 {
+			return false
+		}
+
+		// Check ConnectionID
+		if !connectionIDField.IsValid() || connectionIDField.String() == "" {
+			return false
+		}
+		// Validate SQID if we have a SQID manager
+		if v.sqidManager != nil {
+			decoded, err := v.sqidManager.Decode("connections", connectionIDField.String())
+			if err != nil || decoded == 0 {
+				return false
+			}
+		}
+
+		// Check Repository
+		if !repositoryField.IsValid() || repositoryField.String() == "" {
+			return false
+		}
+
+		// Check RepositoryBranch
+		if !repositoryBranchField.IsValid() || repositoryBranchField.String() == "" {
+			return false
+		}
+
+		// Check ImportFromConnectionPaths
+		if !importFromConnectionPathsField.IsValid() || importFromConnectionPathsField.Len() == 0 {
+			return false
+		}
+
+		// Check ImportToRepositoryPath
+		if !importToRepositoryPathField.IsValid() || importToRepositoryPathField.String() == "" {
+			return false
+		}
+
+	case "export":
+		// For export workflowables, these fields are required:
+		// FieldMappings, ConnectionID, Repository, RepositoryBranch, ExportFromRepositoryPaths, ExportToConnectionPath
+
+		// Check FieldMappings
+		if !fieldMappingsField.IsValid() || fieldMappingsField.Len() == 0 {
+			return false
+		}
+
+		// Check ConnectionID
+		if !connectionIDField.IsValid() || connectionIDField.String() == "" {
+			return false
+		}
+		// Validate SQID if we have a SQID manager
+		if v.sqidManager != nil {
+			decoded, err := v.sqidManager.Decode("connections", connectionIDField.String())
+			if err != nil || decoded == 0 {
+				return false
+			}
+		}
+
+		// Check Repository
+		if !repositoryField.IsValid() || repositoryField.String() == "" {
+			return false
+		}
+
+		// Check RepositoryBranch
+		if !repositoryBranchField.IsValid() || repositoryBranchField.String() == "" {
+			return false
+		}
+
+		// Check ExportFromRepositoryPaths
+		if !exportFromRepositoryPathsField.IsValid() || exportFromRepositoryPathsField.Len() == 0 {
+			return false
+		}
+
+		// Check ExportToConnectionPath
+		if !exportToConnectionPathField.IsValid() || exportToConnectionPathField.String() == "" {
+			return false
+		}
+
+	case "pipeline":
+		// For pipeline workflowables, Stages is required
+		if !stagesField.IsValid() || stagesField.Len() == 0 {
+			return false
+		}
+
+	case "action":
+		// For action workflowables, Executable is required
+		if !executableField.IsValid() || executableField.String() == "" {
+			return false
+		}
+
+	default:
+		// Unknown workflowable type
+		return false
 	}
 
 	return true
