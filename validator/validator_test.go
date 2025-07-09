@@ -589,7 +589,7 @@ func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
 	}
 }
 
-// TestNewCustomValidators tests all the new custom validation functions
+// TestNewCustomValidators tests all the new custom validation functions.
 func TestNewCustomValidators(t *testing.T) {
 	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	validator := validator.NewValidator(sqidManager)
@@ -694,7 +694,7 @@ func TestNewCustomValidators(t *testing.T) {
 	})
 }
 
-// TestEnhancedModelValidation tests models with improved validation
+// TestEnhancedModelValidation tests models with improved validation.
 func TestEnhancedModelValidation(t *testing.T) {
 	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	validator := validator.NewValidator(sqidManager)
@@ -740,7 +740,7 @@ func TestEnhancedModelValidation(t *testing.T) {
 	t.Run("StoredQuery with SQL validation", func(t *testing.T) {
 		queryID, _ := sqidManager.Encode("queries", 123)
 		userID, _ := sqidManager.Encode("users", 123)
-		
+
 		query := models.StoredQuery{
 			ID:          queryID,
 			Name:        "Test Query",
@@ -767,7 +767,7 @@ func TestEnhancedModelValidation(t *testing.T) {
 	t.Run("StoredQuery with dangerous SQL", func(t *testing.T) {
 		queryID, _ := sqidManager.Encode("queries", 123)
 		userID, _ := sqidManager.Encode("users", 123)
-		
+
 		query := models.StoredQuery{
 			ID:          queryID,
 			Name:        "Dangerous Query",
