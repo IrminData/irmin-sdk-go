@@ -1119,130 +1119,144 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 	})
 }
 
-// TestCustomValidators_Comprehensive tests all custom validation functions individually.
-func TestCustomValidators_Comprehensive(t *testing.T) {
+// TestValidTokenValidation tests the validtoken custom validation function.
+func TestValidTokenValidation(t *testing.T) {
 	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	validator := validator.NewValidator(sqidManager)
 
-	t.Run("validtoken validation", func(t *testing.T) {
-		tests := []struct {
-			name    string
-			token   string
-			wantErr bool
-		}{
-			{"valid token", "cred_1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef", false},
-			{"too short", "cred_short", true},
-			{"wrong prefix", "wrong_1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef", true},
-			{"invalid chars", "cred_123456789@abcdef1234567890abcdef1234567890abcdef1234567890abcdef", true},
-			{"empty string", "", true},
-		}
+	tests := []struct {
+		name    string
+		token   string
+		wantErr bool
+	}{
+		{"valid token", "cred_1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef", false},
+		{"too short", "cred_short", true},
+		{"wrong prefix", "wrong_1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef", true},
+		{"invalid chars", "cred_123456789@abcdef1234567890abcdef1234567890abcdef1234567890abcdef", true},
+		{"empty string", "", true},
+	}
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.token, "validtoken")
-				if (err != nil) != tt.wantErr {
-					t.Errorf("validtoken validation error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.token, "validtoken")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validtoken validation error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
 
-	t.Run("validslug validation", func(t *testing.T) {
-		tests := []struct {
-			name    string
-			slug    string
-			wantErr bool
-		}{
-			{"valid slug", "my-repo_name", false},
-			{"valid with numbers", "repo123", false},
-			{"too short", "", true},
-			{"too long", strings.Repeat("a", 101), true},
-			{"invalid chars", "repo@name", true},
-			{"valid minimal", "a", false},
-		}
+// TestValidSlugValidation tests the validslug custom validation function.
+func TestValidSlugValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.slug, "validslug")
-				if (err != nil) != tt.wantErr {
-					t.Errorf("validslug validation error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+	tests := []struct {
+		name    string
+		slug    string
+		wantErr bool
+	}{
+		{"valid slug", "my-repo_name", false},
+		{"valid with numbers", "repo123", false},
+		{"too short", "", true},
+		{"too long", strings.Repeat("a", 101), true},
+		{"invalid chars", "repo@name", true},
+		{"valid minimal", "a", false},
+	}
 
-	t.Run("validsqid validation", func(t *testing.T) {
-		validUserSQID, _ := sqidManager.Encode("users", 123)
-		validConnectionSQID, _ := sqidManager.Encode("connections", 456)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.slug, "validslug")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validslug validation error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
 
-		tests := []struct {
-			name    string
-			sqid    string
-			param   string
-			wantErr bool
-		}{
-			{"valid user SQID", validUserSQID, "users", false},
-			{"valid connection SQID", validConnectionSQID, "connections", false},
-			{"invalid SQID", "invalid_sqid", "users", true},
-			{"empty string", "", "users", true},
-			{"wrong type", validUserSQID, "connections", true},
-		}
+// TestValidSQIDValidation tests the validsqid custom validation function.
+func TestValidSQIDValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.sqid, "validsqid="+tt.param)
-				if (err != nil) != tt.wantErr {
-					t.Errorf("validsqid validation error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+	validUserSQID, _ := sqidManager.Encode("users", 123)
+	validConnectionSQID, _ := sqidManager.Encode("connections", 456)
 
-	t.Run("validrrule validation", func(t *testing.T) {
-		tests := []struct {
-			name    string
-			rrule   string
-			wantErr bool
-		}{
-			{"valid daily", "FREQ=DAILY;COUNT=5", false},
-			{"valid weekly", "FREQ=WEEKLY;BYDAY=MO,WE,FR", false},
-			{"valid with dtstart", "DTSTART:20240101T090000Z;FREQ=DAILY", false},
-			{"invalid rrule", "INVALID_RULE", true},
-			{"empty string", "", false}, // Empty is allowed (optional)
-		}
+	tests := []struct {
+		name    string
+		sqid    string
+		param   string
+		wantErr bool
+	}{
+		{"valid user SQID", validUserSQID, "users", false},
+		{"valid connection SQID", validConnectionSQID, "connections", false},
+		{"invalid SQID", "invalid_sqid", "users", true},
+		{"empty string", "", "users", true},
+		{"wrong type", validUserSQID, "connections", true},
+	}
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.rrule, "validrrule")
-				if (err != nil) != tt.wantErr {
-					t.Errorf("validrrule validation error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.sqid, "validsqid="+tt.param)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validsqid validation error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
 
-	t.Run("validcron validation", func(t *testing.T) {
-		tests := []struct {
-			name    string
-			cron    string
-			wantErr bool
-		}{
-			{"valid cron daily", "0 0 * * *", false},
-			{"valid cron hourly", "0 * * * *", false},
-			{"valid cron with prefix", "CRON:0 0 * * *", false},
-			{"invalid cron", "invalid cron", true},
-			{"empty string", "", false}, // Empty is allowed (optional)
-		}
+// TestValidRRuleValidation tests the validrrule custom validation function.
+func TestValidRRuleValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.cron, "validcron")
-				if (err != nil) != tt.wantErr {
-					t.Errorf("validcron validation error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+	tests := []struct {
+		name    string
+		rrule   string
+		wantErr bool
+	}{
+		{"valid daily", "FREQ=DAILY;COUNT=5", false},
+		{"valid weekly", "FREQ=WEEKLY;BYDAY=MO,WE,FR", false},
+		{"valid with dtstart", "DTSTART:20240101T090000Z;FREQ=DAILY", false},
+		{"invalid rrule", "INVALID_RULE", true},
+		{"empty string", "", false}, // Empty is allowed (optional)
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.rrule, "validrrule")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validrrule validation error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+// TestValidCronValidation tests the validcron custom validation function.
+func TestValidCronValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
+
+	tests := []struct {
+		name    string
+		cron    string
+		wantErr bool
+	}{
+		{"valid cron daily", "0 0 * * *", false},
+		{"valid cron hourly", "0 * * * *", false},
+		{"valid cron with prefix", "CRON:0 0 * * *", false},
+		{"invalid cron", "invalid cron", true},
+		{"empty string", "", false}, // Empty is allowed (optional)
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.cron, "validcron")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validcron validation error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }
 
 // TestClientSideValidation tests validation without SQID manager.
