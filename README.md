@@ -75,7 +75,7 @@ request := irmincore.CreateConnectionRequest{
     Connector: "postgres",
 }
 
-// Validate without sending
+// Basic validation (backward compatible)
 if err := client.ValidateRequest(request); err != nil {
     fmt.Printf("Request is invalid: %v\n", err)
     return
@@ -85,19 +85,94 @@ if err := client.ValidateRequest(request); err != nil {
 connection, _, err := client.CreateConnection("my-workspace", request)
 ```
 
+### Enhanced Validation
+
+The SDK provides enhanced validation with multiple error formats for different use cases:
+
+```go
+request := irmincore.CreateConnectionRequest{
+    // Missing required "Name" and "Connector" fields
+    Description: "Invalid request",
+}
+
+// Enhanced validation with detailed results
+result := client.ValidateRequestEnhanced(request)
+
+if result.HasErrors() {
+    // Get a user-friendly error message
+    fmt.Printf("Validation error: %s\n", result.GetUserMessage())
+    
+    // Get field-specific error messages
+    for field, message := range result.GetFieldErrors() {
+        fmt.Printf("Field '%s': %s\n", field, message)
+    }
+    
+    // Access the original validation errors if needed
+    if rawErr := result.GetRawErrors(); rawErr != nil {
+        fmt.Printf("Raw validation error: %v\n", rawErr)
+    }
+    
+    return
+}
+
+// Request is valid, proceed with API call
+connection, _, err := client.CreateConnection("my-workspace", request)
+```
+
+### Enhanced API Calls
+
+You can also use enhanced validation with API calls to get validation details alongside the response:
+
+```go
+request := irmincore.CreateConnectionRequest{
+    Name:      "My Connection",
+    Connector: "postgres",
+}
+
+// Make API call with enhanced validation
+var connection models.Connection
+resp, validationResult, err := client.FetchAPIEnhanced(irmincore.RequestOptions{
+    Method:      "POST",
+    Endpoint:    "/workspaces/my-workspace/connections",
+    Body:        request,
+    ContentType: "application/json",
+}, &connection)
+
+// Check validation results even for successful requests
+if !validationResult.IsValid {
+    fmt.Printf("Validation warnings: %s\n", validationResult.GetUserMessage())
+}
+
+if err != nil {
+    fmt.Printf("API call failed: %v\n", err)
+    return
+}
+
+fmt.Printf("Created connection: %s\n", connection.Name)
+```
+
 ### Individual Field Validation
 
 You can validate individual fields using validation tags:
 
 ```go
-// Validate an email address
+// Basic field validation (backward compatible)
 if err := client.ValidateVar("user@example.com", "email"); err != nil {
     fmt.Printf("Invalid email: %v\n", err)
 }
 
+// Enhanced field validation
+result := client.ValidateVarEnhanced("invalid-email", "email")
+if result.HasErrors() {
+    fmt.Printf("User message: %s\n", result.GetUserMessage())
+    // Output: "User message: Field 'field' must be a valid email address"
+}
+
 // Validate a required field
-if err := client.ValidateVar("", "required"); err != nil {
-    fmt.Printf("Field is required: %v\n", err)
+result = client.ValidateVarEnhanced("", "required")
+if result.HasErrors() {
+    fmt.Printf("Field error: %s\n", result.GetUserMessage())
+    // Output: "Field error: Field 'field' is required"
 }
 ```
 
