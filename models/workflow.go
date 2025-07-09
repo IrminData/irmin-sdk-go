@@ -45,12 +45,12 @@ type PipelineStage struct {
 	Type          PipelineStageType `json:"type"           validate:"required,oneof=action connection repository,validpipelinestage"`
 
 	// Action stage specific
-	Executable *string `json:"executable,omitempty"`
+	Executable *string `json:"executable,omitempty" validate:"min=1"`
 
 	// Connection stage specific
-	ConnectionID        *string  `json:"connection_id,omitempty"`
-	ConnectionWritePath *string  `json:"connection_write_path,omitempty" validate:"omitempty,min=1"`
-	ConnectionReadPaths []string `json:"connection_read_paths,omitempty" validate:"omitempty,dive,min=1"`
+	ConnectionID        *string  `json:"connection_id,omitempty"         validate:"validsqid=connections"`
+	ConnectionWritePath *string  `json:"connection_write_path,omitempty" validate:"min=1"`
+	ConnectionReadPaths []string `json:"connection_read_paths,omitempty" validate:"dive,min=1"`
 
 	// Repository stage specific
 	Repository          *string  `json:"repository,omitempty"`
@@ -69,21 +69,20 @@ type Workflowable struct {
 	Type WorkflowableType `json:"type" validate:"required,oneof=import action export pipeline,validworkflowable"`
 
 	// Import & Export workflowable
-
-	FieldMappings    []FieldMapping `json:"field_mappings,omitempty"    validate:"omitempty,dive"`
-	ConnectionID     string         `json:"connection_id,omitempty"`
-	Repository       string         `json:"repository,omitempty"`
-	RepositoryBranch string         `json:"repository_branch,omitempty"`
+	FieldMappings    []FieldMapping `json:"field_mappings,omitempty"    validate:"dive,required_if=Type import,required_if=Type export"`
+	ConnectionID     string         `json:"connection_id,omitempty"     validate:"validsqid=connections,required_if=Type import,required_if=Type export"`
+	Repository       string         `json:"repository,omitempty"        validate:"min=1,required_if=Type import,required_if=Type export"`
+	RepositoryBranch string         `json:"repository_branch,omitempty" validate:"min=1,required_if=Type import,required_if=Type export"`
 
 	// Import workflowable
 
-	ImportFromConnectionPaths []string `json:"import_from_connection_paths,omitempty" validate:"omitempty,dive,min=1"`
-	ImportToRepositoryPath    string   `json:"import_to_repository_path,omitempty"`
+	ImportFromConnectionPaths []string `json:"import_from_connection_paths,omitempty" validate:"dive,min=1,required_if=Type import"`
+	ImportToRepositoryPath    string   `json:"import_to_repository_path,omitempty"    validate:"min=1,required_if=Type import"`
 
 	// Export workflowable
 
-	ExportFromRepositoryPaths []string `json:"export_from_repository_paths,omitempty" validate:"omitempty,dive,min=1"`
-	ExportToConnectionPath    string   `json:"export_to_connection_path,omitempty"`
+	ExportFromRepositoryPaths []string `json:"export_from_repository_paths,omitempty" validate:"dive,min=1,required_if=Type export"`
+	ExportToConnectionPath    string   `json:"export_to_connection_path,omitempty"    validate:"min=1,required_if=Type export"`
 
 	// Pipeline workflowable
 
@@ -92,7 +91,7 @@ type Workflowable struct {
 
 	// Action workflowable
 
-	Executable              string            `json:"executable,omitempty"`
+	Executable              string            `json:"executable,omitempty"                validate:"min=1,required_if=Type action"`
 	Input                   []ActionInputData `json:"input,omitempty"                     validate:"omitempty,dive"`
 	ResultsRepository       *string           `json:"results_repository,omitempty"        validate:"omitempty,min=1"`
 	ResultsRepositoryBranch *string           `json:"results_repository_branch,omitempty" validate:"omitempty,min=1"`
