@@ -24,10 +24,10 @@ const (
 	TokenLength   = 64
 	SlugMinLength = 1
 	SlugMaxLength = 100
-	// New constants for validation
+	// New constants for validation.
 	DocumentationMaxLength = 10000
-	SQLMaxLength          = 50000
-	URLMaxLength          = 2000
+	SQLMaxLength           = 50000
+	URLMaxLength           = 2000
 )
 
 // NewValidator creates a new validator instance.
@@ -477,7 +477,7 @@ func validateSQL(fl validator.FieldLevel) bool {
 
 	// Basic SQL injection prevention - check for dangerous patterns
 	sqlLower := strings.ToLower(strings.TrimSpace(sqlValue))
-	
+
 	// Allow common SQL operations but block potentially dangerous ones
 	dangerousPatterns := []string{
 		"drop ", "delete ", "truncate ", "alter ", "create ",
