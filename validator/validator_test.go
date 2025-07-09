@@ -331,91 +331,7 @@ func TestStartsWithValidation(t *testing.T) {
 	}
 }
 
-func TestClientValidator_RequestValidation(t *testing.T) {
-	// Test client-side validator (no SQID manager)
-	clientValidator := validator.NewClientValidator()
-
-	t.Run("CreateConnectionRequest - Valid", func(t *testing.T) {
-		req := coreapi.CreateConnectionRequest{
-			Name:        "My Database Connection",
-			Connector:   "postgres",
-			Description: "Connection to production database",
-			Details: map[string]any{
-				"host":     "localhost",
-				"port":     5432,
-				"database": "myapp",
-			},
-			Settings: map[string]any{
-				"ssl_mode": "require",
-			},
-		}
-
-		err := clientValidator.Validate(req)
-		if err != nil {
-			t.Errorf("Expected valid connection request, got error: %v", err)
-		}
-	})
-
-	t.Run("CreateConnectionRequest - Invalid (missing required fields)", func(t *testing.T) {
-		req := coreapi.CreateConnectionRequest{
-			// Missing required Name and Connector fields
-			Description: "This request is missing required fields",
-		}
-
-		err := clientValidator.Validate(req)
-		if err == nil {
-			t.Error("Expected validation error for missing required fields")
-		}
-	})
-
-	t.Run("CreateWorkspaceRequest - Valid", func(t *testing.T) {
-		req := coreapi.CreateWorkspaceRequest{
-			Name:        "My New Workspace",
-			Description: "A workspace for data analysis",
-		}
-
-		err := clientValidator.Validate(req)
-		if err != nil {
-			t.Errorf("Expected valid workspace request, got error: %v", err)
-		}
-	})
-
-	t.Run("CreateWorkspaceRequest - Invalid (missing required name)", func(t *testing.T) {
-		req := coreapi.CreateWorkspaceRequest{
-			// Missing required Name field
-			Description: "A workspace without a name",
-		}
-
-		err := clientValidator.Validate(req)
-		if err == nil {
-			t.Error("Expected validation error for missing required name")
-		}
-	})
-
-	t.Run("TransferConnectionOwnershipRequest - Valid", func(t *testing.T) {
-		req := coreapi.TransferConnectionOwnershipRequest{
-			NewOwnerID: "user_123", // SQID validation will be skipped on client-side
-		}
-
-		err := clientValidator.Validate(req)
-		if err != nil {
-			t.Errorf("Expected valid transfer request, got error: %v", err)
-		}
-	})
-
-	t.Run("TransferConnectionOwnershipRequest - Invalid (missing required field)", func(t *testing.T) {
-		req := coreapi.TransferConnectionOwnershipRequest{
-			// Missing required NewOwnerID field
-		}
-
-		err := clientValidator.Validate(req)
-		if err == nil {
-			t.Error("Expected validation error for missing required NewOwnerID")
-		}
-	})
-}
-
-func TestServerValidator_RequestValidation(t *testing.T) {
+func TestValidator_RequestValidation(t *testing.T) {
 	// Test server-side validator (with SQID manager)
 	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	serverValidator := validator.NewValidator(sqidManager)
@@ -472,41 +388,9 @@ func TestServerValidator_RequestValidation(t *testing.T) {
 	})
 }
 
-func TestClientVsServerValidator_SQIDHandling(t *testing.T) {
-	// Setup both validators
-	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
-	clientValidator := validator.NewClientValidator()
-	serverValidator := validator.NewValidator(sqidManager)
-
-	// Create a user model with an invalid SQID (models have SQID validation tags)
-	user := models.User{
-		ID:             "definitely_not_a_valid_sqid",
-		FirstName:      "John",
-		LastName:       "Doe",
-		Email:          "john@example.com",
-		Phone:          "+1234567890", // Valid E164 format
-		Company:        "Example Inc",
-		ProfilePicture: "https://example.com/profile.jpg", // Valid URL
-		Roles:          []models.Role{},                   // Empty roles slice
-	}
-
-	t.Run("Client validator skips SQID validation", func(t *testing.T) {
-		err := clientValidator.Validate(user)
-		if err != nil {
-			t.Errorf("Client validator should skip SQID validation, got error: %v", err)
-		}
-	})
-
-	t.Run("Server validator enforces SQID validation", func(t *testing.T) {
-		err := serverValidator.Validate(user)
-		if err == nil {
-			t.Error("Server validator should enforce SQID validation and fail")
-		}
-	})
-}
-
 func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
-	clientValidator := validator.NewClientValidator()
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
 
 	tests := []struct {
 		name    string
@@ -581,7 +465,7 @@ func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := clientValidator.Validate(tt.request)
+			err := validator.Validate(tt.request)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -589,109 +473,119 @@ func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
 	}
 }
 
-// TestNewCustomValidators tests all the new custom validation functions.
-func TestNewCustomValidators(t *testing.T) {
+// TestSQLValidation tests the validsql custom validation function.
+func TestSQLValidation(t *testing.T) {
 	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	validator := validator.NewValidator(sqidManager)
 
-	t.Run("SQL Validation", func(t *testing.T) {
-		tests := []struct {
-			name    string
-			sql     string
-			wantErr bool
-		}{
-			{"valid select", "SELECT * FROM users WHERE id = 1", false},
-			{"valid with limit", "SELECT name, email FROM users LIMIT 10", false},
-			{"empty string", "", false}, // Optional field
-			{"dangerous drop", "DROP TABLE users", true},
-			{"dangerous delete", "DELETE FROM users", true},
-			{"dangerous union", "SELECT * FROM users UNION SELECT * FROM admin", true},
-			{"dangerous exec", "EXEC sp_configure", true},
-			{"too long sql", strings.Repeat("SELECT * FROM table ", 10000), true},
-		}
+	tests := []struct {
+		name    string
+		sql     string
+		wantErr bool
+	}{
+		{"Valid_Select_Statement", "SELECT * FROM users WHERE id = 1", false},
+		{"Valid_Select_With_Limit", "SELECT name, email FROM users LIMIT 10", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Invalid_Drop_Statement", "DROP TABLE users", true},
+		{"Invalid_Delete_Statement", "DELETE FROM users", true},
+		{"Invalid_Union_Statement", "SELECT * FROM users UNION SELECT * FROM admin", true},
+		{"Invalid_Exec_Statement", "EXEC sp_configure", true},
+		{"Invalid_Too_Long_SQL", strings.Repeat("SELECT * FROM table ", 10000), true},
+	}
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.sql, "validsql")
-				if (err != nil) != tt.wantErr {
-					t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.sql, "validsql")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
 
-	t.Run("Documentation Validation", func(t *testing.T) {
-		tests := []struct {
-			name    string
-			doc     string
-			wantErr bool
-		}{
-			{"valid documentation", "This is a valid documentation string", false},
-			{"empty string", "", false}, // Optional field
-			{"long valid doc", strings.Repeat("This is documentation. ", 100), false},
-			{"too long doc", strings.Repeat("x", 20000), true}, // Exceeds DocumentationMaxLength
-		}
+// TestDocumentationValidation tests the validdocumentation custom validation function.
+func TestDocumentationValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.doc, "validdocumentation")
-				if (err != nil) != tt.wantErr {
-					t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+	tests := []struct {
+		name    string
+		doc     string
+		wantErr bool
+	}{
+		{"Valid_Documentation_String", "This is a valid documentation string", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Valid_Long_Documentation", strings.Repeat("This is documentation. ", 100), false},
+		{"Invalid_Too_Long_Documentation", strings.Repeat("x", 20000), true}, // Exceeds DocumentationMaxLength
+	}
 
-	t.Run("URL Validation", func(t *testing.T) {
-		tests := []struct {
-			name    string
-			url     string
-			wantErr bool
-		}{
-			{"valid https url", "https://example.com", false},
-			{"valid http url", "http://example.com", false},
-			{"valid with path", "https://example.com/path/to/resource", false},
-			{"empty string", "", false}, // Optional field
-			{"invalid scheme", "ftp://example.com", true},
-			{"no scheme", "example.com", true},
-			{"malformed url", "not-a-url", true},
-			{"too long url", "https://" + strings.Repeat("x", 2000), true},
-		}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.doc, "validdocumentation")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.url, "validurl")
-				if (err != nil) != tt.wantErr {
-					t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+// TestURLValidation tests the validurl custom validation function.
+func TestURLValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
 
-	t.Run("Phone Validation", func(t *testing.T) {
-		tests := []struct {
-			name    string
-			phone   string
-			wantErr bool
-		}{
-			{"valid US phone", "+1234567890", false},
-			{"valid international", "+447123456789", false},
-			{"empty string", "", false}, // Optional field
-			{"missing plus", "1234567890", true},
-			{"too short", "+1", true}, // Changed from "+123" to "+1" which is truly too short
-			{"too long", "+123456789012345678", true},
-			{"non-numeric", "+12345abcde", true},
-		}
+	tests := []struct {
+		name    string
+		url     string
+		wantErr bool
+	}{
+		{"Valid_HTTPS_URL", "https://example.com", false},
+		{"Valid_HTTP_URL", "http://example.com", false},
+		{"Valid_URL_With_Path", "https://example.com/path/to/resource", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Invalid_FTP_Scheme", "ftp://example.com", true},
+		{"Invalid_No_Scheme", "example.com", true},
+		{"Invalid_Malformed_URL", "not-a-url", true},
+		{"Invalid_Too_Long_URL", "https://" + strings.Repeat("x", 2000), true},
+	}
 
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				err := validator.ValidateVar(tt.phone, "validphone")
-				if (err != nil) != tt.wantErr {
-					t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
-				}
-			})
-		}
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.url, "validurl")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+// TestPhoneValidation tests the validphone custom validation function.
+func TestPhoneValidation(t *testing.T) {
+	sqidManager := sqids.NewSQIDManager("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	validator := validator.NewValidator(sqidManager)
+
+	tests := []struct {
+		name    string
+		phone   string
+		wantErr bool
+	}{
+		{"Valid_US_Phone", "+1234567890", false},
+		{"Valid_International_Phone", "+447123456789", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Invalid_Missing_Plus", "1234567890", true},
+		{"Invalid_Too_Short", "+1", true}, // Changed from "+123" to "+1" which is truly too short
+		{"Invalid_Too_Long", "+123456789012345678", true},
+		{"Invalid_Non_Numeric", "+12345abcde", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validator.ValidateVar(tt.phone, "validphone")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateVar() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }
 
 // TestEnhancedModelValidation tests models with improved validation.

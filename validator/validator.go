@@ -1,6 +1,8 @@
 package irminsdkvalidator
 
 import (
+	"errors"
+	"fmt"
 	"net/url"
 	"reflect"
 	"strings"
@@ -12,13 +14,60 @@ import (
 	"github.com/teambition/rrule-go"
 )
 
+// ValidationResultError contains validation results in multiple formats for different use cases.
+type ValidationResultError struct {
+	// IsValid indicates whether the validation passed
+	IsValid bool
+
+	// UserMessage provides a single, generic error message suitable for end users
+	UserMessage string
+
+	// FieldErrors maps field names to user-friendly error messages
+	FieldErrors map[string]string
+
+	// RawErrors contains the original validation errors from the underlying library
+	RawErrors error
+}
+
+// Error implements the error interface for backward compatibility.
+func (vr *ValidationResultError) Error() string {
+	if vr.IsValid {
+		return ""
+	}
+	if vr.UserMessage != "" {
+		return vr.UserMessage
+	}
+	if vr.RawErrors != nil {
+		return vr.RawErrors.Error()
+	}
+	return "validation failed"
+}
+
+// HasErrors returns true if there are any validation errors.
+func (vr *ValidationResultError) HasErrors() bool {
+	return !vr.IsValid
+}
+
+// GetUserMessage returns a single user-friendly error message.
+func (vr *ValidationResultError) GetUserMessage() string {
+	return vr.UserMessage
+}
+
+// GetFieldErrors returns a map of field-specific error messages.
+func (vr *ValidationResultError) GetFieldErrors() map[string]string {
+	return vr.FieldErrors
+}
+
+// GetRawErrors returns the original validation errors.
+func (vr *ValidationResultError) GetRawErrors() error {
+	return vr.RawErrors
+}
+
 // Validator provides validation functionality for Irmin models.
 type Validator struct {
 	validate    *validator.Validate
 	sqidManager *irminsqids.SQIDManager
 }
-
-// Constants are now defined in constants.go
 
 // NewValidator creates a new validator instance.
 func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
@@ -30,67 +79,46 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	}
 
 	// Register custom validation functions
-	err := v.RegisterValidation("validtoken", validateToken)
-	if err != nil {
+	if err := v.RegisterValidation("validtoken", validateToken); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validslug", validateSlug)
-	if err != nil {
+	if err := v.RegisterValidation("validslug", validateSlug); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validsqid", validator.validateSQID)
-	if err != nil {
+	if err := v.RegisterValidation("validsqid", validator.validateSQID); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validrrule", validateRRule)
-	if err != nil {
+	if err := v.RegisterValidation("validrrule", validateRRule); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validcron", validateCron)
-	if err != nil {
+	if err := v.RegisterValidation("validcron", validateCron); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validschedule", validateScheduleTrigger)
-	if err != nil {
+	if err := v.RegisterValidation("validschedule", validateScheduleTrigger); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validsql", validateSQL)
-	if err != nil {
+	if err := v.RegisterValidation("validsql", validateSQL); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validdocumentation", validateDocumentation)
-	if err != nil {
+	if err := v.RegisterValidation("validdocumentation", validateDocumentation); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validurl", validateURL)
-	if err != nil {
+	if err := v.RegisterValidation("validurl", validateURL); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validphone", validatePhone)
-	if err != nil {
+	if err := v.RegisterValidation("validphone", validatePhone); err != nil {
 		panic(err)
 	}
 
 	// Register custom pipeline stage validation
-	err = v.RegisterValidation("validpipelinestage", validator.validatePipelineStage)
-	if err != nil {
+	if err := v.RegisterValidation("validpipelinestage", validator.validatePipelineStage); err != nil {
 		panic(err)
 	}
 
 	// Register custom workflowable validation
-	err = v.RegisterValidation("validworkflowable", validator.validateWorkflowable)
-	if err != nil {
+	if err := v.RegisterValidation("validworkflowable", validator.validateWorkflowable); err != nil {
 		panic(err)
 	}
-
-	// // Use JSON field names in error messages
-	// v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-	// 	name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-	// 	if name == "-" {
-	// 		return ""
-	// 	}
-	// 	return name
-	// })
 
 	return validator
 }
@@ -106,57 +134,45 @@ func NewClientValidator() *Validator {
 	}
 
 	// Register custom validation functions (excluding SQID validation)
-	err := v.RegisterValidation("validtoken", validateToken)
-	if err != nil {
+	if err := v.RegisterValidation("validtoken", validateToken); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validslug", validateSlug)
-	if err != nil {
+	if err := v.RegisterValidation("validslug", validateSlug); err != nil {
 		panic(err)
 	}
 	// Register SQID validation but it will be skipped when sqidManager is nil
-	err = v.RegisterValidation("validsqid", validator.validateSQID)
-	if err != nil {
+	if err := v.RegisterValidation("validsqid", validator.validateSQID); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validrrule", validateRRule)
-	if err != nil {
+	if err := v.RegisterValidation("validrrule", validateRRule); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validcron", validateCron)
-	if err != nil {
+	if err := v.RegisterValidation("validcron", validateCron); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validschedule", validateScheduleTrigger)
-	if err != nil {
+	if err := v.RegisterValidation("validschedule", validateScheduleTrigger); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validsql", validateSQL)
-	if err != nil {
+	if err := v.RegisterValidation("validsql", validateSQL); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validdocumentation", validateDocumentation)
-	if err != nil {
+	if err := v.RegisterValidation("validdocumentation", validateDocumentation); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validurl", validateURL)
-	if err != nil {
+	if err := v.RegisterValidation("validurl", validateURL); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validphone", validatePhone)
-	if err != nil {
+	if err := v.RegisterValidation("validphone", validatePhone); err != nil {
 		panic(err)
 	}
 
 	// Register custom pipeline stage validation
-	err = v.RegisterValidation("validpipelinestage", validator.validatePipelineStage)
-	if err != nil {
+	if err := v.RegisterValidation("validpipelinestage", validator.validatePipelineStage); err != nil {
 		panic(err)
 	}
 
 	// Register custom workflowable validation
-	err = v.RegisterValidation("validworkflowable", validator.validateWorkflowable)
-	if err != nil {
+	if err := v.RegisterValidation("validworkflowable", validator.validateWorkflowable); err != nil {
 		panic(err)
 	}
 
@@ -835,4 +851,196 @@ func (v *Validator) Validate(s any) error {
 // ValidateVar validates a single variable.
 func (v *Validator) ValidateVar(field any, tag string) error {
 	return v.validate.Var(field, tag)
+}
+
+// ValidateEnhanced validates a struct and returns a detailed ValidationResultError.
+// This provides multiple error formats for different use cases.
+func (v *Validator) ValidateEnhanced(s any) *ValidationResultError {
+	err := v.validate.Struct(s)
+	if err == nil {
+		return &ValidationResultError{
+			IsValid:     true,
+			UserMessage: "",
+			FieldErrors: make(map[string]string),
+			RawErrors:   nil,
+		}
+	}
+
+	return v.buildValidationResult(err)
+}
+
+// ValidateVarEnhanced validates a single variable and returns a detailed ValidationResultError.
+func (v *Validator) ValidateVarEnhanced(field any, tag string) *ValidationResultError {
+	err := v.validate.Var(field, tag)
+	if err == nil {
+		return &ValidationResultError{
+			IsValid:     true,
+			UserMessage: "",
+			FieldErrors: make(map[string]string),
+			RawErrors:   nil,
+		}
+	}
+
+	return v.buildValidationResult(err)
+}
+
+// buildValidationResult converts validation errors into a structured ValidationResultError.
+func (v *Validator) buildValidationResult(err error) *ValidationResultError {
+	result := &ValidationResultError{
+		IsValid:     false,
+		FieldErrors: make(map[string]string),
+		RawErrors:   err,
+	}
+
+	// Check if it's a ValidationErrors type from go-playground/validator
+	var validationErrors validator.ValidationErrors
+	if errors.As(err, &validationErrors) {
+		var userMessages []string
+
+		for _, fieldError := range validationErrors {
+			fieldName := v.getFieldName(fieldError)
+			fieldMessage := v.getFieldErrorMessage(fieldError)
+
+			result.FieldErrors[fieldName] = fieldMessage
+			userMessages = append(userMessages, fieldMessage)
+		}
+
+		// Create a generic user message
+		switch {
+		case len(userMessages) == 1:
+			result.UserMessage = userMessages[0]
+		case len(userMessages) > 1:
+			result.UserMessage = "Multiple validation errors occurred. Please check the field errors for details."
+		default:
+			result.UserMessage = "Validation failed"
+		}
+	} else {
+		// Handle other types of errors
+		result.UserMessage = "Validation failed: " + err.Error()
+	}
+
+	return result
+}
+
+// getFieldName extracts a user-friendly field name from a validation error.
+func (v *Validator) getFieldName(fieldError validator.FieldError) string {
+	// Use JSON tag name if available, otherwise use the struct field name
+	field := fieldError.Field()
+
+	// For single variable validation, field might be empty, use "field" as default
+	if field == "" {
+		return "field"
+	}
+
+	// For nested fields, we want to show the full path but make it user-friendly
+	if strings.Contains(field, ".") {
+		// Convert something like "User.Address.Street" to "user.address.street"
+		parts := strings.Split(field, ".")
+		for i, part := range parts {
+			parts[i] = strings.ToLower(part)
+		}
+		return strings.Join(parts, ".")
+	}
+
+	return strings.ToLower(field)
+}
+
+// getStandardValidationMessage returns error messages for standard validation tags.
+func (v *Validator) getStandardValidationMessage(field, tag, param string) (string, bool) {
+	switch tag {
+	case "required":
+		return fmt.Sprintf("Field '%s' is required", field), true
+	case "email":
+		return fmt.Sprintf("Field '%s' must be a valid email address", field), true
+	case "min":
+		return fmt.Sprintf("Field '%s' must be at least %s characters long", field, param), true
+	case "max":
+		return fmt.Sprintf("Field '%s' must be at most %s characters long", field, param), true
+	case "len":
+		return fmt.Sprintf("Field '%s' must be exactly %s characters long", field, param), true
+	case "numeric":
+		return fmt.Sprintf("Field '%s' must be a number", field), true
+	case "alpha":
+		return fmt.Sprintf("Field '%s' must contain only letters", field), true
+	case "alphanum":
+		return fmt.Sprintf("Field '%s' must contain only letters and numbers", field), true
+	case "url":
+		return fmt.Sprintf("Field '%s' must be a valid URL", field), true
+	case "uuid":
+		return fmt.Sprintf("Field '%s' must be a valid UUID", field), true
+	default:
+		return "", false
+	}
+}
+
+// getStringValidationMessage returns error messages for string-related validation tags.
+func (v *Validator) getStringValidationMessage(field, tag, param string) (string, bool) {
+	switch tag {
+	case "oneof":
+		return fmt.Sprintf("Field '%s' must be one of: %s", field, param), true
+	case "startswith":
+		return fmt.Sprintf("Field '%s' must start with '%s'", field, param), true
+	case "endswith":
+		return fmt.Sprintf("Field '%s' must end with '%s'", field, param), true
+	case "contains":
+		return fmt.Sprintf("Field '%s' must contain '%s'", field, param), true
+	default:
+		return "", false
+	}
+}
+
+// getCustomValidationMessage returns error messages for custom validation tags.
+func (v *Validator) getCustomValidationMessage(field, tag string) (string, bool) {
+	switch tag {
+	case "validtoken":
+		return fmt.Sprintf("Field '%s' must be a valid API token", field), true
+	case "validslug":
+		return fmt.Sprintf(
+			"Field '%s' must be a valid slug (letters, numbers, hyphens, and underscores only)",
+			field,
+		), true
+	case "validsqid":
+		return fmt.Sprintf("Field '%s' must be a valid SQID", field), true
+	case "validrrule":
+		return fmt.Sprintf("Field '%s' must be a valid recurrence rule", field), true
+	case "validcron":
+		return fmt.Sprintf("Field '%s' must be a valid cron expression", field), true
+	case "validschedule":
+		return fmt.Sprintf("Field '%s' must be a valid schedule trigger", field), true
+	case "validsql":
+		return fmt.Sprintf("Field '%s' must be a valid SQL query", field), true
+	case "validdocumentation":
+		return fmt.Sprintf("Field '%s' must be valid documentation", field), true
+	case "validurl":
+		return fmt.Sprintf("Field '%s' must be a valid URL", field), true
+	case "validphone":
+		return fmt.Sprintf("Field '%s' must be a valid phone number in E.164 format", field), true
+	default:
+		return "", false
+	}
+}
+
+// getFieldErrorMessage creates a user-friendly error message for a specific field error.
+func (v *Validator) getFieldErrorMessage(fieldError validator.FieldError) string {
+	field := v.getFieldName(fieldError)
+	tag := fieldError.Tag()
+	param := fieldError.Param()
+
+	// Try standard validation messages
+	if msg, found := v.getStandardValidationMessage(field, tag, param); found {
+		return msg
+	}
+
+	// Try string validation messages
+	if msg, found := v.getStringValidationMessage(field, tag, param); found {
+		return msg
+	}
+
+	// Try custom validation messages
+	if msg, found := v.getCustomValidationMessage(field, tag); found {
+		return msg
+	}
+
+	// Generic message for unknown validation tags
+	return fmt.Sprintf("Field '%s' failed validation: %s", field, tag)
 }

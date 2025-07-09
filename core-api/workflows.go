@@ -16,7 +16,7 @@ type UpdateWorkflowRequest struct {
 
 // TransferWorkflowOwnershipRequest represents the JSON request body for transferring workflow ownership.
 type TransferWorkflowOwnershipRequest struct {
-	NewOwnerID string `json:"new_owner_id" validate:"required,min=1"`
+	NewOwnerID string `json:"new_owner_id" validate:"required,validsqid=users"`
 }
 
 // WorkflowRequest represents the JSON request body for creating a workflow.
