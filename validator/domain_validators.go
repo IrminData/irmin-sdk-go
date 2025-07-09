@@ -253,14 +253,14 @@ func (v *Validator) validateCommonWorkflowableFields(parentStruct reflect.Value)
 }
 
 // validatePipelineWorkflowable validates pipeline-type workflowables.
-func (v *Validator) validatePipelineWorkflowable(parentStruct reflect.Value) bool {
+func (v *Validator) validatePipelineWorkflowable(_ reflect.Value) bool {
 	// Pipeline workflowables are valid by default
 	// Specific stage validation is handled by the pipeline stage validator
 	return true
 }
 
 // validateActionWorkflowable validates action-type workflowables.
-func (v *Validator) validateActionWorkflowable(parentStruct reflect.Value) bool {
+func (v *Validator) validateActionWorkflowable(_ reflect.Value) bool {
 	// Action workflowables are valid by default
 	// Specific validation is handled by standard field validators
 	return true
