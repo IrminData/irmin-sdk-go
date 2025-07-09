@@ -12,18 +12,16 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
-	"time"
 
 	"maps"
 
+	irminsdkgo "github.com/IrminData/irmin-sdk-go"
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 	irminsqids "github.com/IrminData/irmin-sdk-go/sqids"
 	irminvalidator "github.com/IrminData/irmin-sdk-go/validator"
 )
 
-const (
-	defaultTimeout = 10 * time.Second
-)
+// Timeout constants are now defined in the root constants.go file
 
 // Client represents the Irmin API client.
 type Client struct {
@@ -50,7 +48,7 @@ func NewClient(baseURL, token, locale string) *Client {
 		Token:   token,
 		Locale:  locale,
 		HTTPClient: &http.Client{
-			Timeout: defaultTimeout,
+			Timeout: irminsdkgo.DefaultAPITimeout,
 		},
 		Validator: irminvalidator.NewClientValidator(),
 	}
@@ -63,7 +61,7 @@ func NewClientWithSQIDManager(baseURL, token, locale string, sqidManager *irmins
 		Token:   token,
 		Locale:  locale,
 		HTTPClient: &http.Client{
-			Timeout: defaultTimeout,
+			Timeout: irminsdkgo.DefaultAPITimeout,
 		},
 		Validator: irminvalidator.NewValidator(sqidManager),
 	}
@@ -213,7 +211,7 @@ func (c *Client) prepareRequestBody(opts RequestOptions) (io.Reader, map[string]
 
 // Request is the main method that sends requests to the Irmin API and returns raw response data.
 func (c *Client) Request(opts RequestOptions) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), irminsdkgo.DefaultAPITimeout)
 	defer cancel()
 
 	url := fmt.Sprintf("%s%s", c.BaseURL, opts.Endpoint)

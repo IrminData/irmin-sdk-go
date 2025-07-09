@@ -459,15 +459,15 @@ func TestServerValidator_RequestValidation(t *testing.T) {
 		}
 	})
 
-	t.Run("TransferConnectionOwnershipRequest - No SQID validation in core-api", func(t *testing.T) {
-		// Core-api request structs don't have SQID validation tags
+	t.Run("TransferConnectionOwnershipRequest - With SQID validation in core-api", func(t *testing.T) {
+		// Core-api request structs DO have SQID validation tags
 		req := coreapi.TransferConnectionOwnershipRequest{
-			NewOwnerID: "invalid_user_sqid", // This won't trigger SQID validation
+			NewOwnerID: "invalid_user_sqid", // This WILL trigger SQID validation
 		}
 
 		err := serverValidator.Validate(req)
-		if err != nil {
-			t.Errorf("Core-api requests don't have SQID validation tags, got error: %v", err)
+		if err == nil {
+			t.Error("Expected SQID validation error for invalid user SQID")
 		}
 	})
 }
@@ -572,10 +572,10 @@ func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
 		{
 			name: "CreateQueryRequest - Invalid (missing required fields)",
 			request: coreapi.CreateQueryRequest{
-				// All fields are optional in CreateQueryRequest
-				Description: "Query with optional fields only",
+				// Name field is required in CreateQueryRequest
+				Description: "Query missing required name field",
 			},
-			wantErr: false, // Changed to false since all fields are optional
+			wantErr: true, // Name is required
 		},
 	}
 
