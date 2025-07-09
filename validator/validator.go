@@ -686,19 +686,19 @@ func validateImageURL(fl validator.FieldLevel) bool {
 
 	// Additional checks for image URLs
 	imageURLLower := strings.ToLower(imageURLValue)
-	
+
 	// Check for non-image extensions that would indicate this is not an image URL
 	nonImageExtensions := []string{
 		".txt", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".zip", ".tar", ".gz",
 		".mp3", ".mp4", ".avi", ".mov", ".html", ".htm", ".css", ".js", ".json", ".xml",
 	}
-	
+
 	for _, ext := range nonImageExtensions {
 		if strings.Contains(imageURLLower, ext) {
 			return false
 		}
 	}
-	
+
 	// Allow URLs without specific extensions (could be dynamic/API generated images)
 	return true
 }
