@@ -2,9 +2,9 @@ package irminmodels
 
 type FieldMapping struct {
 	SourcePath       string  `json:"source_path"                 validate:"required,min=1"`
-	SourceField      *string `json:"source_field,omitempty"      validate:"omitempty,min=1"`
+	SourceField      *string `json:"source_field,omitempty"      validate:"min=1"`
 	DestinationPath  string  `json:"destination_path"            validate:"required,min=1"`
-	DestinationField *string `json:"destination_field,omitempty" validate:"omitempty,min=1"`
+	DestinationField *string `json:"destination_field,omitempty" validate:"min=1"`
 }
 
 type WorkflowableType string
@@ -54,9 +54,9 @@ type PipelineStage struct {
 
 	// Repository stage specific
 	Repository          *string  `json:"repository,omitempty"`
-	RepositoryBranch    *string  `json:"repository_branch,omitempty"     validate:"omitempty,min=1"`
-	RepositoryWritePath *string  `json:"repository_write_path,omitempty" validate:"omitempty,min=1"`
-	RepositoryReadPaths []string `json:"repository_read_paths,omitempty" validate:"omitempty,dive,min=1"`
+	RepositoryBranch    *string  `json:"repository_branch,omitempty"     validate:"min=1"`
+	RepositoryWritePath *string  `json:"repository_write_path,omitempty" validate:"min=1"`
+	RepositoryReadPaths []string `json:"repository_read_paths,omitempty" validate:"dive,min=1"`
 }
 
 type ActionInputData struct {
@@ -87,15 +87,15 @@ type Workflowable struct {
 	// Pipeline workflowable
 
 	Live   bool            `json:"live,omitempty"`
-	Stages []PipelineStage `json:"stages,omitempty" validate:"omitempty,dive"`
+	Stages []PipelineStage `json:"stages,omitempty" validate:"dive"`
 
 	// Action workflowable
 
 	Executable              string            `json:"executable,omitempty"                validate:"min=1,required_if=Type action"`
-	Input                   []ActionInputData `json:"input,omitempty"                     validate:"omitempty,dive"`
-	ResultsRepository       *string           `json:"results_repository,omitempty"        validate:"omitempty,min=1"`
-	ResultsRepositoryBranch *string           `json:"results_repository_branch,omitempty" validate:"omitempty,min=1"`
-	ResultsRepositoryPath   string            `json:"results_repository_path,omitempty"   validate:"omitempty,min=1"`
+	Input                   []ActionInputData `json:"input,omitempty"                     validate:"dive"`
+	ResultsRepository       *string           `json:"results_repository,omitempty"        validate:"min=1"`
+	ResultsRepositoryBranch *string           `json:"results_repository_branch,omitempty" validate:"min=1"`
+	ResultsRepositoryPath   string            `json:"results_repository_path,omitempty"   validate:"min=1"`
 }
 
 type Workflow struct {
