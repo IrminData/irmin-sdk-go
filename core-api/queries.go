@@ -9,9 +9,9 @@ import (
 
 // CreateQueryRequest represents the JSON request body for creating a query.
 type CreateQueryRequest struct {
-	Name        string `json:"name,omitempty" validate:"required"`
+	Name        string `json:"name,omitempty"        validate:"required"`
 	Description string `json:"description,omitempty" validate:"required"`
-	SQL         string `json:"sql,omitempty" validate:"required"`
+	SQL         string `json:"sql,omitempty"         validate:"required"`
 }
 
 // UpdateQueryRequest represents the JSON request body for updating a query.
