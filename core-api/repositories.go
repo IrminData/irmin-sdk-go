@@ -14,8 +14,8 @@ type CreateRepositoryRequest struct {
 	Documentation                     string `json:"documentation,omitempty"                         validate:"validdocumentation"`
 	DefaultBranch                     string `json:"default_branch,omitempty"                        validate:"validslug"`
 	IsImmutable                       bool   `json:"is_immutable,omitempty"`
-	GarbageDefaultRetentionDays       int    `json:"garbage_default_retention_days,omitempty"        validate:"omitempty,min=1,max=3650"`
-	GarbageDefaultBranchRetentionDays int    `json:"garbage_default_branch_retention_days,omitempty" validate:"omitempty,min=1,max=3650"`
+	GarbageDefaultRetentionDays       int    `json:"garbage_default_retention_days,omitempty"        validate:"min=1,max=3650"`
+	GarbageDefaultBranchRetentionDays int    `json:"garbage_default_branch_retention_days,omitempty" validate:"min=1,max=3650"`
 }
 
 // UpdateRepositoryRequest represents the JSON request body for updating a repository.
@@ -24,8 +24,8 @@ type UpdateRepositoryRequest struct {
 	Description                       string `json:"description,omitempty"                           validate:"max=500"`
 	Documentation                     string `json:"documentation,omitempty"                         validate:"validdocumentation"`
 	IsImmutable                       *bool  `json:"is_immutable,omitempty"`
-	GarbageDefaultRetentionDays       int    `json:"garbage_default_retention_days,omitempty"        validate:"omitempty,min=1,max=3650"`
-	GarbageDefaultBranchRetentionDays int    `json:"garbage_default_branch_retention_days,omitempty" validate:"omitempty,min=1,max=3650"`
+	GarbageDefaultRetentionDays       int    `json:"garbage_default_retention_days,omitempty"        validate:"min=1,max=3650"`
+	GarbageDefaultBranchRetentionDays int    `json:"garbage_default_branch_retention_days,omitempty" validate:"min=1,max=3650"`
 }
 
 // TransferRepositoryOwnershipRequest represents the JSON request body for transferring repository ownership.
