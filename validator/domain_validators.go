@@ -253,9 +253,14 @@ func (v *Validator) validateCommonWorkflowableFields(parentStruct reflect.Value)
 }
 
 // validatePipelineWorkflowable validates pipeline-type workflowables.
-func (v *Validator) validatePipelineWorkflowable(_ reflect.Value) bool {
-	// Pipeline workflowables are valid by default
-	// Specific stage validation is handled by the pipeline stage validator
+func (v *Validator) validatePipelineWorkflowable(parentStruct reflect.Value) bool {
+	stagesField := parentStruct.FieldByName("Stages")
+
+	// Pipeline workflowables must have at least one stage
+	if !stagesField.IsValid() || stagesField.Len() == 0 {
+		return false
+	}
+
 	return true
 }
 
