@@ -23,5 +23,5 @@ type IrminAPIResponse struct {
 	Metadata   map[string]string           `json:"metadata,omitempty"`
 	Message    string                      `json:"message,omitempty"    validate:"max=1000"`
 	Errors     []string                    `json:"errors,omitempty"     validate:"dive,min=1"`
-	Data       any                         `json:"data,omitempty"       validate:"dive"`
+	Data       any                         `json:"data,omitempty"`
 }
