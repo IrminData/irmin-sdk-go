@@ -533,8 +533,12 @@ func TestDocumentationValidation(t *testing.T) {
 		{"dangerous_javascript", "javascript:alert('xss')", true},
 		{"dangerous_iframe", "<iframe src='malicious'></iframe>", true},
 		{"dangerous_onclick", "<div onclick='alert()'>text</div>", true},
-		{"severely_unbalanced_brackets", strings.Repeat("[", 10) + "text", false}, // This should be allowed for flexibility
-		{"moderately_unbalanced_brackets", "[text] [more text", false},            // Should be allowed
+		{
+			"severely_unbalanced_brackets",
+			strings.Repeat("[", 10) + "text",
+			false,
+		}, // This should be allowed for flexibility
+		{"moderately_unbalanced_brackets", "[text] [more text", false}, // Should be allowed
 	}
 
 	for _, tt := range tests {
