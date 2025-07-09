@@ -9,7 +9,7 @@ import (
 
 // CreateQueryRequest represents the JSON request body for creating a query.
 type CreateQueryRequest struct {
-	Name        string `json:"name"        validate:"required,min=1,max=100"`
+	Name        string `json:"name"                  validate:"required,min=1,max=100"`
 	Description string `json:"description,omitempty" validate:"max=500"`
 	SQL         string `json:"sql,omitempty"         validate:"validsql"`
 }
