@@ -1,6 +1,7 @@
 package irminsdkvalidator
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"reflect"
@@ -28,7 +29,7 @@ type ValidationResult struct {
 	RawErrors error
 }
 
-// Error implements the error interface for backward compatibility
+// Error implements the error interface for backward compatibility.
 func (vr *ValidationResult) Error() string {
 	if vr.IsValid {
 		return ""
@@ -42,22 +43,22 @@ func (vr *ValidationResult) Error() string {
 	return "validation failed"
 }
 
-// HasErrors returns true if there are any validation errors
+// HasErrors returns true if there are any validation errors.
 func (vr *ValidationResult) HasErrors() bool {
 	return !vr.IsValid
 }
 
-// GetUserMessage returns a single user-friendly error message
+// GetUserMessage returns a single user-friendly error message.
 func (vr *ValidationResult) GetUserMessage() string {
 	return vr.UserMessage
 }
 
-// GetFieldErrors returns a map of field-specific error messages
+// GetFieldErrors returns a map of field-specific error messages.
 func (vr *ValidationResult) GetFieldErrors() map[string]string {
 	return vr.FieldErrors
 }
 
-// GetRawErrors returns the original validation errors
+// GetRawErrors returns the original validation errors.
 func (vr *ValidationResult) GetRawErrors() error {
 	return vr.RawErrors
 }
@@ -700,7 +701,7 @@ func (v *Validator) ValidateVarEnhanced(field any, tag string) *ValidationResult
 	return v.buildValidationResult(err)
 }
 
-// buildValidationResult converts validation errors into a structured ValidationResult
+// buildValidationResult converts validation errors into a structured ValidationResult.
 func (v *Validator) buildValidationResult(err error) *ValidationResult {
 	result := &ValidationResult{
 		IsValid:     false,
@@ -709,17 +710,18 @@ func (v *Validator) buildValidationResult(err error) *ValidationResult {
 	}
 
 	// Check if it's a ValidationErrors type from go-playground/validator
-	if validationErrors, ok := err.(validator.ValidationErrors); ok {
+	var validationErrors validator.ValidationErrors
+	if errors.As(err, &validationErrors) {
 		var userMessages []string
-		
+
 		for _, fieldError := range validationErrors {
 			fieldName := v.getFieldName(fieldError)
 			fieldMessage := v.getFieldErrorMessage(fieldError)
-			
+
 			result.FieldErrors[fieldName] = fieldMessage
 			userMessages = append(userMessages, fieldMessage)
 		}
-		
+
 		// Create a generic user message
 		if len(userMessages) == 1 {
 			result.UserMessage = userMessages[0]
@@ -736,16 +738,16 @@ func (v *Validator) buildValidationResult(err error) *ValidationResult {
 	return result
 }
 
-// getFieldName extracts a user-friendly field name from a validation error
+// getFieldName extracts a user-friendly field name from a validation error.
 func (v *Validator) getFieldName(fieldError validator.FieldError) string {
 	// Use JSON tag name if available, otherwise use the struct field name
 	field := fieldError.Field()
-	
+
 	// For single variable validation, field might be empty, use "field" as default
 	if field == "" {
 		return "field"
 	}
-	
+
 	// For nested fields, we want to show the full path but make it user-friendly
 	if strings.Contains(field, ".") {
 		// Convert something like "User.Address.Street" to "user.address.street"
@@ -755,16 +757,16 @@ func (v *Validator) getFieldName(fieldError validator.FieldError) string {
 		}
 		return strings.Join(parts, ".")
 	}
-	
+
 	return strings.ToLower(field)
 }
 
-// getFieldErrorMessage creates a user-friendly error message for a specific field error
+// getFieldErrorMessage creates a user-friendly error message for a specific field error.
 func (v *Validator) getFieldErrorMessage(fieldError validator.FieldError) string {
 	field := v.getFieldName(fieldError)
 	tag := fieldError.Tag()
 	param := fieldError.Param()
-	
+
 	switch tag {
 	case "required":
 		return fmt.Sprintf("Field '%s' is required", field)

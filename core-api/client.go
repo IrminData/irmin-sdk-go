@@ -334,7 +334,7 @@ func (c *Client) ValidateVar(field any, tag string) error {
 // This provides multiple error formats for different use cases:
 // - A single user-friendly message
 // - A map of field-specific error messages
-// - The original validation errors
+// - The original validation errors.
 func (c *Client) ValidateRequestEnhanced(req any) *irminvalidator.ValidationResult {
 	if c.Validator == nil {
 		return &irminvalidator.ValidationResult{
@@ -363,7 +363,10 @@ func (c *Client) ValidateVarEnhanced(field any, tag string) *irminvalidator.Vali
 
 // FetchAPIEnhanced sends a request with enhanced validation and attempts to parse the response into IrminAPIResponse[T].
 // This method provides detailed validation results before sending the request.
-func (c *Client) FetchAPIEnhanced(opts RequestOptions, out any) (*irminmodels.IrminAPIResponse, *irminvalidator.ValidationResult, error) {
+func (c *Client) FetchAPIEnhanced(
+	opts RequestOptions,
+	out any,
+) (*irminmodels.IrminAPIResponse, *irminvalidator.ValidationResult, error) {
 	// Enhanced validation of the request body if it exists and has validation tags
 	var validationResult *irminvalidator.ValidationResult
 	if opts.Body != nil && c.Validator != nil {
