@@ -14,8 +14,8 @@ import (
 	"github.com/teambition/rrule-go"
 )
 
-// ValidationResult contains validation results in multiple formats for different use cases.
-type ValidationResult struct {
+// ValidationResultError contains validation results in multiple formats for different use cases.
+type ValidationResultError struct {
 	// IsValid indicates whether the validation passed
 	IsValid bool
 
@@ -30,7 +30,7 @@ type ValidationResult struct {
 }
 
 // Error implements the error interface for backward compatibility.
-func (vr *ValidationResult) Error() string {
+func (vr *ValidationResultError) Error() string {
 	if vr.IsValid {
 		return ""
 	}
@@ -44,22 +44,22 @@ func (vr *ValidationResult) Error() string {
 }
 
 // HasErrors returns true if there are any validation errors.
-func (vr *ValidationResult) HasErrors() bool {
+func (vr *ValidationResultError) HasErrors() bool {
 	return !vr.IsValid
 }
 
 // GetUserMessage returns a single user-friendly error message.
-func (vr *ValidationResult) GetUserMessage() string {
+func (vr *ValidationResultError) GetUserMessage() string {
 	return vr.UserMessage
 }
 
 // GetFieldErrors returns a map of field-specific error messages.
-func (vr *ValidationResult) GetFieldErrors() map[string]string {
+func (vr *ValidationResultError) GetFieldErrors() map[string]string {
 	return vr.FieldErrors
 }
 
 // GetRawErrors returns the original validation errors.
-func (vr *ValidationResult) GetRawErrors() error {
+func (vr *ValidationResultError) GetRawErrors() error {
 	return vr.RawErrors
 }
 
@@ -670,12 +670,12 @@ func (v *Validator) ValidateVar(field any, tag string) error {
 	return v.validate.Var(field, tag)
 }
 
-// ValidateEnhanced validates a struct and returns a detailed ValidationResult.
+// ValidateEnhanced validates a struct and returns a detailed ValidationResultError.
 // This provides multiple error formats for different use cases.
-func (v *Validator) ValidateEnhanced(s any) *ValidationResult {
+func (v *Validator) ValidateEnhanced(s any) *ValidationResultError {
 	err := v.validate.Struct(s)
 	if err == nil {
-		return &ValidationResult{
+		return &ValidationResultError{
 			IsValid:     true,
 			UserMessage: "",
 			FieldErrors: make(map[string]string),
@@ -686,11 +686,11 @@ func (v *Validator) ValidateEnhanced(s any) *ValidationResult {
 	return v.buildValidationResult(err)
 }
 
-// ValidateVarEnhanced validates a single variable and returns a detailed ValidationResult.
-func (v *Validator) ValidateVarEnhanced(field any, tag string) *ValidationResult {
+// ValidateVarEnhanced validates a single variable and returns a detailed ValidationResultError.
+func (v *Validator) ValidateVarEnhanced(field any, tag string) *ValidationResultError {
 	err := v.validate.Var(field, tag)
 	if err == nil {
-		return &ValidationResult{
+		return &ValidationResultError{
 			IsValid:     true,
 			UserMessage: "",
 			FieldErrors: make(map[string]string),
@@ -701,9 +701,9 @@ func (v *Validator) ValidateVarEnhanced(field any, tag string) *ValidationResult
 	return v.buildValidationResult(err)
 }
 
-// buildValidationResult converts validation errors into a structured ValidationResult.
-func (v *Validator) buildValidationResult(err error) *ValidationResult {
-	result := &ValidationResult{
+// buildValidationResult converts validation errors into a structured ValidationResultError.
+func (v *Validator) buildValidationResult(err error) *ValidationResultError {
+	result := &ValidationResultError{
 		IsValid:     false,
 		FieldErrors: make(map[string]string),
 		RawErrors:   err,
@@ -723,11 +723,12 @@ func (v *Validator) buildValidationResult(err error) *ValidationResult {
 		}
 
 		// Create a generic user message
-		if len(userMessages) == 1 {
+		switch {
+		case len(userMessages) == 1:
 			result.UserMessage = userMessages[0]
-		} else if len(userMessages) > 1 {
+		case len(userMessages) > 1:
 			result.UserMessage = "Multiple validation errors occurred. Please check the field errors for details."
-		} else {
+		default:
 			result.UserMessage = "Validation failed"
 		}
 	} else {
