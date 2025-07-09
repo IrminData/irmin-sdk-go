@@ -106,7 +106,7 @@ type Workflow struct {
 	ID            string           `json:"id"                     validate:"required,validsqid=workflows"`
 	Name          string           `json:"name"                   validate:"required,min=1,max=100"`
 	Description   string           `json:"description"            validate:"max=500"`
-	Documentation string           `json:"documentation"`
+	Documentation string           `json:"documentation"          validate:"validdocumentation"`
 	Status        WorkflowStatus   `json:"status"                 validate:"required,oneof=paused pending initiating running complete error cancelled"`
 	Type          WorkflowableType `json:"type"                   validate:"required,oneof=import action export pipeline"`
 	Owner         User             `json:"owner"                  validate:"required"`

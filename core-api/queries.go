@@ -9,16 +9,16 @@ import (
 
 // CreateQueryRequest represents the JSON request body for creating a query.
 type CreateQueryRequest struct {
-	Name        string `json:"name,omitempty"        validate:"required"`
-	Description string `json:"description,omitempty" validate:"required"`
-	SQL         string `json:"sql,omitempty"         validate:"required"`
+	Name        string `json:"name"        validate:"required,min=1,max=100"`
+	Description string `json:"description,omitempty" validate:"max=500"`
+	SQL         string `json:"sql,omitempty"         validate:"validsql"`
 }
 
 // UpdateQueryRequest represents the JSON request body for updating a query.
 type UpdateQueryRequest struct {
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	SQL         string `json:"sql,omitempty"`
+	Name        string `json:"name,omitempty"        validate:"min=1,max=100"`
+	Description string `json:"description,omitempty" validate:"max=500"`
+	SQL         string `json:"sql,omitempty"         validate:"validsql"`
 }
 
 // TransferQueryOwnershipRequest represents the JSON request body for transferring query ownership.
@@ -28,7 +28,7 @@ type TransferQueryOwnershipRequest struct {
 
 // ExecuteSQLRequest represents the JSON request body for executing SQL.
 type ExecuteSQLRequest struct {
-	SQL string `json:"sql,omitempty" validate:"required"`
+	SQL string `json:"sql,omitempty" validate:"validsql"`
 }
 
 func (c *Client) ListStoredQueries(workspace string) ([]irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error) {

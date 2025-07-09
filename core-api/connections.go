@@ -9,20 +9,20 @@ import (
 
 // CreateConnectionRequest represents the JSON request body for creating connections.
 type CreateConnectionRequest struct {
-	Name          string         `json:"name"                    validate:"required"`
+	Name          string         `json:"name"                    validate:"required,min=1,max=100"`
 	Connector     string         `json:"connector"               validate:"required,validsqid=connectors"`
-	Description   string         `json:"description,omitempty"`
-	Documentation string         `json:"documentation,omitempty"`
+	Description   string         `json:"description,omitempty"   validate:"max=500"`
+	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation"`
 	Details       map[string]any `json:"details"`
 	Settings      map[string]any `json:"settings"`
 }
 
 // UpdateConnectionRequest represents the JSON request body for updating connections.
 type UpdateConnectionRequest struct {
-	Name          string         `json:"name,omitempty"`
+	Name          string         `json:"name,omitempty"          validate:"min=1,max=100"`
 	Connector     string         `json:"connector"               validate:"required,validsqid=connectors"`
-	Description   string         `json:"description,omitempty"`
-	Documentation string         `json:"documentation,omitempty"`
+	Description   string         `json:"description,omitempty"   validate:"max=500"`
+	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation"`
 	Details       map[string]any `json:"details,omitempty"`
 	Settings      map[string]any `json:"settings,omitempty"`
 }

@@ -1,6 +1,7 @@
 package irminsdkvalidator
 
 import (
+	"net/url"
 	"reflect"
 	"strings"
 	"time"
@@ -23,6 +24,10 @@ const (
 	TokenLength   = 64
 	SlugMinLength = 1
 	SlugMaxLength = 100
+	// New constants for validation
+	DocumentationMaxLength = 10000
+	SQLMaxLength          = 50000
+	URLMaxLength          = 2000
 )
 
 // NewValidator creates a new validator instance.
@@ -56,6 +61,22 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 		panic(err)
 	}
 	err = v.RegisterValidation("validschedule", validateScheduleTrigger)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validsql", validateSQL)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validdocumentation", validateDocumentation)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validurl", validateURL)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validphone", validatePhone)
 	if err != nil {
 		panic(err)
 	}
@@ -105,6 +126,22 @@ func NewClientValidator() *Validator {
 		panic(err)
 	}
 	err = v.RegisterValidation("validschedule", validateScheduleTrigger)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validsql", validateSQL)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validdocumentation", validateDocumentation)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validurl", validateURL)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("validphone", validatePhone)
 	if err != nil {
 		panic(err)
 	}
@@ -409,6 +446,177 @@ func isValidCron(cronValue string) bool {
 	// Try to parse the cron expression
 	_, err := cron.ParseStandard(cronStr)
 	return err == nil
+}
+
+// validateSQL validates SQL queries to ensure they are safe and properly formatted.
+func validateSQL(fl validator.FieldLevel) bool {
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var sqlValue string
+	if field.Kind() == reflect.Ptr {
+		sqlValue = field.Elem().String()
+	} else {
+		sqlValue = field.String()
+	}
+
+	// Empty string is considered valid (optional field)
+	if sqlValue == "" {
+		return true
+	}
+
+	// Check maximum length
+	if len(sqlValue) > SQLMaxLength {
+		return false
+	}
+
+	// Basic SQL injection prevention - check for dangerous patterns
+	sqlLower := strings.ToLower(strings.TrimSpace(sqlValue))
+	
+	// Allow common SQL operations but block potentially dangerous ones
+	dangerousPatterns := []string{
+		"drop ", "delete ", "truncate ", "alter ", "create ",
+		"insert ", "update ", "exec ", "execute ", "sp_",
+		"xp_", "union ", "/*!",
+	}
+
+	for _, pattern := range dangerousPatterns {
+		if strings.Contains(sqlLower, pattern) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// validateDocumentation validates documentation fields with appropriate length limits.
+func validateDocumentation(fl validator.FieldLevel) bool {
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var docValue string
+	if field.Kind() == reflect.Ptr {
+		docValue = field.Elem().String()
+	} else {
+		docValue = field.String()
+	}
+
+	// Empty string is considered valid (optional field)
+	if docValue == "" {
+		return true
+	}
+
+	// Check maximum length
+	if len(docValue) > DocumentationMaxLength {
+		return false
+	}
+
+	return true
+}
+
+// validateURL validates URLs with additional checks beyond the standard url validator.
+func validateURL(fl validator.FieldLevel) bool {
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var urlValue string
+	if field.Kind() == reflect.Ptr {
+		urlValue = field.Elem().String()
+	} else {
+		urlValue = field.String()
+	}
+
+	// Empty string is considered valid (optional field)
+	if urlValue == "" {
+		return true
+	}
+
+	// Check maximum length
+	if len(urlValue) > URLMaxLength {
+		return false
+	}
+
+	// Parse the URL to validate format
+	parsedURL, err := url.Parse(urlValue)
+	if err != nil {
+		return false
+	}
+
+	// Check that scheme and host are present
+	if parsedURL.Scheme == "" || parsedURL.Host == "" {
+		return false
+	}
+
+	// Additional checks for allowed schemes
+	allowedSchemes := []string{"http", "https"}
+	hasValidScheme := false
+	for _, scheme := range allowedSchemes {
+		if strings.ToLower(parsedURL.Scheme) == scheme {
+			hasValidScheme = true
+			break
+		}
+	}
+
+	return hasValidScheme
+}
+
+// validatePhone validates phone numbers with E.164 format and additional checks.
+func validatePhone(fl validator.FieldLevel) bool {
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var phoneValue string
+	if field.Kind() == reflect.Ptr {
+		phoneValue = field.Elem().String()
+	} else {
+		phoneValue = field.String()
+	}
+
+	// Empty string is considered valid (optional field)
+	if phoneValue == "" {
+		return true
+	}
+
+	// Basic E.164 validation
+	// Must start with + and be followed by 1-15 digits
+	if !strings.HasPrefix(phoneValue, "+") {
+		return false
+	}
+
+	// Remove the + and check if the rest are digits
+	digits := phoneValue[1:]
+	if len(digits) < 3 || len(digits) > 15 {
+		return false
+	}
+
+	// Check that all remaining characters are digits
+	for _, char := range digits {
+		if char < '0' || char > '9' {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Validate validates a struct and returns validation errors.
