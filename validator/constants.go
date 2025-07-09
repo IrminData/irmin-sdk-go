@@ -18,3 +18,10 @@ const (
 	SQLMaxLength           = 50000
 	URLMaxLength           = 2000
 )
+
+// Field name conversion constants.
+const (
+	// FieldNameConversionBuffer is the estimated additional characters needed
+	// when converting PascalCase field names to snake_case (for underscores).
+	FieldNameConversionBuffer = 5
+)
