@@ -513,10 +513,10 @@ func TestDocumentationValidation(t *testing.T) {
 		doc     string
 		wantErr bool
 	}{
-		{"valid documentation", "This is a valid documentation string", false},
-		{"empty string", "", false}, // Optional field
-		{"long valid doc", strings.Repeat("This is documentation. ", 100), false},
-		{"too long doc", strings.Repeat("x", 20000), true}, // Exceeds DocumentationMaxLength
+		{"Valid_Documentation_String", "This is a valid documentation string", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Valid_Long_Documentation", strings.Repeat("This is documentation. ", 100), false},
+		{"Invalid_Too_Long_Documentation", strings.Repeat("x", 20000), true}, // Exceeds DocumentationMaxLength
 	}
 
 	for _, tt := range tests {
@@ -539,14 +539,14 @@ func TestURLValidation(t *testing.T) {
 		url     string
 		wantErr bool
 	}{
-		{"valid https url", "https://example.com", false},
-		{"valid http url", "http://example.com", false},
-		{"valid with path", "https://example.com/path/to/resource", false},
-		{"empty string", "", false}, // Optional field
-		{"invalid scheme", "ftp://example.com", true},
-		{"no scheme", "example.com", true},
-		{"malformed url", "not-a-url", true},
-		{"too long url", "https://" + strings.Repeat("x", 2000), true},
+		{"Valid_HTTPS_URL", "https://example.com", false},
+		{"Valid_HTTP_URL", "http://example.com", false},
+		{"Valid_URL_With_Path", "https://example.com/path/to/resource", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Invalid_FTP_Scheme", "ftp://example.com", true},
+		{"Invalid_No_Scheme", "example.com", true},
+		{"Invalid_Malformed_URL", "not-a-url", true},
+		{"Invalid_Too_Long_URL", "https://" + strings.Repeat("x", 2000), true},
 	}
 
 	for _, tt := range tests {
@@ -569,13 +569,13 @@ func TestPhoneValidation(t *testing.T) {
 		phone   string
 		wantErr bool
 	}{
-		{"valid US phone", "+1234567890", false},
-		{"valid international", "+447123456789", false},
-		{"empty string", "", false}, // Optional field
-		{"missing plus", "1234567890", true},
-		{"too short", "+1", true}, // Changed from "+123" to "+1" which is truly too short
-		{"too long", "+123456789012345678", true},
-		{"non-numeric", "+12345abcde", true},
+		{"Valid_US_Phone", "+1234567890", false},
+		{"Valid_International_Phone", "+447123456789", false},
+		{"Empty_String", "", false}, // Optional field
+		{"Invalid_Missing_Plus", "1234567890", true},
+		{"Invalid_Too_Short", "+1", true}, // Changed from "+123" to "+1" which is truly too short
+		{"Invalid_Too_Long", "+123456789012345678", true},
+		{"Invalid_Non_Numeric", "+12345abcde", true},
 	}
 
 	for _, tt := range tests {
