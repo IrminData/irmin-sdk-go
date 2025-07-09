@@ -18,17 +18,7 @@ type Validator struct {
 	sqidManager *irminsqids.SQIDManager
 }
 
-// Constants.
-const (
-	TokenPrefix   = "cred_"
-	TokenLength   = 64
-	SlugMinLength = 1
-	SlugMaxLength = 100
-	// New constants for validation.
-	DocumentationMaxLength = 10000
-	SQLMaxLength           = 50000
-	URLMaxLength           = 2000
-)
+// Constants are now defined in constants.go
 
 // NewValidator creates a new validator instance.
 func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
