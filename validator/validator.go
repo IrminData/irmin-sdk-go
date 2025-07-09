@@ -139,6 +139,11 @@ func registerValidations(v *validator.Validate, validator *Validator) {
 	if err := v.RegisterValidation("validworkflowable", validator.validateWorkflowable); err != nil {
 		panic(err)
 	}
+
+	// Register image URL validation
+	if err := v.RegisterValidation("validimageurl", validateImageURL); err != nil {
+		panic(err)
+	}
 }
 
 // validateTokenPrefix is a custom validation function for API token prefixes
@@ -652,6 +657,81 @@ func validatePhone(fl validator.FieldLevel) bool {
 	return true
 }
 
+// validateImageURL validates image URLs with additional checks for image formats.
+func validateImageURL(fl validator.FieldLevel) bool {
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	// Get the actual string value
+	var imageURLValue string
+	if field.Kind() == reflect.Ptr {
+		imageURLValue = field.Elem().String()
+	} else {
+		imageURLValue = field.String()
+	}
+
+	// Empty string is considered valid (optional field)
+	if imageURLValue == "" {
+		return true
+	}
+
+	// First, validate as a regular URL
+	if !validateURLInternal(imageURLValue) {
+		return false
+	}
+
+	// Additional checks for image URLs
+	imageURLLower := strings.ToLower(imageURLValue)
+	
+	// Check for non-image extensions that would indicate this is not an image URL
+	nonImageExtensions := []string{
+		".txt", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".zip", ".tar", ".gz",
+		".mp3", ".mp4", ".avi", ".mov", ".html", ".htm", ".css", ".js", ".json", ".xml",
+	}
+	
+	for _, ext := range nonImageExtensions {
+		if strings.Contains(imageURLLower, ext) {
+			return false
+		}
+	}
+	
+	// Allow URLs without specific extensions (could be dynamic/API generated images)
+	return true
+}
+
+// validateURLInternal is a helper function that validates URL format without the field level interface.
+func validateURLInternal(urlValue string) bool {
+	// Check maximum length
+	if len(urlValue) > URLMaxLength {
+		return false
+	}
+
+	// Parse the URL to validate format
+	parsedURL, err := url.Parse(urlValue)
+	if err != nil {
+		return false
+	}
+
+	// Check that scheme and host are present
+	if parsedURL.Scheme == "" || parsedURL.Host == "" {
+		return false
+	}
+
+	// Additional checks for allowed schemes
+	allowedSchemes := []string{"http", "https"}
+	for _, scheme := range allowedSchemes {
+		if strings.ToLower(parsedURL.Scheme) == scheme {
+			return true
+		}
+	}
+
+	return false
+}
+
 // validatePipelineStage validates that pipeline stages have the correct required fields based on their type.
 func (v *Validator) validatePipelineStage(fl validator.FieldLevel) bool {
 	// This validator should be applied to the Type field of a PipelineStage
@@ -1037,6 +1117,8 @@ func (v *Validator) getCustomValidationMessage(field, tag string) (string, bool)
 		return fmt.Sprintf("Field '%s' must be a valid pipeline stage type with required fields", field), true
 	case "validworkflowable":
 		return fmt.Sprintf("Field '%s' must be a valid workflowable type with required fields", field), true
+	case "validimageurl":
+		return fmt.Sprintf("Field '%s' must be a valid image URL", field), true
 	default:
 		return "", false
 	}
