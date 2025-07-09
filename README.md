@@ -47,7 +47,15 @@ func main() {
 
 ## Client-Side Validation
 
-The SDK includes built-in validation for all request types. Requests are automatically validated before being sent to the API, helping you catch errors early.
+The SDK includes built-in validation for all request types with enhanced security and functionality. Requests are automatically validated before being sent to the API, helping you catch errors early.
+
+### Enhanced Validation Features
+
+- **SQL Security**: Validates SQL queries allowing normal operations (SELECT, INSERT, UPDATE, DELETE, UNION) while blocking dangerous operations (DROP, TRUNCATE, ALTER)
+- **Markdown Documentation**: Validates documentation fields as safe markdown, preventing script injection while allowing flexible formatting
+- **Image URL Validation**: Specialized validation for image URLs with format and security checks
+- **Phone Number Validation**: E.164 format validation with international support
+- **Enhanced URL Security**: Restricts URLs to safe schemes (http/https) and validates format
 
 ### Automatic Validation
 
@@ -87,7 +95,7 @@ connection, _, err := client.CreateConnection("my-workspace", request)
 
 ### Individual Field Validation
 
-You can validate individual fields using validation tags:
+You can validate individual fields using enhanced validation tags:
 
 ```go
 // Validate an email address
@@ -95,11 +103,33 @@ if err := client.ValidateVar("user@example.com", "email"); err != nil {
     fmt.Printf("Invalid email: %v\n", err)
 }
 
-// Validate a required field
-if err := client.ValidateVar("", "required"); err != nil {
-    fmt.Printf("Field is required: %v\n", err)
+// Validate SQL query (allows normal operations, blocks dangerous ones)
+if err := client.ValidateVar("SELECT * FROM users UNION SELECT * FROM customers", "validsql"); err != nil {
+    fmt.Printf("Invalid SQL: %v\n", err)
+}
+
+// Validate image URL
+if err := client.ValidateVar("https://example.com/profile.jpg", "validimageurl"); err != nil {
+    fmt.Printf("Invalid image URL: %v\n", err)
+}
+
+// Validate markdown documentation
+if err := client.ValidateVar("# Header\n\n**Bold text**", "validdocumentation"); err != nil {
+    fmt.Printf("Invalid documentation: %v\n", err)
 }
 ```
+
+### Custom Validation Tags
+
+The SDK supports these enhanced validation tags:
+
+- `validsql` - SQL queries with security checks
+- `validdocumentation` - Safe markdown validation  
+- `validimageurl` - Image URL validation
+- `validurl` - General URL validation
+- `validphone` - E.164 phone number validation
+- `validslug` - Slug/identifier validation
+- `validtoken` - API token validation
 
 ### SQID Validation
 

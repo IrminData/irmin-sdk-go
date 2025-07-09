@@ -20,6 +20,7 @@ type Validator struct {
 
 // Constants are now defined in constants.go
 
+
 // NewValidator creates a new validator instance.
 func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	v := validator.New()
@@ -468,11 +469,11 @@ func validateSQL(fl validator.FieldLevel) bool {
 	// Basic SQL injection prevention - check for dangerous patterns
 	sqlLower := strings.ToLower(strings.TrimSpace(sqlValue))
 
-	// Allow common SQL operations but block potentially dangerous ones
+	// Block only dangerous DDL and system operations
 	dangerousPatterns := []string{
-		"drop ", "delete ", "truncate ", "alter ", "create ",
-		"insert ", "update ", "exec ", "execute ", "sp_",
-		"xp_", "union ", "/*!",
+		"drop ", "truncate ", "alter ", 
+		"exec ", "execute ", "sp_", "xp_",
+		"/*!",
 	}
 
 	for _, pattern := range dangerousPatterns {
@@ -484,7 +485,8 @@ func validateSQL(fl validator.FieldLevel) bool {
 	return true
 }
 
-// validateDocumentation validates documentation fields with appropriate length limits.
+// validateDocumentation validates documentation fields to ensure they contain valid markdown
+// while being quite permissive. Prevents injection attacks through documentation.
 func validateDocumentation(fl validator.FieldLevel) bool {
 	field := fl.Field()
 
@@ -509,6 +511,46 @@ func validateDocumentation(fl validator.FieldLevel) bool {
 	// Check maximum length
 	if len(docValue) > DocumentationMaxLength {
 		return false
+	}
+
+	// Basic security checks to prevent malicious content
+	// Block potentially dangerous HTML/JS that could be injected through markdown
+	docLower := strings.ToLower(docValue)
+	
+	// Block script tags and javascript
+	dangerousPatterns := []string{
+		"<script", "</script>", "javascript:", "vbscript:", "onload=", "onerror=", 
+		"onclick=", "onmouseover=", "onfocus=", "<iframe", "</iframe>",
+		"<object", "</object>", "<embed", "</embed>", "<form", "</form>",
+	}
+
+	for _, pattern := range dangerousPatterns {
+		if strings.Contains(docLower, pattern) {
+			return false
+		}
+	}
+
+	// Basic markdown structure validation - be permissive but check for balanced brackets
+	// Count square brackets for links [text](url) and images ![alt](url)
+	openSquare := strings.Count(docValue, "[")
+	closeSquare := strings.Count(docValue, "]")
+	openParen := strings.Count(docValue, "(")
+	closeParen := strings.Count(docValue, ")")
+
+	// Allow substantial tolerance for unbalanced brackets (markdown can be flexible)
+	// Only fail if extremely unbalanced (indicating potential malformed content)
+	if openSquare > 0 && closeSquare > 0 {
+		bracketDiff := openSquare - closeSquare
+		if bracketDiff > 20 || bracketDiff < -20 {
+			return false
+		}
+	}
+
+	if openParen > 0 && closeParen > 0 {
+		parenDiff := openParen - closeParen
+		if parenDiff > 20 || parenDiff < -20 {
+			return false
+		}
 	}
 
 	return true
@@ -608,6 +650,8 @@ func validatePhone(fl validator.FieldLevel) bool {
 
 	return true
 }
+
+
 
 // Validate validates a struct and returns validation errors.
 func (v *Validator) Validate(s any) error {

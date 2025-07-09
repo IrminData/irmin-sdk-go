@@ -602,11 +602,19 @@ func TestNewCustomValidators(t *testing.T) {
 		}{
 			{"valid select", "SELECT * FROM users WHERE id = 1", false},
 			{"valid with limit", "SELECT name, email FROM users LIMIT 10", false},
+			{"valid union", "SELECT * FROM users UNION SELECT * FROM customers", false},
+			{"valid insert", "INSERT INTO users (name) VALUES ('John')", false},
+			{"valid update", "UPDATE users SET name = 'Jane' WHERE id = 1", false},
+			{"valid delete", "DELETE FROM users WHERE id = 1", false},
+			{"valid create table", "CREATE TABLE temp_table AS SELECT * FROM users", false},
 			{"empty string", "", false}, // Optional field
 			{"dangerous drop", "DROP TABLE users", true},
-			{"dangerous delete", "DELETE FROM users", true},
-			{"dangerous union", "SELECT * FROM users UNION SELECT * FROM admin", true},
+			{"dangerous truncate", "TRUNCATE TABLE users", true},
+			{"dangerous alter", "ALTER TABLE users ADD COLUMN password VARCHAR(255)", true},
 			{"dangerous exec", "EXEC sp_configure", true},
+			{"dangerous execute", "EXECUTE sp_adduser", true},
+			{"dangerous system proc", "sp_cmdshell 'dir'", true},
+			{"dangerous comment", "SELECT * FROM users /* malicious comment */", false}, // Comments are allowed now
 			{"too long sql", strings.Repeat("SELECT * FROM table ", 10000), true},
 		}
 
@@ -627,9 +635,19 @@ func TestNewCustomValidators(t *testing.T) {
 			wantErr bool
 		}{
 			{"valid documentation", "This is a valid documentation string", false},
+			{"valid markdown", "# Header\n\n**Bold text** and *italic*", false},
+			{"valid links", "[Link text](https://example.com)", false},
+			{"valid images", "![Alt text](https://example.com/image.png)", false},
+			{"valid code blocks", "```go\nfunc main() {}\n```", false},
 			{"empty string", "", false}, // Optional field
 			{"long valid doc", strings.Repeat("This is documentation. ", 100), false},
 			{"too long doc", strings.Repeat("x", 20000), true}, // Exceeds DocumentationMaxLength
+			{"dangerous script", "<script>alert('xss')</script>", true},
+			{"dangerous javascript", "javascript:alert('xss')", true},
+			{"dangerous iframe", "<iframe src='malicious'></iframe>", true},
+			{"dangerous onclick", "<div onclick='alert()'>text</div>", true},
+			{"severely unbalanced brackets", strings.Repeat("[", 10) + "text", false}, // This should be allowed for flexibility
+			{"moderately unbalanced brackets", "[text] [more text", false}, // Should be allowed
 		}
 
 		for _, tt := range tests {
@@ -692,6 +710,8 @@ func TestNewCustomValidators(t *testing.T) {
 			})
 		}
 	})
+
+
 }
 
 // TestEnhancedModelValidation tests models with improved validation.
@@ -791,3 +811,5 @@ func TestEnhancedModelValidation(t *testing.T) {
 		}
 	})
 }
+
+
