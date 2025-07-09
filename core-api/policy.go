@@ -27,7 +27,7 @@ type CreatePolicyRequest struct {
 	Principal  irminmodels.PolicyPrincipal `json:"principal"             validate:"required,oneof=workspace_user role everyone"`
 	ResourceID *string                     `json:"resource_id,omitempty"`
 	RoleID     *string                     `json:"role_id,omitempty"     validate:"required_if=Principal role,validsqid=roles"`
-	UserID     *string                     `json:"user_id,omitempty"     validate:"required_if=Principal user,validsqid=users"`
+	UserID     *string                     `json:"user_id,omitempty"     validate:"required_if=Principal workspace_user,validsqid=users"`
 }
 
 // UpdatePolicyRequest represents the JSON request body for updating a policy.
@@ -38,7 +38,7 @@ type UpdatePolicyRequest struct {
 	Principal  irminmodels.PolicyPrincipal `json:"principal,omitempty"   validate:"oneof=workspace_user role everyone"`
 	ResourceID *string                     `json:"resource_id,omitempty"`
 	RoleID     *string                     `json:"role_id,omitempty"     validate:"required_if=Principal role,validsqid=roles"`
-	UserID     *string                     `json:"user_id,omitempty"     validate:"required_if=Principal user,validsqid=users"`
+	UserID     *string                     `json:"user_id,omitempty"     validate:"required_if=Principal workspace_user,validsqid=users"`
 }
 
 // ListPolicies returns a list of all policies for a workspace.
