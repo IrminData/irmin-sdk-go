@@ -50,7 +50,7 @@ func NewClient(baseURL, token, locale string) *Client {
 		HTTPClient: &http.Client{
 			Timeout: irminsdkgo.DefaultAPITimeout,
 		},
-		Validator: irminvalidator.NewClientValidator(),
+		Validator: irminvalidator.NewValidator(nil),
 	}
 }
 
