@@ -69,8 +69,6 @@ type Validator struct {
 	sqidManager *irminsqids.SQIDManager
 }
 
-// Constants are now defined in constants.go
-
 // NewValidator creates a new validator instance.
 func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	v := validator.New()
@@ -81,109 +79,34 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
 	}
 
 	// Register custom validation functions
-	err := v.RegisterValidation("validtoken", validateToken)
-	if err != nil {
+	if err := v.RegisterValidation("validtoken", validateToken); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validslug", validateSlug)
-	if err != nil {
+	if err := v.RegisterValidation("validslug", validateSlug); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validsqid", validator.validateSQID)
-	if err != nil {
+	if err := v.RegisterValidation("validsqid", validator.validateSQID); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validrrule", validateRRule)
-	if err != nil {
+	if err := v.RegisterValidation("validrrule", validateRRule); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validcron", validateCron)
-	if err != nil {
+	if err := v.RegisterValidation("validcron", validateCron); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validschedule", validateScheduleTrigger)
-	if err != nil {
+	if err := v.RegisterValidation("validschedule", validateScheduleTrigger); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validsql", validateSQL)
-	if err != nil {
+	if err := v.RegisterValidation("validsql", validateSQL); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validdocumentation", validateDocumentation)
-	if err != nil {
+	if err := v.RegisterValidation("validdocumentation", validateDocumentation); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validurl", validateURL)
-	if err != nil {
+	if err := v.RegisterValidation("validurl", validateURL); err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("validphone", validatePhone)
-	if err != nil {
-		panic(err)
-	}
-
-	// // Use JSON field names in error messages
-	// v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-	// 	name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-	// 	if name == "-" {
-	// 		return ""
-	// 	}
-	// 	return name
-	// })
-
-	return validator
-}
-
-// NewClientValidator creates a new validator instance for client-side use.
-// This validator skips SQID validation since clients don't have access to the SQID alphabet.
-func NewClientValidator() *Validator {
-	v := validator.New()
-
-	validator := &Validator{
-		validate:    v,
-		sqidManager: nil, // No SQID manager for client-side validation
-	}
-
-	// Register custom validation functions (excluding SQID validation)
-	err := v.RegisterValidation("validtoken", validateToken)
-	if err != nil {
-		panic(err)
-	}
-	err = v.RegisterValidation("validslug", validateSlug)
-	if err != nil {
-		panic(err)
-	}
-	// Register SQID validation but it will be skipped when sqidManager is nil
-	err = v.RegisterValidation("validsqid", validator.validateSQID)
-	if err != nil {
-		panic(err)
-	}
-	err = v.RegisterValidation("validrrule", validateRRule)
-	if err != nil {
-		panic(err)
-	}
-	err = v.RegisterValidation("validcron", validateCron)
-	if err != nil {
-		panic(err)
-	}
-	err = v.RegisterValidation("validschedule", validateScheduleTrigger)
-	if err != nil {
-		panic(err)
-	}
-	err = v.RegisterValidation("validsql", validateSQL)
-	if err != nil {
-		panic(err)
-	}
-	err = v.RegisterValidation("validdocumentation", validateDocumentation)
-	if err != nil {
-		panic(err)
-	}
-	err = v.RegisterValidation("validurl", validateURL)
-	if err != nil {
-		panic(err)
-	}
-	err = v.RegisterValidation("validphone", validatePhone)
-	if err != nil {
+	if err := v.RegisterValidation("validphone", validatePhone); err != nil {
 		panic(err)
 	}
 
@@ -762,63 +685,102 @@ func (v *Validator) getFieldName(fieldError validator.FieldError) string {
 	return strings.ToLower(field)
 }
 
+// getStandardValidationMessage returns error messages for standard validation tags.
+func (v *Validator) getStandardValidationMessage(field, tag, param string) (string, bool) {
+	switch tag {
+	case "required":
+		return fmt.Sprintf("Field '%s' is required", field), true
+	case "email":
+		return fmt.Sprintf("Field '%s' must be a valid email address", field), true
+	case "min":
+		return fmt.Sprintf("Field '%s' must be at least %s characters long", field, param), true
+	case "max":
+		return fmt.Sprintf("Field '%s' must be at most %s characters long", field, param), true
+	case "len":
+		return fmt.Sprintf("Field '%s' must be exactly %s characters long", field, param), true
+	case "numeric":
+		return fmt.Sprintf("Field '%s' must be a number", field), true
+	case "alpha":
+		return fmt.Sprintf("Field '%s' must contain only letters", field), true
+	case "alphanum":
+		return fmt.Sprintf("Field '%s' must contain only letters and numbers", field), true
+	case "url":
+		return fmt.Sprintf("Field '%s' must be a valid URL", field), true
+	case "uuid":
+		return fmt.Sprintf("Field '%s' must be a valid UUID", field), true
+	default:
+		return "", false
+	}
+}
+
+// getStringValidationMessage returns error messages for string-related validation tags.
+func (v *Validator) getStringValidationMessage(field, tag, param string) (string, bool) {
+	switch tag {
+	case "oneof":
+		return fmt.Sprintf("Field '%s' must be one of: %s", field, param), true
+	case "startswith":
+		return fmt.Sprintf("Field '%s' must start with '%s'", field, param), true
+	case "endswith":
+		return fmt.Sprintf("Field '%s' must end with '%s'", field, param), true
+	case "contains":
+		return fmt.Sprintf("Field '%s' must contain '%s'", field, param), true
+	default:
+		return "", false
+	}
+}
+
+// getCustomValidationMessage returns error messages for custom validation tags.
+func (v *Validator) getCustomValidationMessage(field, tag string) (string, bool) {
+	switch tag {
+	case "validtoken":
+		return fmt.Sprintf("Field '%s' must be a valid API token", field), true
+	case "validslug":
+		return fmt.Sprintf(
+			"Field '%s' must be a valid slug (letters, numbers, hyphens, and underscores only)",
+			field,
+		), true
+	case "validsqid":
+		return fmt.Sprintf("Field '%s' must be a valid SQID", field), true
+	case "validrrule":
+		return fmt.Sprintf("Field '%s' must be a valid recurrence rule", field), true
+	case "validcron":
+		return fmt.Sprintf("Field '%s' must be a valid cron expression", field), true
+	case "validschedule":
+		return fmt.Sprintf("Field '%s' must be a valid schedule trigger", field), true
+	case "validsql":
+		return fmt.Sprintf("Field '%s' must be a valid SQL query", field), true
+	case "validdocumentation":
+		return fmt.Sprintf("Field '%s' must be valid documentation", field), true
+	case "validurl":
+		return fmt.Sprintf("Field '%s' must be a valid URL", field), true
+	case "validphone":
+		return fmt.Sprintf("Field '%s' must be a valid phone number in E.164 format", field), true
+	default:
+		return "", false
+	}
+}
+
 // getFieldErrorMessage creates a user-friendly error message for a specific field error.
 func (v *Validator) getFieldErrorMessage(fieldError validator.FieldError) string {
 	field := v.getFieldName(fieldError)
 	tag := fieldError.Tag()
 	param := fieldError.Param()
 
-	switch tag {
-	case "required":
-		return fmt.Sprintf("Field '%s' is required", field)
-	case "email":
-		return fmt.Sprintf("Field '%s' must be a valid email address", field)
-	case "min":
-		return fmt.Sprintf("Field '%s' must be at least %s characters long", field, param)
-	case "max":
-		return fmt.Sprintf("Field '%s' must be at most %s characters long", field, param)
-	case "len":
-		return fmt.Sprintf("Field '%s' must be exactly %s characters long", field, param)
-	case "numeric":
-		return fmt.Sprintf("Field '%s' must be a number", field)
-	case "alpha":
-		return fmt.Sprintf("Field '%s' must contain only letters", field)
-	case "alphanum":
-		return fmt.Sprintf("Field '%s' must contain only letters and numbers", field)
-	case "url":
-		return fmt.Sprintf("Field '%s' must be a valid URL", field)
-	case "uuid":
-		return fmt.Sprintf("Field '%s' must be a valid UUID", field)
-	case "oneof":
-		return fmt.Sprintf("Field '%s' must be one of: %s", field, param)
-	case "startswith":
-		return fmt.Sprintf("Field '%s' must start with '%s'", field, param)
-	case "endswith":
-		return fmt.Sprintf("Field '%s' must end with '%s'", field, param)
-	case "contains":
-		return fmt.Sprintf("Field '%s' must contain '%s'", field, param)
-	case "validtoken":
-		return fmt.Sprintf("Field '%s' must be a valid API token", field)
-	case "validslug":
-		return fmt.Sprintf("Field '%s' must be a valid slug (letters, numbers, hyphens, and underscores only)", field)
-	case "validsqid":
-		return fmt.Sprintf("Field '%s' must be a valid SQID", field)
-	case "validrrule":
-		return fmt.Sprintf("Field '%s' must be a valid recurrence rule", field)
-	case "validcron":
-		return fmt.Sprintf("Field '%s' must be a valid cron expression", field)
-	case "validschedule":
-		return fmt.Sprintf("Field '%s' must be a valid schedule trigger", field)
-	case "validsql":
-		return fmt.Sprintf("Field '%s' must be a valid SQL query", field)
-	case "validdocumentation":
-		return fmt.Sprintf("Field '%s' must be valid documentation", field)
-	case "validurl":
-		return fmt.Sprintf("Field '%s' must be a valid URL", field)
-	case "validphone":
-		return fmt.Sprintf("Field '%s' must be a valid phone number in E.164 format", field)
-	default:
-		// Generic message for unknown validation tags
-		return fmt.Sprintf("Field '%s' failed validation: %s", field, tag)
+	// Try standard validation messages
+	if msg, found := v.getStandardValidationMessage(field, tag, param); found {
+		return msg
 	}
+
+	// Try string validation messages
+	if msg, found := v.getStringValidationMessage(field, tag, param); found {
+		return msg
+	}
+
+	// Try custom validation messages
+	if msg, found := v.getCustomValidationMessage(field, tag); found {
+		return msg
+	}
+
+	// Generic message for unknown validation tags
+	return fmt.Sprintf("Field '%s' failed validation: %s", field, tag)
 }
