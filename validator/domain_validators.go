@@ -232,7 +232,6 @@ func (v *Validator) validateCommonWorkflowableFields(parentStruct reflect.Value)
 
 	repositoryField := parentStruct.FieldByName("Repository")
 	repositoryBranchField := parentStruct.FieldByName("RepositoryBranch")
-	fieldMappingsField := parentStruct.FieldByName("FieldMappings")
 
 	// Must have repository
 	if !repositoryField.IsValid() || repositoryField.String() == "" {
@@ -244,10 +243,10 @@ func (v *Validator) validateCommonWorkflowableFields(parentStruct reflect.Value)
 		return false
 	}
 
-	// Must have field mappings array, but it can be empty
-	if !fieldMappingsField.IsValid() {
-		return false
-	}
+	// FieldMappings validation is handled by standard tags:
+	// - "required_if=Type import,required_if=Type export" ensures they're required when needed
+	// - "dive" validates each FieldMapping when present
+	// Custom validator doesn't need to check this field
 
 	return true
 }
