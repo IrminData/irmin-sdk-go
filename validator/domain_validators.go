@@ -296,7 +296,7 @@ func (v *Validator) validateConnectionID(connectionIDField reflect.Value) bool {
 	}
 
 	// Validate that the connection ID is a valid SQID for connection type
-	decoded, err := v.sqidManager.Decode("connection", connectionID)
+	decoded, err := v.sqidManager.Decode("connections", connectionID)
 	if err != nil {
 		return false
 	}
