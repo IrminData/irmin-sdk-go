@@ -271,7 +271,7 @@ func (v *Validator) validateActionWorkflowable(_ reflect.Value) bool {
 	return true
 }
 
-// validateConnectionID validates that a connection ID field is properly set.
+// validateConnectionID validates that a connection ID field is a valid SQID.
 func (v *Validator) validateConnectionID(connectionIDField reflect.Value) bool {
 	if !connectionIDField.IsValid() {
 		return false
@@ -288,6 +288,22 @@ func (v *Validator) validateConnectionID(connectionIDField reflect.Value) bool {
 	}
 
 	if connectionID == "" {
+		return false
+	}
+
+	// Skip SQID validation if no SQID manager is available (client-side scenario)
+	if v.sqidManager == nil {
+		return true
+	}
+
+	// Validate that the connection ID is a valid SQID for connection type
+	decoded, err := v.sqidManager.Decode("connection", connectionID)
+	if err != nil {
+		return false
+	}
+
+	// Check if the decoded value is a valid uint64
+	if decoded == 0 {
 		return false
 	}
 
