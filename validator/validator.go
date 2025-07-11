@@ -220,6 +220,16 @@ func (v *Validator) ValidateDynamic(data any) *ValidationResultError {
 		return v.validateArray(dataValue)
 	}
 
+	// Check if data is just a string, which is valid
+	if dataType.Kind() == reflect.String {
+		return &ValidationResultError{
+			IsValid:     true,
+			UserMessage: "",
+			FieldErrors: make(map[string]string),
+			RawErrors:   nil,
+		}
+	}
+
 	// For single structs, validate directly
 	return v.ValidateEnhanced(data)
 }
