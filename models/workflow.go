@@ -2,9 +2,9 @@ package irminmodels
 
 type FieldMapping struct {
 	SourcePath       string  `json:"source_path"                 validate:"required"`
-	SourceField      *string `json:"source_field,omitempty"      validate:"min=1"`
+	SourceField      *string `json:"source_field,omitempty"`
 	DestinationPath  string  `json:"destination_path"            validate:"required"`
-	DestinationField *string `json:"destination_field,omitempty" validate:"min=1"`
+	DestinationField *string `json:"destination_field,omitempty"`
 }
 
 type WorkflowableType string
@@ -103,8 +103,8 @@ type Workflow struct {
 	Name          string           `json:"name"                   validate:"required,max=100"`
 	Description   string           `json:"description"            validate:"max=500"`
 	Documentation string           `json:"documentation"          validate:"validdocumentation"`
-	Status        WorkflowStatus   `json:"status"                 validate:"required,oneof=paused pending initiating running complete error cancelled"`
-	Type          WorkflowableType `json:"type"                   validate:"required,oneof=import action export pipeline"`
+	Status        WorkflowStatus   `json:"status"                 validate:"required"`
+	Type          WorkflowableType `json:"type"                   validate:"required"`
 	Owner         User             `json:"owner"                  validate:"required"`
 	Tags          []Tag            `json:"tags,omitempty"         validate:"dive"`
 	Schedule      *Schedule        `json:"schedule,omitempty"`
