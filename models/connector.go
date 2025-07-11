@@ -6,7 +6,7 @@ type Connector struct {
 	Name             string                `json:"name"                        validate:"required,min=1,max=100"`
 	Description      string                `json:"description"                 validate:"required,min=1,max=500"`
 	Version          string                `json:"version"                     validate:"required,min=1,max=20"`
-	StructureVersion string                `json:"structure_version,omitempty" validate:"min=1,max=20"`
+	StructureVersion string                `json:"structure_version"           validate:"required,min=1,max=20"`
 	Author           string                `json:"author"                      validate:"required,min=1,max=100"`
 	LogoURL          string                `json:"logo_url"                    validate:"required,validimageurl"`
 	Capabilities     []ConnectorCapability `json:"capabilities"                validate:"required,min=1,dive,oneof=pull push webhook_patch webhook_pull"`
@@ -21,10 +21,10 @@ type Connector struct {
 type ConnectorCapability string
 
 const (
-	ConnectorCapabilityPullFullSync  ConnectorCapability = "pull"
-	ConnectorCapabilityPushFullSync  ConnectorCapability = "push"
-	ConnectorCapabilityPushPatchSync ConnectorCapability = "webhook_patch"
-	ConnectorCapabilityPullPatchSync ConnectorCapability = "webhook_pull"
+	ConnectorCapabilityPullFullSync ConnectorCapability = "pull"
+	ConnectorCapabilityPushFullSync ConnectorCapability = "push"
+	ConnectorCapabilityPushPatch    ConnectorCapability = "push_patch"
+	ConnectorCapabilityEventWebhook ConnectorCapability = "event_webhook"
 )
 
 // ConnectorCategory represents the category of a connector.
