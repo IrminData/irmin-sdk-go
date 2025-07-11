@@ -36,7 +36,7 @@ type SearchFilters struct {
 	OwnerID  *string  `json:"owner_id,omitempty"  validate:"validsqid=users"`
 	DateFrom *string  `json:"date_from,omitempty" validate:"datetime"`
 	DateTo   *string  `json:"date_to,omitempty"   validate:"datetime"`
-	Limit    int      `json:"limit"               validate:"required,min=1,max=100"`
+	Limit    int      `json:"limit"               validate:"required,max=100"`
 	Offset   int      `json:"offset"              validate:"min=0"`
 }
 

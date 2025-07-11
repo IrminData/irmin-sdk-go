@@ -10,12 +10,12 @@ const (
 )
 
 type EditorItem struct {
-	Name         string         `json:"name"               validate:"required,min=1,max=255"`
-	Path         string         `json:"path"               validate:"required,min=1"`
+	Name         string         `json:"name"               validate:"required,max=255"`
+	Path         string         `json:"path"               validate:"required"`
 	Type         EditorItemType `json:"type"               validate:"required,oneof=file folder"`
 	Content      *string        `json:"content,omitempty"`
-	Language     *string        `json:"language,omitempty" validate:"min=1,max=20"` // js, py, go, etc.
-	Children     []EditorItem   `json:"children,omitempty" validate:"dive"`         // for folders
+	Language     *string        `json:"language,omitempty" validate:"max=20"` // js, py, go, etc.
+	Children     []EditorItem   `json:"children,omitempty" validate:"dive"`   // for folders
 	LastModified time.Time      `json:"last_modified"      validate:"required"`
 }
 
