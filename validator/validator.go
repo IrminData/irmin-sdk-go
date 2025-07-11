@@ -67,7 +67,7 @@ type Validator struct {
 
 // NewValidator creates a new validator instance.
 func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator {
-	v := validator.New()
+	v := validator.New(validator.WithRequiredStructEnabled())
 
 	validator := &Validator{
 		validate:    v,
