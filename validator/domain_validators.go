@@ -244,8 +244,8 @@ func (v *Validator) validateCommonWorkflowableFields(parentStruct reflect.Value)
 		return false
 	}
 
-	// Must have field mappings
-	if !fieldMappingsField.IsValid() || fieldMappingsField.Len() == 0 {
+	// Must have field mappings array, but it can be empty
+	if !fieldMappingsField.IsValid() {
 		return false
 	}
 
@@ -256,8 +256,8 @@ func (v *Validator) validateCommonWorkflowableFields(parentStruct reflect.Value)
 func (v *Validator) validatePipelineWorkflowable(parentStruct reflect.Value) bool {
 	stagesField := parentStruct.FieldByName("Stages")
 
-	// Pipeline workflowables must have at least one stage
-	if !stagesField.IsValid() || stagesField.Len() == 0 {
+	// Pipeline workflowables must have stages array, but it can be empty
+	if !stagesField.IsValid() {
 		return false
 	}
 
