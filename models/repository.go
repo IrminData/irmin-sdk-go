@@ -5,12 +5,12 @@ import "time"
 // BranchGarbageCollectionRules represents the garbage collection rules for a branch.
 type BranchGarbageCollectionRules struct {
 	BranchID      string `json:"branch_id"      validate:"required,validslug"`
-	RetentionDays int    `json:"retention_days" validate:"required,max=3650"`
+	RetentionDays int    `json:"retention_days" validate:"required,gte=0,lte=3650"`
 }
 
 // GarbageCollectionRules represents the garbage collection rules for a repository.
 type GarbageCollectionRules struct {
-	DefaultRetentionDays int                            `json:"default_retention_days,omitempty" validate:"max=3650"`
+	DefaultRetentionDays *int                           `json:"default_retention_days,omitempty" validate:"gte=0,lte=3650"`
 	Branches             []BranchGarbageCollectionRules `json:"branches,omitempty"               validate:"dive"`
 }
 
