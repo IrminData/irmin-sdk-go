@@ -10,8 +10,8 @@ type BranchGarbageCollectionRules struct {
 
 // GarbageCollectionRules represents the garbage collection rules for a repository.
 type GarbageCollectionRules struct {
-	DefaultRetentionDays *int                            `json:"default_retention_days,omitempty" validate:"gt=0,lte=3650"`
-	Branches             *[]BranchGarbageCollectionRules `json:"branches,omitempty"               validate:"dive"`
+	DefaultRetentionDays *int                           `json:"default_retention_days,omitempty"`
+	Branches             []BranchGarbageCollectionRules `json:"branches,omitempty"               validate:"dive"`
 }
 
 type Repository struct {
