@@ -25,7 +25,13 @@ func validateToken(fl validator.FieldLevel) bool {
 		return true
 	}
 
-	token := field.String()
+	// Get the actual string value
+	var token string
+	if field.Kind() == reflect.Ptr {
+		token = field.Elem().String()
+	} else {
+		token = field.String()
+	}
 
 	// Must start with "cred_"
 	if !strings.HasPrefix(token, TokenPrefix) {
@@ -54,6 +60,7 @@ func validateToken(fl validator.FieldLevel) bool {
 }
 
 // validateSlug validates slug/branch name format.
+// Slug can be nil, in which case it is considered valid.
 // Slug names must:
 // - Be at least 1 character
 // - Be at most 100 characters
