@@ -7,13 +7,13 @@ type ObjectSchema struct {
 	LastModified *string    `json:"last_modified,omitempty" validate:"datetime"`
 	Description  *string    `json:"description,omitempty"   validate:"max=500"`
 	// Structured schema
-	Schema *JSONSchema `json:"schema,omitempty" validate:"required_if=Type structured"`
+	Schema *JSONSchema `json:"schema,omitempty"        validate:"required_if=Type structured"`
 	// Structured or Binary schema
 	Size        *int    `json:"size,omitempty"          validate:"gte=0,required_if=Type binary,required_if=Type structured"`
 	ContentType *string `json:"content_type,omitempty"  validate:"max=100,required_if=Type binary,required_if=Type structured"`
 	// Group schema
 	Children     []ObjectSchema           `json:"children,omitempty"      validate:"dive,required_if=Type group"`
-	Restrictions *GroupSchemaRestrictions `json:"restrictions,omitempty" validate:"required_if=Type group"`
+	Restrictions *GroupSchemaRestrictions `json:"restrictions,omitempty"  validate:"required_if=Type group"`
 }
 
 // GroupSchemaRestrictions defines restrictions on group schemas.
