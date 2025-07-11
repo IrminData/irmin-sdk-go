@@ -432,11 +432,9 @@ func TestCoreAPIRequestStructs_ComprehensiveValidation(t *testing.T) {
 		{
 			name: "CreateRepositoryRequest - Valid",
 			request: coreapi.CreateRepositoryRequest{
-				Name:                              "my-repo",
-				DefaultBranch:                     "main",
-				Description:                       "My data repository",
-				GarbageDefaultRetentionDays:       30, // Provide valid min=1 value
-				GarbageDefaultBranchRetentionDays: 30, // Provide valid min=1 value
+				Name:          "my-repo",
+				DefaultBranch: "main",
+				Description:   "My data repository",
 			},
 			wantErr: false,
 		},
