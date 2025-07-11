@@ -3,15 +3,15 @@ package irminmodels
 // IrminAPIPaginationMetadata represents the pagination metadata from the Irmin Core API.
 type IrminAPIPaginationMetadata struct {
 	// Total is the total number of items available
-	Total *int `json:"total" validate:"gte=0"`
+	Total *int `json:"total"          validate:"gte=0"`
 	// Current page number
 	Page *int `json:"page,omitempty" validate:"gte=1"`
 	// Number of items per page
-	PerPage *int `json:"per_page" validate:"gte=1"`
+	PerPage *int `json:"per_page"       validate:"gte=1"`
 	// Total number of pages available
-	TotalPages *int `json:"total_pages" validate:"gte=1"`
+	TotalPages *int `json:"total_pages"    validate:"gte=1"`
 	// HasMore indicates if there are more items available
-	HasMore *bool `json:"has_more" validate:"required"`
+	HasMore *bool `json:"has_more"       validate:"required"`
 	// Next is the next page number or token, if applicable
 	Next *string `json:"next,omitempty"`
 }
