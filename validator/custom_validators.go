@@ -12,12 +12,20 @@ import (
 )
 
 // validateToken validates API token format.
+// Token can be nil, in which case it is considered valid.
 // Token prefixes must:
 // - Start with "cred_"
 // - Be at least 64 characters total
 // - Contain only alphanumeric characters and underscores after the prefix.
 func validateToken(fl validator.FieldLevel) bool {
-	token := fl.Field().String()
+	field := fl.Field()
+
+	// Handle nil pointers
+	if field.Kind() == reflect.Ptr && field.IsNil() {
+		return true
+	}
+
+	token := field.String()
 
 	// Must start with "cred_"
 	if !strings.HasPrefix(token, TokenPrefix) {
