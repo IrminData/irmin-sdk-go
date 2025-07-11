@@ -15,7 +15,7 @@ const (
 // SearchResult represents a unified search result with typed entity data.
 type SearchResult struct {
 	Type      WorkspaceSearchResultType `json:"type"      validate:"required,oneof=workflow repository connection query user repository_object invite"`
-	Relevance float64                   `json:"relevance" validate:"required,min=0,max=1"`
+	Relevance float64                   `json:"relevance" validate:"required,gte=0,lte=1"`
 
 	// Typed entity fields - only one will be populated based on Type
 
