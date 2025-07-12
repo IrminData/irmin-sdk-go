@@ -23,7 +23,7 @@ type Object struct {
 	PhysicalAddress       string            `json:"physical_address,omitempty"        validate:"omitempty,uri"`
 	PhysicalAddressExpiry *int64            `json:"physical_address_expiry,omitempty" validate:"omitempty,min=0"`
 	SizeBytes             int64             `json:"size_bytes,omitempty"              validate:"omitempty,min=0"`
-	LastModified          string            `json:"last_modified,omitempty"           validate:"omitempty,datetime"`
+	LastModified          string            `json:"last_modified,omitempty"`
 	Metadata              map[string]string `json:"metadata,omitempty"`
 	Tags                  []Tag             `json:"tags,omitempty"                    validate:"dive,omitempty"`
 	Children              []Object          `json:"children,omitempty"                validate:"dive,omitempty"`
