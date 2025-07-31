@@ -124,8 +124,8 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 		return fmt.Errorf("invalid table name: %w", err)
 	}
 	createQuery := fmt.Sprintf("CREATE TABLE %s (%s)", safeTableName, joinStrings(columns, ", "))
-	if _, err := c.db.Exec(createQuery); err != nil {
-		return fmt.Errorf("failed to create table %s: %w", tableName, err)
+	if _, execErr := c.db.Exec(createQuery); execErr != nil {
+		return fmt.Errorf("failed to create table %s: %w", tableName, execErr)
 	}
 
 	// Insert data
@@ -141,8 +141,8 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 		}
 
 		insertQuery := fmt.Sprintf("INSERT INTO %s VALUES (%s)", safeTableName, joinStrings(placeholders, ", "))
-		if _, err := c.db.Exec(insertQuery, rowValues...); err != nil {
-			return fmt.Errorf("failed to insert data into table %s: %w", tableName, err)
+		if _, insertErr := c.db.Exec(insertQuery, rowValues...); insertErr != nil {
+			return fmt.Errorf("failed to insert data into table %s: %w", tableName, insertErr)
 		}
 	}
 

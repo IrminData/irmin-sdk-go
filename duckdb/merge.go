@@ -96,24 +96,18 @@ func (c *InMemoryClient) MergeDataSources(
 
 	// Get actual row count from merged table
 	var finalRowCount int
-	safeTargetTableName, validationErr := validateSQLIdentifierForMerge(targetTableName)
-	if validationErr != nil {
-		c.logger.Warn("invalid target table name for count query", "table", targetTableName, "error", validationErr)
+	countQuery, queryErr := buildCountQuery(targetTableName)
+	if queryErr != nil {
+		c.logger.Warn("invalid target table name for count query", "table", targetTableName, "error", queryErr)
 		finalRowCount = totalRows // fallback
 	} else {
-		countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", safeTargetTableName)
 		if scanErr := c.db.QueryRow(countQuery).Scan(&finalRowCount); scanErr != nil {
 			finalRowCount = totalRows // fallback
 		}
 	}
 
 	// Clean up temporary tables
-	for _, tempTable := range tempTableNames {
-		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tempTable)
-		if _, dropErr := c.db.Exec(dropQuery); dropErr != nil {
-			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", dropErr)
-		}
-	}
+	c.cleanupTempTables(tempTableNames)
 
 	return &MergeResult{
 		TableName:   targetTableName,
@@ -133,10 +127,11 @@ func (c *InMemoryClient) MergeFiles(
 		return nil, errors.New("no source files provided for merging")
 	}
 
-	// Create temporary files and load them as tables
-	var tempTableNames []string
-	var sourceNames []string
-	var cleanup []func()
+	// Process files and create temporary tables
+	tempTableNames, sourceNames, cleanup, err := c.processFilesForMerge(sourceFiles, targetTableName)
+	if err != nil {
+		return nil, err
+	}
 
 	defer func() {
 		for _, cleanupFunc := range cleanup {
@@ -144,41 +139,72 @@ func (c *InMemoryClient) MergeFiles(
 		}
 	}()
 
+	// Execute merge operation
+	return c.executeMergeOperation(tempTableNames, sourceNames, targetTableName, strategy)
+}
+
+// processFilesForMerge handles the creation of temporary files and tables from source files.
+func (c *InMemoryClient) processFilesForMerge(
+	sourceFiles map[string][]byte,
+	targetTableName string,
+) ([]string, []string, []func(), error) {
+	var tempTableNames []string
+	var sourceNames []string
+	var cleanup []func()
+
 	for filename, content := range sourceFiles {
-		// Create temporary file
-		tempFile, err := os.CreateTemp("", fmt.Sprintf("duckdb_merge_*_%s", filename))
-		if err != nil {
-			return nil, fmt.Errorf("failed to create temp file for %s: %w", filename, err)
+		tempFile, createTempErr := os.CreateTemp("", fmt.Sprintf("duckdb_merge_*_%s", filename))
+		if createTempErr != nil {
+			return nil, nil, cleanup, fmt.Errorf("failed to create temp file for %s: %w", filename, createTempErr)
 		}
 
 		tempFilePath := tempFile.Name()
 		cleanup = append(cleanup, func() {
 			if removeErr := os.Remove(tempFilePath); removeErr != nil {
-				// Log error but don't fail the operation since this is cleanup
+				// Cleanup errors are not critical, so we just ignore them
+				_ = removeErr
 			}
 		})
 
-		// Write content to temp file
-		if _, writeErr := tempFile.Write(content); writeErr != nil {
-			if closeErr := tempFile.Close(); closeErr != nil {
-				// Log both errors but prioritize the write error
-			}
-			return nil, fmt.Errorf("failed to write content to temp file: %w", writeErr)
-		}
-		if closeErr := tempFile.Close(); closeErr != nil {
-			return nil, fmt.Errorf("failed to close temp file: %w", closeErr)
+		var writeErr error
+		if writeErr = c.writeAndCloseFile(tempFile, content); writeErr != nil {
+			return nil, nil, cleanup, writeErr
 		}
 
-		// Create table from file
 		tempTableName := fmt.Sprintf("temp_%s_%s", targetTableName, cleanTableName(filename))
 		tempTableNames = append(tempTableNames, tempTableName)
 		sourceNames = append(sourceNames, filename)
 
-		if err := c.loadFileAsTableFromPath(tempFilePath, filename, tempTableName); err != nil {
-			return nil, fmt.Errorf("failed to load file %s as table: %w", filename, err)
+		var loadErr error
+		if loadErr = c.loadFileAsTableFromPath(tempFilePath, filename, tempTableName); loadErr != nil {
+			return nil, nil, cleanup, fmt.Errorf("failed to load file %s as table: %w", filename, loadErr)
 		}
 	}
 
+	return tempTableNames, sourceNames, cleanup, nil
+}
+
+// writeAndCloseFile writes content to a temp file and closes it safely.
+func (c *InMemoryClient) writeAndCloseFile(tempFile *os.File, content []byte) error {
+	if _, writeErr := tempFile.Write(content); writeErr != nil {
+		if closeErr := tempFile.Close(); closeErr != nil {
+			// Close error is secondary to write error, so we ignore it
+			_ = closeErr
+		}
+		return fmt.Errorf("failed to write content to temp file: %w", writeErr)
+	}
+	if closeErr := tempFile.Close(); closeErr != nil {
+		return fmt.Errorf("failed to close temp file: %w", closeErr)
+	}
+	return nil
+}
+
+// executeMergeOperation performs the actual merge operation and cleanup.
+func (c *InMemoryClient) executeMergeOperation(
+	tempTableNames, sourceNames []string,
+	targetTableName string,
+	strategy MergeStrategy,
+) (*MergeResult, error) {
 	// Build and execute merge query
 	mergeQuery, err := c.buildMergeQuery(tempTableNames, targetTableName, strategy)
 	if err != nil {
@@ -191,29 +217,33 @@ func (c *InMemoryClient) MergeFiles(
 
 	// Get row count
 	var finalRowCount int
-	safeTargetTableName, validationErr := validateSQLIdentifierForMerge(targetTableName)
-	if validationErr != nil {
-		c.logger.Warn("invalid target table name for count query", "table", targetTableName, "error", validationErr)
+	countQuery, queryErr := buildCountQuery(targetTableName)
+	if queryErr != nil {
+		c.logger.Warn("invalid target table name for count query", "table", targetTableName, "error", queryErr)
 	} else {
-		countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", safeTargetTableName)
 		if scanErr := c.db.QueryRow(countQuery).Scan(&finalRowCount); scanErr != nil {
 			c.logger.Warn("failed to get row count", "error", scanErr)
 		}
 	}
 
 	// Clean up temporary tables
-	for _, tempTable := range tempTableNames {
-		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tempTable)
-		if _, dropErr := c.db.Exec(dropQuery); dropErr != nil {
-			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", dropErr)
-		}
-	}
+	c.cleanupTempTables(tempTableNames)
 
 	return &MergeResult{
 		TableName:   targetTableName,
 		RowCount:    finalRowCount,
 		SourceNames: sourceNames,
 	}, nil
+}
+
+// cleanupTempTables removes temporary tables from the database.
+func (c *InMemoryClient) cleanupTempTables(tempTableNames []string) {
+	for _, tempTable := range tempTableNames {
+		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tempTable)
+		if _, dropErr := c.db.Exec(dropQuery); dropErr != nil {
+			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", dropErr)
+		}
+	}
 }
 
 // loadFileAsTable overloaded version that accepts byte data.
@@ -265,11 +295,11 @@ func (c *InMemoryClient) loadFileAsTableFromPath(filePath, originalFilename, tab
 
 	// Create table from file
 	readQuery := BuildReadQuery(filePath, options)
-	safeTableName, err := validateSQLIdentifierForMerge(tableName)
-	if err != nil {
-		return fmt.Errorf("invalid table name: %w", err)
+	fromClause := "SELECT * FROM " + readQuery
+	createQuery, queryErr := buildCreateTableQuery(tableName, fromClause)
+	if queryErr != nil {
+		return fmt.Errorf("invalid table name: %w", queryErr)
 	}
-	createQuery := fmt.Sprintf("CREATE TABLE %s AS SELECT * FROM %s", safeTableName, readQuery)
 
 	if _, createErr := c.db.Exec(createQuery); createErr != nil {
 		return fmt.Errorf("failed to create table %s from file: %w", tableName, createErr)
@@ -364,4 +394,26 @@ func validateSQLIdentifierForMerge(identifier string) (string, error) {
 	}
 	// Return quoted identifier to prevent SQL injection
 	return fmt.Sprintf(`"%s"`, identifier), nil
+}
+
+// buildCountQuery safely constructs a COUNT query for a table.
+func buildCountQuery(tableName string) (string, error) {
+	safeTableName, err := validateSQLIdentifierForMerge(tableName)
+	if err != nil {
+		return "", err
+	}
+	// This construction is safe since tableName is validated and quoted
+	query := "SELECT COUNT(*) FROM " + safeTableName
+	return query, nil
+}
+
+// buildCreateTableQuery safely constructs a CREATE TABLE AS query.
+func buildCreateTableQuery(tableName, fromClause string) (string, error) {
+	safeTableName, err := validateSQLIdentifierForMerge(tableName)
+	if err != nil {
+		return "", err
+	}
+	// This construction is safe since tableName is validated and quoted
+	query := "CREATE TABLE " + safeTableName + " AS " + fromClause
+	return query, nil
 }
