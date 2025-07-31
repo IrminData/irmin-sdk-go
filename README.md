@@ -73,6 +73,7 @@ fmt.Printf("Connector: %s\n", info.Name)
 
 ```go
 import (
+    "fmt"
     "log"
     "log/slog"
     "github.com/IrminData/irmin-sdk-go/duckdb"
@@ -269,6 +270,7 @@ The DuckDB client provides powerful in-memory data processing capabilities:
 
 ```go
 import (
+    "fmt"
     "log/slog"
     "github.com/IrminData/irmin-sdk-go/duckdb"
 )
