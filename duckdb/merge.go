@@ -3,7 +3,6 @@ package duckdb
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -137,7 +136,7 @@ func (c *InMemoryClient) MergeFiles(
 
 	for filename, content := range sourceFiles {
 		// Create temporary file
-		tempFile, err := ioutil.TempFile("", fmt.Sprintf("duckdb_merge_*_%s", filename))
+		tempFile, err := os.CreateTemp("", fmt.Sprintf("duckdb_merge_*_%s", filename))
 		if err != nil {
 			return nil, fmt.Errorf("failed to create temp file for %s: %w", filename, err)
 		}
@@ -204,7 +203,7 @@ func (c *InMemoryClient) loadFileAsTable(data []byte, originalFilename, tableNam
 	}
 
 	// Create temporary file from byte data
-	tempFile, err := ioutil.TempFile("", fmt.Sprintf("duckdb_load_*_%s", originalFilename))
+	tempFile, err := os.CreateTemp("", fmt.Sprintf("duckdb_load_*_%s", originalFilename))
 	if err != nil {
 		return fmt.Errorf("failed to create temp file for %s: %w", originalFilename, err)
 	}
