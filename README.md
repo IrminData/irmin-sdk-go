@@ -72,7 +72,11 @@ fmt.Printf("Connector: %s\n", info.Name)
 ### In-Memory Data Processing with DuckDB
 
 ```go
-import "github.com/IrminData/irmin-sdk-go/duckdb"
+import (
+    "log"
+    "log/slog"
+    "github.com/IrminData/irmin-sdk-go/duckdb"
+)
 
 // Create DuckDB client for in-memory analytics
 logger := slog.Default()
@@ -264,9 +268,13 @@ The DuckDB client provides powerful in-memory data processing capabilities:
 ### Basic Usage
 
 ```go
-import "github.com/IrminData/irmin-sdk-go/duckdb"
+import (
+    "log/slog"
+    "github.com/IrminData/irmin-sdk-go/duckdb"
+)
 
 // Create client
+logger := slog.Default()
 client, err := duckdb.NewInMemoryClient(logger)
 defer client.Close()
 
