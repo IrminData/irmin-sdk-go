@@ -1,0 +1,324 @@
+package duckdb
+
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+)
+
+// MergeStrategy defines how to handle conflicts when merging data.
+type MergeStrategy string
+
+const (
+	// MergeStrategyUnion combines all rows from all sources (allows duplicates).
+	MergeStrategyUnion MergeStrategy = "union"
+
+	// MergeStrategyUnionDistinct combines all rows but removes exact duplicates.
+	MergeStrategyUnionDistinct MergeStrategy = "union_distinct"
+
+	// MergeStrategyFirstWins keeps only rows from the first source when conflicts occur.
+	MergeStrategyFirstWins MergeStrategy = "first_wins"
+
+	// MergeStrategyLastWins keeps only rows from the last source when conflicts occur.
+	MergeStrategyLastWins MergeStrategy = "last_wins"
+)
+
+// MergeResult represents the result of merging multiple data sources.
+type MergeResult struct {
+	TableName   string   `json:"table_name"`
+	RowCount    int      `json:"row_count"`
+	SourceNames []string `json:"source_names"` // Track which sources contributed
+}
+
+// MergeDataSources merges multiple in-memory data sources into a single table.
+// It handles different merge strategies for conflict resolution.
+//
+// Parameters:
+//   - dataSources: Map of source names to their data
+//   - targetTableName: The name of the target table to create
+//   - strategy: How to handle merge conflicts
+//
+// Returns the merge result or an error.
+func (c *InMemoryClient) MergeDataSources(
+	dataSources map[string][]map[string]any,
+	targetTableName string,
+	strategy MergeStrategy,
+) (*MergeResult, error) {
+	if len(dataSources) == 0 {
+		return nil, fmt.Errorf("no data sources provided for merging")
+	}
+
+	// If only one source, create table directly
+	if len(dataSources) == 1 {
+		for sourceName, data := range dataSources {
+			if err := c.CreateTableFromData(targetTableName, data); err != nil {
+				return nil, fmt.Errorf("failed to create table from single source: %w", err)
+			}
+			return &MergeResult{
+				TableName:   targetTableName,
+				RowCount:    len(data),
+				SourceNames: []string{sourceName},
+			}, nil
+		}
+	}
+
+	// Create individual tables for each source
+	var tempTableNames []string
+	var sourceNames []string
+	totalRows := 0
+
+	for sourceName, data := range dataSources {
+		tempTableName := fmt.Sprintf("temp_%s_%s", targetTableName, cleanTableName(sourceName))
+		tempTableNames = append(tempTableNames, tempTableName)
+		sourceNames = append(sourceNames, sourceName)
+		totalRows += len(data)
+
+		if err := c.CreateTableFromData(tempTableName, data); err != nil {
+			return nil, fmt.Errorf("failed to create temp table for source %s: %w", sourceName, err)
+		}
+	}
+
+	// Build merge query based on strategy
+	mergeQuery, err := c.buildMergeQuery(tempTableNames, targetTableName, strategy)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build merge query: %w", err)
+	}
+
+	// Execute merge query
+	if _, err := c.db.Exec(mergeQuery); err != nil {
+		return nil, fmt.Errorf("failed to execute merge query: %w", err)
+	}
+
+	// Get actual row count from merged table
+	var finalRowCount int
+	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", targetTableName)
+	if err := c.db.QueryRow(countQuery).Scan(&finalRowCount); err != nil {
+		finalRowCount = totalRows // fallback
+	}
+
+	// Clean up temporary tables
+	for _, tempTable := range tempTableNames {
+		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tempTable)
+		if _, err := c.db.Exec(dropQuery); err != nil {
+			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", err)
+		}
+	}
+
+	return &MergeResult{
+		TableName:   targetTableName,
+		RowCount:    finalRowCount,
+		SourceNames: sourceNames,
+	}, nil
+}
+
+// MergeFiles merges multiple files from byte content into a single table.
+// This is useful for processing files loaded into memory.
+func (c *InMemoryClient) MergeFiles(
+	sourceFiles map[string][]byte,
+	targetTableName string,
+	strategy MergeStrategy,
+) (*MergeResult, error) {
+	if len(sourceFiles) == 0 {
+		return nil, fmt.Errorf("no source files provided for merging")
+	}
+
+	// Create temporary files and load them as tables
+	var tempTableNames []string
+	var sourceNames []string
+	var cleanup []func()
+
+	defer func() {
+		for _, cleanupFunc := range cleanup {
+			cleanupFunc()
+		}
+	}()
+
+	for filename, content := range sourceFiles {
+		// Create temporary file
+		tempFile, err := ioutil.TempFile("", fmt.Sprintf("duckdb_merge_*_%s", filename))
+		if err != nil {
+			return nil, fmt.Errorf("failed to create temp file for %s: %w", filename, err)
+		}
+
+		tempFilePath := tempFile.Name()
+		cleanup = append(cleanup, func() {
+			os.Remove(tempFilePath)
+		})
+
+		// Write content to temp file
+		if _, err := tempFile.Write(content); err != nil {
+			tempFile.Close()
+			return nil, fmt.Errorf("failed to write content to temp file: %w", err)
+		}
+		tempFile.Close()
+
+		// Create table from file
+		tempTableName := fmt.Sprintf("temp_%s_%s", targetTableName, cleanTableName(filename))
+		tempTableNames = append(tempTableNames, tempTableName)
+		sourceNames = append(sourceNames, filename)
+
+		if err := c.loadFileAsTableFromPath(tempFilePath, filename, tempTableName); err != nil {
+			return nil, fmt.Errorf("failed to load file %s as table: %w", filename, err)
+		}
+	}
+
+	// Build and execute merge query
+	mergeQuery, err := c.buildMergeQuery(tempTableNames, targetTableName, strategy)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build merge query: %w", err)
+	}
+
+	if _, err := c.db.Exec(mergeQuery); err != nil {
+		return nil, fmt.Errorf("failed to execute merge query: %w", err)
+	}
+
+	// Get row count
+	var finalRowCount int
+	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", targetTableName)
+	if err := c.db.QueryRow(countQuery).Scan(&finalRowCount); err != nil {
+		c.logger.Warn("failed to get row count", "error", err)
+	}
+
+	// Clean up temporary tables
+	for _, tempTable := range tempTableNames {
+		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tempTable)
+		if _, err := c.db.Exec(dropQuery); err != nil {
+			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", err)
+		}
+	}
+
+	return &MergeResult{
+		TableName:   targetTableName,
+		RowCount:    finalRowCount,
+		SourceNames: sourceNames,
+	}, nil
+}
+
+// loadFileAsTable overloaded version that accepts byte data
+func (c *InMemoryClient) loadFileAsTable(data []byte, originalFilename, tableName string) error {
+	// Validate format is supported before proceeding
+	if !IsFormatSupported(originalFilename) {
+		return fmt.Errorf("unsupported format for %s", originalFilename)
+	}
+
+	// Create temporary file from byte data
+	tempFile, err := ioutil.TempFile("", fmt.Sprintf("duckdb_load_*_%s", originalFilename))
+	if err != nil {
+		return fmt.Errorf("failed to create temp file for %s: %w", originalFilename, err)
+	}
+	defer os.Remove(tempFile.Name())
+	defer tempFile.Close()
+
+	// Write byte data to temp file
+	if _, err := tempFile.Write(data); err != nil {
+		return fmt.Errorf("failed to write data to temp file: %w", err)
+	}
+	tempFile.Close() // Close before reading
+
+	// Create table from file using the file path version
+	return c.loadFileAsTableFromPath(tempFile.Name(), originalFilename, tableName)
+}
+
+// loadFileAsTableFromPath loads a file from a file path into DuckDB as a table
+func (c *InMemoryClient) loadFileAsTableFromPath(filePath, originalFilename, tableName string) error {
+	options, err := GetDuckDBReadOptions(originalFilename)
+	if err != nil {
+		return fmt.Errorf("unsupported format for %s: %w", originalFilename, err)
+	}
+
+	// Install required extensions
+	for _, ext := range GetRequiredExtensions(options) {
+		installQuery := fmt.Sprintf("INSTALL %s;", ext)
+		loadQuery := fmt.Sprintf("LOAD %s;", ext)
+
+		if _, err := c.db.Exec(installQuery); err != nil {
+			c.logger.Warn("failed to install extension", "extension", ext, "error", err)
+		}
+		if _, err := c.db.Exec(loadQuery); err != nil {
+			c.logger.Warn("failed to load extension", "extension", ext, "error", err)
+		}
+	}
+
+	// Create table from file
+	readQuery := BuildReadQuery(filePath, options)
+	createQuery := fmt.Sprintf("CREATE TABLE %s AS SELECT * FROM %s", tableName, readQuery)
+
+	if _, err := c.db.Exec(createQuery); err != nil {
+		return fmt.Errorf("failed to create table %s from file: %w", tableName, err)
+	}
+
+	return nil
+}
+
+// buildMergeQuery constructs the appropriate merge query based on strategy
+func (c *InMemoryClient) buildMergeQuery(sourceTableNames []string, targetTableName string, strategy MergeStrategy) (string, error) {
+	if len(sourceTableNames) == 0 {
+		return "", fmt.Errorf("no source tables provided")
+	}
+
+	var selectQueries []string
+	for _, tableName := range sourceTableNames {
+		selectQueries = append(selectQueries, fmt.Sprintf("SELECT * FROM %s", tableName))
+	}
+
+	switch strategy {
+	case MergeStrategyUnion:
+		query := fmt.Sprintf("CREATE TABLE %s AS (%s)",
+			targetTableName,
+			strings.Join(selectQueries, " UNION ALL "))
+		return query, nil
+
+	case MergeStrategyUnionDistinct:
+		query := fmt.Sprintf("CREATE TABLE %s AS (%s)",
+			targetTableName,
+			strings.Join(selectQueries, " UNION "))
+		return query, nil
+
+	case MergeStrategyFirstWins:
+		// For first wins, we take the first table and use EXCEPT to remove duplicates from others
+		if len(sourceTableNames) == 1 {
+			return fmt.Sprintf("CREATE TABLE %s AS SELECT * FROM %s", targetTableName, sourceTableNames[0]), nil
+		}
+
+		baseQuery := fmt.Sprintf("SELECT * FROM %s", sourceTableNames[0])
+		for i := 1; i < len(sourceTableNames); i++ {
+			baseQuery = fmt.Sprintf("(%s) UNION (SELECT * FROM %s EXCEPT %s)",
+				baseQuery, sourceTableNames[i], baseQuery)
+		}
+		return fmt.Sprintf("CREATE TABLE %s AS %s", targetTableName, baseQuery), nil
+
+	case MergeStrategyLastWins:
+		// For last wins, we reverse the order and apply first wins logic
+		if len(sourceTableNames) == 1 {
+			return fmt.Sprintf("CREATE TABLE %s AS SELECT * FROM %s", targetTableName, sourceTableNames[0]), nil
+		}
+
+		baseQuery := fmt.Sprintf("SELECT * FROM %s", sourceTableNames[len(sourceTableNames)-1])
+		for i := len(sourceTableNames) - 2; i >= 0; i-- {
+			baseQuery = fmt.Sprintf("(%s) UNION (SELECT * FROM %s EXCEPT %s)",
+				baseQuery, sourceTableNames[i], baseQuery)
+		}
+		return fmt.Sprintf("CREATE TABLE %s AS %s", targetTableName, baseQuery), nil
+
+	default:
+		return "", fmt.Errorf("unsupported merge strategy: %s", strategy)
+	}
+}
+
+// cleanTableName removes special characters from table names to make them valid SQL identifiers
+func cleanTableName(name string) string {
+	// Replace common problematic characters
+	name = strings.ReplaceAll(name, ".", "_")
+	name = strings.ReplaceAll(name, "-", "_")
+	name = strings.ReplaceAll(name, " ", "_")
+	name = strings.ReplaceAll(name, "/", "_")
+	name = strings.ReplaceAll(name, "\\", "_")
+
+	// Remove file extensions
+	if idx := strings.LastIndex(name, "."); idx != -1 {
+		name = name[:idx]
+	}
+
+	return name
+}
