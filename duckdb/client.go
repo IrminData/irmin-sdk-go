@@ -138,9 +138,9 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 			rowValues = append(rowValues, row[colName])
 		}
 
-		insertQuery, queryErr := buildInsertQuery(tableName, len(rowValues))
-		if queryErr != nil {
-			return fmt.Errorf("failed to build insert query: %w", queryErr)
+		insertQuery, insertQueryErr := buildInsertQuery(tableName, len(rowValues))
+		if insertQueryErr != nil {
+			return fmt.Errorf("failed to build insert query: %w", insertQueryErr)
 		}
 
 		if _, insertErr := c.db.Exec(insertQuery, rowValues...); insertErr != nil {
@@ -197,17 +197,6 @@ func (c *InMemoryClient) Close() error {
 }
 
 // Helper functions.
-func joinStrings(slice []string, separator string) string {
-	if len(slice) == 0 {
-		return ""
-	}
-	result := slice[0]
-	for i := 1; i < len(slice); i++ {
-		result += separator + slice[i]
-	}
-	return result
-}
-
 func findString(s, substr string) int {
 	for i := 0; i <= len(s)-len(substr); i++ {
 		if s[i:i+len(substr)] == substr {
