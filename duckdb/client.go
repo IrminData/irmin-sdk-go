@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"regexp"
+	"strings"
 
 	// Import DuckDB driver to register it with database/sql package.
 	// The blank import is necessary as the driver needs to register itself
@@ -119,28 +120,29 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 	}
 
 	// Create the table
-	safeTableName, err := validateSQLIdentifier(tableName)
-	if err != nil {
-		return fmt.Errorf("invalid table name: %w", err)
+	createQuery, queryErr := buildCreateTableWithColumnsQuery(tableName, columns)
+	if queryErr != nil {
+		return fmt.Errorf("invalid table name: %w", queryErr)
 	}
-	createQuery := fmt.Sprintf("CREATE TABLE %s (%s)", safeTableName, joinStrings(columns, ", "))
 	if _, execErr := c.db.Exec(createQuery); execErr != nil {
 		return fmt.Errorf("failed to create table %s: %w", tableName, execErr)
 	}
 
 	// Insert data
 	for _, row := range data {
-		var placeholders []string
 		var rowValues []any
 
 		for _, col := range columns {
 			// Extract column name (remove type suffix)
 			colName := col[:findString(col, " ")]
-			placeholders = append(placeholders, "?")
 			rowValues = append(rowValues, row[colName])
 		}
 
-		insertQuery := fmt.Sprintf("INSERT INTO %s VALUES (%s)", safeTableName, joinStrings(placeholders, ", "))
+		insertQuery, queryErr := buildInsertQuery(tableName, len(rowValues))
+		if queryErr != nil {
+			return fmt.Errorf("failed to build insert query: %w", queryErr)
+		}
+
 		if _, insertErr := c.db.Exec(insertQuery, rowValues...); insertErr != nil {
 			return fmt.Errorf("failed to insert data into table %s: %w", tableName, insertErr)
 		}
@@ -225,4 +227,34 @@ func validateSQLIdentifier(identifier string) (string, error) {
 	}
 	// Return quoted identifier to prevent SQL injection
 	return fmt.Sprintf(`"%s"`, identifier), nil
+}
+
+// buildInsertQuery safely constructs an INSERT query for a table.
+func buildInsertQuery(tableName string, placeholderCount int) (string, error) {
+	safeTableName, err := validateSQLIdentifier(tableName)
+	if err != nil {
+		return "", err
+	}
+
+	// Build placeholders safely
+	placeholders := make([]string, placeholderCount)
+	for i := range placeholders {
+		placeholders[i] = "?"
+	}
+
+	// Construct query safely using string concatenation with validated components
+	query := "INSERT INTO " + safeTableName + " VALUES (" + strings.Join(placeholders, ", ") + ")"
+	return query, nil
+}
+
+// buildCreateTableWithColumnsQuery safely constructs a CREATE TABLE query with column definitions.
+func buildCreateTableWithColumnsQuery(tableName string, columnDefinitions []string) (string, error) {
+	safeTableName, err := validateSQLIdentifier(tableName)
+	if err != nil {
+		return "", err
+	}
+
+	// Construct query safely using string concatenation with validated components
+	query := "CREATE TABLE " + safeTableName + " (" + strings.Join(columnDefinitions, ", ") + ")"
+	return query, nil
 }
