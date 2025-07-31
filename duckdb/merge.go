@@ -1,6 +1,7 @@
 package duckdb
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -46,7 +47,7 @@ func (c *InMemoryClient) MergeDataSources(
 	strategy MergeStrategy,
 ) (*MergeResult, error) {
 	if len(dataSources) == 0 {
-		return nil, fmt.Errorf("no data sources provided for merging")
+		return nil, errors.New("no data sources provided for merging")
 	}
 
 	// If only one source, create table directly
@@ -120,7 +121,7 @@ func (c *InMemoryClient) MergeFiles(
 	strategy MergeStrategy,
 ) (*MergeResult, error) {
 	if len(sourceFiles) == 0 {
-		return nil, fmt.Errorf("no source files provided for merging")
+		return nil, errors.New("no source files provided for merging")
 	}
 
 	// Create temporary files and load them as tables
@@ -195,7 +196,7 @@ func (c *InMemoryClient) MergeFiles(
 	}, nil
 }
 
-// loadFileAsTable overloaded version that accepts byte data
+// loadFileAsTable overloaded version that accepts byte data.
 func (c *InMemoryClient) loadFileAsTable(data []byte, originalFilename, tableName string) error {
 	// Validate format is supported before proceeding
 	if !IsFormatSupported(originalFilename) {
@@ -220,7 +221,7 @@ func (c *InMemoryClient) loadFileAsTable(data []byte, originalFilename, tableNam
 	return c.loadFileAsTableFromPath(tempFile.Name(), originalFilename, tableName)
 }
 
-// loadFileAsTableFromPath loads a file from a file path into DuckDB as a table
+// loadFileAsTableFromPath loads a file from a file path into DuckDB as a table.
 func (c *InMemoryClient) loadFileAsTableFromPath(filePath, originalFilename, tableName string) error {
 	options, err := GetDuckDBReadOptions(originalFilename)
 	if err != nil {
@@ -251,10 +252,14 @@ func (c *InMemoryClient) loadFileAsTableFromPath(filePath, originalFilename, tab
 	return nil
 }
 
-// buildMergeQuery constructs the appropriate merge query based on strategy
-func (c *InMemoryClient) buildMergeQuery(sourceTableNames []string, targetTableName string, strategy MergeStrategy) (string, error) {
+// buildMergeQuery constructs the appropriate merge query based on strategy.
+func (c *InMemoryClient) buildMergeQuery(
+	sourceTableNames []string,
+	targetTableName string,
+	strategy MergeStrategy,
+) (string, error) {
 	if len(sourceTableNames) == 0 {
-		return "", fmt.Errorf("no source tables provided")
+		return "", errors.New("no source tables provided")
 	}
 
 	var selectQueries []string
@@ -306,7 +311,7 @@ func (c *InMemoryClient) buildMergeQuery(sourceTableNames []string, targetTableN
 	}
 }
 
-// cleanTableName removes special characters from table names to make them valid SQL identifiers
+// cleanTableName removes special characters from table names to make them valid SQL identifiers.
 func cleanTableName(name string) string {
 	// Replace common problematic characters
 	name = strings.ReplaceAll(name, ".", "_")
