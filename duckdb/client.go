@@ -1,0 +1,211 @@
+package duckdb
+
+import (
+	"database/sql"
+	"fmt"
+	"log/slog"
+
+	// Import DuckDB driver to register it with database/sql package.
+	// The blank import is necessary as the driver needs to register itself
+	// but we don't directly use any of its exported symbols.
+	_ "github.com/marcboeker/go-duckdb"
+)
+
+// InMemoryClient is a client for interacting with DuckDB for in-memory data processing.
+type InMemoryClient struct {
+	db     *sql.DB
+	logger *slog.Logger
+}
+
+// NewInMemoryClient creates a new client for in-memory data processing with DuckDB.
+// It configures the DuckDB connection without external storage dependencies.
+// Returns the client and an error if encountered.
+func NewInMemoryClient(logger *slog.Logger) (*InMemoryClient, error) {
+	// Open a connection to DuckDB using an in-memory database.
+	db, err := sql.Open("duckdb", "")
+	if err != nil {
+		return nil, fmt.Errorf("failed to open DuckDB connection: %w", err)
+	}
+
+	client := &InMemoryClient{db: db, logger: logger}
+
+	// Install optional extensions for enhanced functionality
+	optionalExtensions := []string{
+		"spatial",      // Provides Excel file reading capabilities via st_read()
+		"avro",         // Support for Apache Avro files
+		"delta",        // Support for Delta Lake format
+		"iceberg",      // Support for Apache Iceberg format
+		"autocomplete", // Enhanced autocomplete functionality
+		"json",         // Enhanced JSON processing
+	}
+	client.installOptionalExtensions(optionalExtensions, logger)
+
+	// Return the client.
+	return client, nil
+}
+
+// installOptionalExtensions attempts to install and load optional DuckDB extensions.
+// It logs warnings for any failures but doesn't return errors since these are optional.
+func (c *InMemoryClient) installOptionalExtensions(extensions []string, logger *slog.Logger) {
+	for _, ext := range extensions {
+		installQuery := fmt.Sprintf("INSTALL %s;", ext)
+		loadQuery := fmt.Sprintf("LOAD %s;", ext)
+
+		_, installErr := c.db.Exec(installQuery)
+		if installErr == nil {
+			_, loadErr := c.db.Exec(loadQuery)
+			if loadErr != nil {
+				logger.Warn("failed to load extension", "extension", ext, "error", loadErr)
+			} else {
+				logger.Debug("successfully loaded extension", "extension", ext)
+			}
+		} else {
+			logger.Warn("failed to install extension", "extension", ext, "error", installErr)
+		}
+	}
+}
+
+// ExecuteQuery executes a SQL query using the client's DuckDB connection and returns the resulting rows.
+// It is suitable for queries that return rows (e.g. SELECT statements).
+//
+// query: the SQL query to execute.
+// args: optional arguments for the query.
+func (c *InMemoryClient) ExecuteQuery(query string, args ...any) (*sql.Rows, error) {
+	// Execute the query and return the rows and any error encountered.
+	rows, err := c.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return rows, nil
+}
+
+// ExecuteNonQuery executes a SQL statement that does not return rows (such as INSERT, UPDATE, DELETE).
+//
+// query: the SQL statement to execute.
+// args: optional arguments for the statement.
+func (c *InMemoryClient) ExecuteNonQuery(query string, args ...any) (sql.Result, error) {
+	// Execute the statement and return the result and any error encountered.
+	result, err := c.db.Exec(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// CreateTableFromData creates a table in DuckDB from in-memory data.
+// This is useful for loading data directly into DuckDB for processing.
+func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string]any) error {
+	if len(data) == 0 {
+		return fmt.Errorf("no data provided for table %s", tableName)
+	}
+
+	// Analyze the first row to determine column types
+	firstRow := data[0]
+	var columns []string
+
+	for key, value := range firstRow {
+		columns = append(columns, key)
+		switch value.(type) {
+		case int, int32, int64:
+			columns[len(columns)-1] += " INTEGER"
+		case float32, float64:
+			columns[len(columns)-1] += " DOUBLE"
+		case bool:
+			columns[len(columns)-1] += " BOOLEAN"
+		default:
+			columns[len(columns)-1] += " VARCHAR"
+		}
+	}
+
+	// Create the table
+	createQuery := fmt.Sprintf("CREATE TABLE %s (%s)", tableName, joinStrings(columns, ", "))
+	if _, err := c.db.Exec(createQuery); err != nil {
+		return fmt.Errorf("failed to create table %s: %w", tableName, err)
+	}
+
+	// Insert data
+	for _, row := range data {
+		var placeholders []string
+		var rowValues []any
+
+		for _, col := range columns {
+			// Extract column name (remove type suffix)
+			colName := col[:findString(col, " ")]
+			placeholders = append(placeholders, "?")
+			rowValues = append(rowValues, row[colName])
+		}
+
+		insertQuery := fmt.Sprintf("INSERT INTO %s VALUES (%s)", tableName, joinStrings(placeholders, ", "))
+		if _, err := c.db.Exec(insertQuery, rowValues...); err != nil {
+			return fmt.Errorf("failed to insert data into table %s: %w", tableName, err)
+		}
+	}
+
+	return nil
+}
+
+// QueryToMap executes a query and returns the results as a slice of maps.
+// This is convenient for working with query results in Go.
+func (c *InMemoryClient) QueryToMap(query string, args ...any) ([]map[string]any, error) {
+	rows, err := c.ExecuteQuery(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	var results []map[string]any
+	for rows.Next() {
+		values := make([]any, len(columns))
+		valuePtrs := make([]any, len(columns))
+		for i := range values {
+			valuePtrs[i] = &values[i]
+		}
+
+		if err := rows.Scan(valuePtrs...); err != nil {
+			return nil, err
+		}
+
+		row := make(map[string]any)
+		for i, col := range columns {
+			row[col] = values[i]
+		}
+		results = append(results, row)
+	}
+
+	return results, rows.Err()
+}
+
+// Close closes the DuckDB connection held by the client.
+func (c *InMemoryClient) Close() error {
+	// Close the database connection.
+	if err := c.db.Close(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Helper functions
+func joinStrings(slice []string, separator string) string {
+	if len(slice) == 0 {
+		return ""
+	}
+	result := slice[0]
+	for i := 1; i < len(slice); i++ {
+		result += separator + slice[i]
+	}
+	return result
+}
+
+func findString(s, substr string) int {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return i
+		}
+	}
+	return -1
+}
