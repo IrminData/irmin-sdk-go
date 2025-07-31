@@ -1,15 +1,17 @@
-package duckdb
+package duckdb_test
 
 import (
 	"fmt"
 	"log/slog"
 	"testing"
+
+	"github.com/IrminData/irmin-sdk-go/duckdb"
 )
 
 func TestNewInMemoryClient(t *testing.T) {
 	logger := slog.Default()
 
-	client, err := NewInMemoryClient(logger)
+	client, err := duckdb.NewInMemoryClient(logger)
 	if err != nil {
 		t.Fatalf("Failed to create in-memory client: %v", err)
 	}
@@ -22,7 +24,7 @@ func TestNewInMemoryClient(t *testing.T) {
 
 func TestCreateTableFromData(t *testing.T) {
 	logger := slog.Default()
-	client, err := NewInMemoryClient(logger)
+	client, err := duckdb.NewInMemoryClient(logger)
 	if err != nil {
 		t.Fatalf("Failed to create in-memory client: %v", err)
 	}
@@ -44,6 +46,9 @@ func TestCreateTableFromData(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to query table: %v", err)
 	}
+	if rows.Err() != nil {
+		t.Fatalf("Failed to query table: %v", rows.Err())
+	}
 	defer rows.Close()
 
 	if !rows.Next() {
@@ -62,7 +67,7 @@ func TestCreateTableFromData(t *testing.T) {
 
 func TestQueryToMap(t *testing.T) {
 	logger := slog.Default()
-	client, err := NewInMemoryClient(logger)
+	client, err := duckdb.NewInMemoryClient(logger)
 	if err != nil {
 		t.Fatalf("Failed to create in-memory client: %v", err)
 	}
@@ -98,7 +103,7 @@ func TestQueryToMap(t *testing.T) {
 
 func TestMergeDataSources(t *testing.T) {
 	logger := slog.Default()
-	client, err := NewInMemoryClient(logger)
+	client, err := duckdb.NewInMemoryClient(logger)
 	if err != nil {
 		t.Fatalf("Failed to create in-memory client: %v", err)
 	}
@@ -116,7 +121,7 @@ func TestMergeDataSources(t *testing.T) {
 		},
 	}
 
-	result, err := client.MergeDataSources(dataSources, "merged_users", MergeStrategyUnion)
+	result, err := client.MergeDataSources(dataSources, "merged_users", duckdb.MergeStrategyUnion)
 	if err != nil {
 		t.Fatalf("Failed to merge data sources: %v", err)
 	}
@@ -159,7 +164,7 @@ func TestGetDuckDBReadOptions(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.filename, func(t *testing.T) {
-			options, err := GetDuckDBReadOptions(test.filename)
+			options, err := duckdb.GetDuckDBReadOptions(test.filename)
 
 			if test.expectError {
 				if err == nil {
@@ -192,13 +197,13 @@ func TestIsFormatSupported(t *testing.T) {
 	}
 
 	for _, format := range supportedFormats {
-		if !IsFormatSupported(format) {
+		if !duckdb.IsFormatSupported(format) {
 			t.Errorf("Format %s should be supported", format)
 		}
 	}
 
 	for _, format := range unsupportedFormats {
-		if IsFormatSupported(format) {
+		if duckdb.IsFormatSupported(format) {
 			t.Errorf("Format %s should not be supported", format)
 		}
 	}
@@ -206,7 +211,7 @@ func TestIsFormatSupported(t *testing.T) {
 
 func TestLoadFileFromBytes(t *testing.T) {
 	logger := slog.Default()
-	client, err := NewInMemoryClient(logger)
+	client, err := duckdb.NewInMemoryClient(logger)
 	if err != nil {
 		t.Fatalf("Failed to create in-memory client: %v", err)
 	}
