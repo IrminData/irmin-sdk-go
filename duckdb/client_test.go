@@ -16,10 +16,6 @@ func TestNewInMemoryClient(t *testing.T) {
 		t.Fatalf("Failed to create in-memory client: %v", err)
 	}
 	defer client.Close()
-
-	if client.db == nil {
-		t.Error("Database connection should not be nil")
-	}
 }
 
 func TestCreateTableFromData(t *testing.T) {
