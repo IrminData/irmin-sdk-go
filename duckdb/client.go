@@ -189,7 +189,7 @@ func (c *InMemoryClient) Close() error {
 	return nil
 }
 
-// Helper functions
+// Helper functions.
 func joinStrings(slice []string, separator string) string {
 	if len(slice) == 0 {
 		return ""
