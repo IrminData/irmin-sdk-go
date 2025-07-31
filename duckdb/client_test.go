@@ -52,8 +52,8 @@ func TestCreateTableFromData(t *testing.T) {
 	}
 
 	var count int
-	if err := rows.Scan(&count); err != nil {
-		t.Fatalf("Failed to scan count: %v", err)
+	if scanErr := rows.Scan(&count); scanErr != nil {
+		t.Fatalf("Failed to scan count: %v", scanErr)
 	}
 
 	if count != 2 {

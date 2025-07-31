@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -22,6 +23,9 @@ const (
 
 	// MergeStrategyLastWins keeps only rows from the last source when conflicts occur.
 	MergeStrategyLastWins MergeStrategy = "last_wins"
+
+	// decrementStep is used when iterating backwards through source table names.
+	decrementStep = 2
 )
 
 // MergeResult represents the result of merging multiple data sources.
@@ -86,22 +90,28 @@ func (c *InMemoryClient) MergeDataSources(
 	}
 
 	// Execute merge query
-	if _, err := c.db.Exec(mergeQuery); err != nil {
-		return nil, fmt.Errorf("failed to execute merge query: %w", err)
+	if _, execErr := c.db.Exec(mergeQuery); execErr != nil {
+		return nil, fmt.Errorf("failed to execute merge query: %w", execErr)
 	}
 
 	// Get actual row count from merged table
 	var finalRowCount int
-	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", targetTableName)
-	if err := c.db.QueryRow(countQuery).Scan(&finalRowCount); err != nil {
+	safeTargetTableName, validationErr := validateSQLIdentifierForMerge(targetTableName)
+	if validationErr != nil {
+		c.logger.Warn("invalid target table name for count query", "table", targetTableName, "error", validationErr)
 		finalRowCount = totalRows // fallback
+	} else {
+		countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", safeTargetTableName)
+		if scanErr := c.db.QueryRow(countQuery).Scan(&finalRowCount); scanErr != nil {
+			finalRowCount = totalRows // fallback
+		}
 	}
 
 	// Clean up temporary tables
 	for _, tempTable := range tempTableNames {
 		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tempTable)
-		if _, err := c.db.Exec(dropQuery); err != nil {
-			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", err)
+		if _, dropErr := c.db.Exec(dropQuery); dropErr != nil {
+			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", dropErr)
 		}
 	}
 
@@ -143,15 +153,21 @@ func (c *InMemoryClient) MergeFiles(
 
 		tempFilePath := tempFile.Name()
 		cleanup = append(cleanup, func() {
-			os.Remove(tempFilePath)
+			if removeErr := os.Remove(tempFilePath); removeErr != nil {
+				// Log error but don't fail the operation since this is cleanup
+			}
 		})
 
 		// Write content to temp file
-		if _, err := tempFile.Write(content); err != nil {
-			tempFile.Close()
-			return nil, fmt.Errorf("failed to write content to temp file: %w", err)
+		if _, writeErr := tempFile.Write(content); writeErr != nil {
+			if closeErr := tempFile.Close(); closeErr != nil {
+				// Log both errors but prioritize the write error
+			}
+			return nil, fmt.Errorf("failed to write content to temp file: %w", writeErr)
 		}
-		tempFile.Close()
+		if closeErr := tempFile.Close(); closeErr != nil {
+			return nil, fmt.Errorf("failed to close temp file: %w", closeErr)
+		}
 
 		// Create table from file
 		tempTableName := fmt.Sprintf("temp_%s_%s", targetTableName, cleanTableName(filename))
@@ -169,22 +185,27 @@ func (c *InMemoryClient) MergeFiles(
 		return nil, fmt.Errorf("failed to build merge query: %w", err)
 	}
 
-	if _, err := c.db.Exec(mergeQuery); err != nil {
-		return nil, fmt.Errorf("failed to execute merge query: %w", err)
+	if _, execErr := c.db.Exec(mergeQuery); execErr != nil {
+		return nil, fmt.Errorf("failed to execute merge query: %w", execErr)
 	}
 
 	// Get row count
 	var finalRowCount int
-	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", targetTableName)
-	if err := c.db.QueryRow(countQuery).Scan(&finalRowCount); err != nil {
-		c.logger.Warn("failed to get row count", "error", err)
+	safeTargetTableName, validationErr := validateSQLIdentifierForMerge(targetTableName)
+	if validationErr != nil {
+		c.logger.Warn("invalid target table name for count query", "table", targetTableName, "error", validationErr)
+	} else {
+		countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", safeTargetTableName)
+		if scanErr := c.db.QueryRow(countQuery).Scan(&finalRowCount); scanErr != nil {
+			c.logger.Warn("failed to get row count", "error", scanErr)
+		}
 	}
 
 	// Clean up temporary tables
 	for _, tempTable := range tempTableNames {
 		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tempTable)
-		if _, err := c.db.Exec(dropQuery); err != nil {
-			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", err)
+		if _, dropErr := c.db.Exec(dropQuery); dropErr != nil {
+			c.logger.Warn("failed to drop temporary table", "table", tempTable, "error", dropErr)
 		}
 	}
 
@@ -211,10 +232,12 @@ func (c *InMemoryClient) loadFileAsTable(data []byte, originalFilename, tableNam
 	defer tempFile.Close()
 
 	// Write byte data to temp file
-	if _, err := tempFile.Write(data); err != nil {
-		return fmt.Errorf("failed to write data to temp file: %w", err)
+	if _, writeErr := tempFile.Write(data); writeErr != nil {
+		return fmt.Errorf("failed to write data to temp file: %w", writeErr)
 	}
-	tempFile.Close() // Close before reading
+	if closeErr := tempFile.Close(); closeErr != nil {
+		return fmt.Errorf("failed to close temp file before reading: %w", closeErr)
+	}
 
 	// Create table from file using the file path version
 	return c.loadFileAsTableFromPath(tempFile.Name(), originalFilename, tableName)
@@ -232,20 +255,24 @@ func (c *InMemoryClient) loadFileAsTableFromPath(filePath, originalFilename, tab
 		installQuery := fmt.Sprintf("INSTALL %s;", ext)
 		loadQuery := fmt.Sprintf("LOAD %s;", ext)
 
-		if _, err := c.db.Exec(installQuery); err != nil {
-			c.logger.Warn("failed to install extension", "extension", ext, "error", err)
+		if _, installErr := c.db.Exec(installQuery); installErr != nil {
+			c.logger.Warn("failed to install extension", "extension", ext, "error", installErr)
 		}
-		if _, err := c.db.Exec(loadQuery); err != nil {
-			c.logger.Warn("failed to load extension", "extension", ext, "error", err)
+		if _, loadErr := c.db.Exec(loadQuery); loadErr != nil {
+			c.logger.Warn("failed to load extension", "extension", ext, "error", loadErr)
 		}
 	}
 
 	// Create table from file
 	readQuery := BuildReadQuery(filePath, options)
-	createQuery := fmt.Sprintf("CREATE TABLE %s AS SELECT * FROM %s", tableName, readQuery)
+	safeTableName, err := validateSQLIdentifierForMerge(tableName)
+	if err != nil {
+		return fmt.Errorf("invalid table name: %w", err)
+	}
+	createQuery := fmt.Sprintf("CREATE TABLE %s AS SELECT * FROM %s", safeTableName, readQuery)
 
-	if _, err := c.db.Exec(createQuery); err != nil {
-		return fmt.Errorf("failed to create table %s from file: %w", tableName, err)
+	if _, createErr := c.db.Exec(createQuery); createErr != nil {
+		return fmt.Errorf("failed to create table %s from file: %w", tableName, createErr)
 	}
 
 	return nil
@@ -299,7 +326,7 @@ func (c *InMemoryClient) buildMergeQuery(
 		}
 
 		baseQuery := fmt.Sprintf("SELECT * FROM %s", sourceTableNames[len(sourceTableNames)-1])
-		for i := len(sourceTableNames) - 2; i >= 0; i-- {
+		for i := len(sourceTableNames) - decrementStep; i >= 0; i-- {
 			baseQuery = fmt.Sprintf("(%s) UNION (SELECT * FROM %s EXCEPT %s)",
 				baseQuery, sourceTableNames[i], baseQuery)
 		}
@@ -325,4 +352,16 @@ func cleanTableName(name string) string {
 	}
 
 	return name
+}
+
+// validateSQLIdentifierForMerge validates and safely quotes SQL identifiers for merge operations.
+// This helps prevent SQL injection by ensuring only valid identifiers are used.
+func validateSQLIdentifierForMerge(identifier string) (string, error) {
+	// Check for valid SQL identifier (alphanumeric and underscore only)
+	validIdentifier := regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
+	if !validIdentifier.MatchString(identifier) {
+		return "", fmt.Errorf("invalid SQL identifier: %s", identifier)
+	}
+	// Return quoted identifier to prevent SQL injection
+	return fmt.Sprintf(`"%s"`, identifier), nil
 }

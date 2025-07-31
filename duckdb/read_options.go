@@ -191,11 +191,11 @@ func (c *InMemoryClient) LoadFileFromBytes(data []byte, filename string, tableNa
 		installQuery := fmt.Sprintf("INSTALL %s;", ext)
 		loadQuery := fmt.Sprintf("LOAD %s;", ext)
 
-		if _, err := c.db.Exec(installQuery); err != nil {
-			c.logger.Warn("failed to install extension", "extension", ext, "error", err)
+		if _, installErr := c.db.Exec(installQuery); installErr != nil {
+			c.logger.Warn("failed to install extension", "extension", ext, "error", installErr)
 		}
-		if _, err := c.db.Exec(loadQuery); err != nil {
-			c.logger.Warn("failed to load extension", "extension", ext, "error", err)
+		if _, loadErr := c.db.Exec(loadQuery); loadErr != nil {
+			c.logger.Warn("failed to load extension", "extension", ext, "error", loadErr)
 		}
 	}
 

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"regexp"
 
 	// Import DuckDB driver to register it with database/sql package.
 	// The blank import is necessary as the driver needs to register itself
@@ -118,7 +119,11 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 	}
 
 	// Create the table
-	createQuery := fmt.Sprintf("CREATE TABLE %s (%s)", tableName, joinStrings(columns, ", "))
+	safeTableName, err := validateSQLIdentifier(tableName)
+	if err != nil {
+		return fmt.Errorf("invalid table name: %w", err)
+	}
+	createQuery := fmt.Sprintf("CREATE TABLE %s (%s)", safeTableName, joinStrings(columns, ", "))
 	if _, err := c.db.Exec(createQuery); err != nil {
 		return fmt.Errorf("failed to create table %s: %w", tableName, err)
 	}
@@ -135,7 +140,7 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 			rowValues = append(rowValues, row[colName])
 		}
 
-		insertQuery := fmt.Sprintf("INSERT INTO %s VALUES (%s)", tableName, joinStrings(placeholders, ", "))
+		insertQuery := fmt.Sprintf("INSERT INTO %s VALUES (%s)", safeTableName, joinStrings(placeholders, ", "))
 		if _, err := c.db.Exec(insertQuery, rowValues...); err != nil {
 			return fmt.Errorf("failed to insert data into table %s: %w", tableName, err)
 		}
@@ -166,8 +171,8 @@ func (c *InMemoryClient) QueryToMap(query string, args ...any) ([]map[string]any
 			valuePtrs[i] = &values[i]
 		}
 
-		if err := rows.Scan(valuePtrs...); err != nil {
-			return nil, err
+		if scanErr := rows.Scan(valuePtrs...); scanErr != nil {
+			return nil, scanErr
 		}
 
 		row := make(map[string]any)
@@ -208,4 +213,16 @@ func findString(s, substr string) int {
 		}
 	}
 	return -1
+}
+
+// validateSQLIdentifier validates and safely quotes SQL identifiers.
+// This helps prevent SQL injection by ensuring only valid identifiers are used.
+func validateSQLIdentifier(identifier string) (string, error) {
+	// Check for valid SQL identifier (alphanumeric and underscore only)
+	validIdentifier := regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
+	if !validIdentifier.MatchString(identifier) {
+		return "", fmt.Errorf("invalid SQL identifier: %s", identifier)
+	}
+	// Return quoted identifier to prevent SQL injection
+	return fmt.Sprintf(`"%s"`, identifier), nil
 }
