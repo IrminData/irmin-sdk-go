@@ -321,49 +321,73 @@ func (c *InMemoryClient) buildMergeQuery(
 		return "", errors.New("no source tables provided")
 	}
 
-	var selectQueries []string
+	// Validate and quote target table name to prevent SQL injection
+	validatedTargetTable, err := validateSQLIdentifierForMerge(targetTableName)
+	if err != nil {
+		return "", fmt.Errorf("invalid target table name: %w", err)
+	}
+
+	// Validate and quote all source table names to prevent SQL injection
+	var validatedSourceTables []string
 	for _, tableName := range sourceTableNames {
-		selectQueries = append(selectQueries, fmt.Sprintf("SELECT * FROM %s", tableName))
+		validatedTable, validateSQLIdentifierForMergeErr := validateSQLIdentifierForMerge(tableName)
+		if validateSQLIdentifierForMergeErr != nil {
+			return "", fmt.Errorf("invalid source table name '%s': %w", tableName, validateSQLIdentifierForMergeErr)
+		}
+		validatedSourceTables = append(validatedSourceTables, validatedTable)
+	}
+
+	var selectQueries []string
+	for _, validatedTableName := range validatedSourceTables {
+		selectQueries = append(selectQueries, fmt.Sprintf("SELECT * FROM %s", validatedTableName))
 	}
 
 	switch strategy {
 	case MergeStrategyUnion:
 		query := fmt.Sprintf("CREATE TABLE %s AS (%s)",
-			targetTableName,
+			validatedTargetTable,
 			strings.Join(selectQueries, " UNION ALL "))
 		return query, nil
 
 	case MergeStrategyUnionDistinct:
 		query := fmt.Sprintf("CREATE TABLE %s AS (%s)",
-			targetTableName,
+			validatedTargetTable,
 			strings.Join(selectQueries, " UNION "))
 		return query, nil
 
 	case MergeStrategyFirstWins:
 		// For first wins, we take the first table and use EXCEPT to remove duplicates from others
-		if len(sourceTableNames) == 1 {
-			return fmt.Sprintf("CREATE TABLE %s AS SELECT * FROM %s", targetTableName, sourceTableNames[0]), nil
+		if len(validatedSourceTables) == 1 {
+			return fmt.Sprintf(
+				"CREATE TABLE %s AS SELECT * FROM %s",
+				validatedTargetTable,
+				validatedSourceTables[0],
+			), nil
 		}
 
-		baseQuery := fmt.Sprintf("SELECT * FROM %s", sourceTableNames[0])
-		for i := 1; i < len(sourceTableNames); i++ {
+		baseQuery := fmt.Sprintf("SELECT * FROM %s", validatedSourceTables[0])
+		for i := 1; i < len(validatedSourceTables); i++ {
 			baseQuery = fmt.Sprintf("(%s) UNION (SELECT * FROM %s EXCEPT %s)",
-				baseQuery, sourceTableNames[i], baseQuery)
+				baseQuery, validatedSourceTables[i], baseQuery)
 		}
-		return fmt.Sprintf("CREATE TABLE %s AS %s", targetTableName, baseQuery), nil
+		return fmt.Sprintf("CREATE TABLE %s AS %s", validatedTargetTable, baseQuery), nil
 
 	case MergeStrategyLastWins:
 		// For last wins, we reverse the order and apply first wins logic
-		if len(sourceTableNames) == 1 {
-			return fmt.Sprintf("CREATE TABLE %s AS SELECT * FROM %s", targetTableName, sourceTableNames[0]), nil
+		if len(validatedSourceTables) == 1 {
+			return fmt.Sprintf(
+				"CREATE TABLE %s AS SELECT * FROM %s",
+				validatedTargetTable,
+				validatedSourceTables[0],
+			), nil
 		}
 
-		baseQuery := fmt.Sprintf("SELECT * FROM %s", sourceTableNames[len(sourceTableNames)-1])
-		for i := len(sourceTableNames) - decrementStep; i >= 0; i-- {
+		baseQuery := fmt.Sprintf("SELECT * FROM %s", validatedSourceTables[len(validatedSourceTables)-1])
+		for i := len(validatedSourceTables) - decrementStep; i >= 0; i-- {
 			baseQuery = fmt.Sprintf("(%s) UNION (SELECT * FROM %s EXCEPT %s)",
-				baseQuery, sourceTableNames[i], baseQuery)
+				baseQuery, validatedSourceTables[i], baseQuery)
 		}
-		return fmt.Sprintf("CREATE TABLE %s AS %s", targetTableName, baseQuery), nil
+		return fmt.Sprintf("CREATE TABLE %s AS %s", validatedTargetTable, baseQuery), nil
 
 	default:
 		return "", fmt.Errorf("unsupported merge strategy: %s", strategy)
@@ -372,17 +396,17 @@ func (c *InMemoryClient) buildMergeQuery(
 
 // cleanTableName removes special characters from table names to make them valid SQL identifiers.
 func cleanTableName(name string) string {
+	// Remove file extensions first (before replacing dots)
+	if idx := strings.LastIndex(name, "."); idx != -1 {
+		name = name[:idx]
+	}
+
 	// Replace common problematic characters
 	name = strings.ReplaceAll(name, ".", "_")
 	name = strings.ReplaceAll(name, "-", "_")
 	name = strings.ReplaceAll(name, " ", "_")
 	name = strings.ReplaceAll(name, "/", "_")
 	name = strings.ReplaceAll(name, "\\", "_")
-
-	// Remove file extensions
-	if idx := strings.LastIndex(name, "."); idx != -1 {
-		name = name[:idx]
-	}
 
 	return name
 }
