@@ -377,7 +377,9 @@ func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
 	}
 
 	// Verify data integrity by checking the values are inserted in correct columns
-	resultRows, err := client.ExecuteQuery(`SELECT "col""with""quotes", "alpha_column", "zebra_column" FROM test_quotes ORDER BY "alpha_column"`)
+	resultRows, err := client.ExecuteQuery(
+		`SELECT "col""with""quotes", "alpha_column", "zebra_column" FROM test_quotes ORDER BY "alpha_column"`,
+	)
 	if err != nil {
 		t.Fatalf("Failed to query table data: %v", err)
 	}
@@ -392,7 +394,12 @@ func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
 		t.Fatalf("Failed to scan first row: %v", err)
 	}
 	if quotedCol != "value1" || alphaCol != "alpha1" || zebraCol != "zebra1" {
-		t.Errorf("First row data mismatch: got (%s, %s, %s), expected (value1, alpha1, zebra1)", quotedCol, alphaCol, zebraCol)
+		t.Errorf(
+			"First row data mismatch: got (%s, %s, %s), expected (value1, alpha1, zebra1)",
+			quotedCol,
+			alphaCol,
+			zebraCol,
+		)
 	}
 
 	// Check second row
@@ -403,6 +410,11 @@ func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
 		t.Fatalf("Failed to scan second row: %v", err)
 	}
 	if quotedCol != "value2" || alphaCol != "alpha2" || zebraCol != "zebra2" {
-		t.Errorf("Second row data mismatch: got (%s, %s, %s), expected (value2, alpha2, zebra2)", quotedCol, alphaCol, zebraCol)
+		t.Errorf(
+			"Second row data mismatch: got (%s, %s, %s), expected (value2, alpha2, zebra2)",
+			quotedCol,
+			alphaCol,
+			zebraCol,
+		)
 	}
 }
