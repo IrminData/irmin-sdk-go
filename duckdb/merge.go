@@ -153,7 +153,7 @@ func (c *InMemoryClient) processFilesForMerge(
 	var cleanup []func()
 
 	for filename, content := range sourceFiles {
-		tempFile, createTempErr := os.CreateTemp("", fmt.Sprintf("duckdb_merge_*_%s", filename))
+		tempFile, createTempErr := os.CreateTemp("", fmt.Sprintf("duckdb_merge_*_%s", cleanTableName(filename)))
 		if createTempErr != nil {
 			return nil, nil, cleanup, fmt.Errorf("failed to create temp file for %s: %w", filename, createTempErr)
 		}
@@ -254,7 +254,7 @@ func (c *InMemoryClient) loadFileAsTable(data []byte, originalFilename, tableNam
 	}
 
 	// Create temporary file from byte data
-	tempFile, err := os.CreateTemp("", fmt.Sprintf("duckdb_load_*_%s", originalFilename))
+	tempFile, err := os.CreateTemp("", fmt.Sprintf("duckdb_load_*_%s", cleanTableName(originalFilename)))
 	if err != nil {
 		return fmt.Errorf("failed to create temp file for %s: %w", originalFilename, err)
 	}
