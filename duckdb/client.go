@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"regexp"
+	"sort"
 	"strings"
 
 	// Import DuckDB driver to register it with database/sql package.
@@ -103,13 +104,21 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 
 	// Analyze the first row to determine column types
 	firstRow := data[0]
-	var columns []string
-	var columnNames []string
 
-	for key, value := range firstRow {
+	// Extract column names and sort them to ensure consistent ordering
+	// between CREATE TABLE and INSERT statements
+	var columnNames []string
+	for key := range firstRow {
 		columnNames = append(columnNames, key)
-		// Quote column name to handle spaces and special characters
-		quotedKey := fmt.Sprintf("\"%s\"", key)
+	}
+	sort.Strings(columnNames)
+
+	// Build column definitions with proper escaping
+	var columns []string
+	for _, key := range columnNames {
+		value := firstRow[key]
+		// Properly escape column name to handle quotes and special characters
+		quotedKey := escapeSQLIdentifier(key)
 		columnDef := quotedKey
 		switch value.(type) {
 		case int, int32, int64:
@@ -200,6 +209,15 @@ func (c *InMemoryClient) Close() error {
 }
 
 // validateSQLIdentifier validates and safely quotes SQL identifiers.
+// escapeSQLIdentifier properly escapes a SQL identifier by doubling any internal quotes
+// and wrapping the result in double quotes.
+func escapeSQLIdentifier(identifier string) string {
+	// Escape any existing double quotes by doubling them
+	escaped := strings.ReplaceAll(identifier, `"`, `""`)
+	// Wrap in double quotes
+	return fmt.Sprintf(`"%s"`, escaped)
+}
+
 // This helps prevent SQL injection by ensuring only valid identifiers are used.
 func validateSQLIdentifier(identifier string) (string, error) {
 	// Check for valid SQL identifier (alphanumeric and underscore only)
