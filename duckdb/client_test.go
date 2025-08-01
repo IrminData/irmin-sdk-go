@@ -328,3 +328,81 @@ func TestCreateTableFromDataWithSpacesInColumnNames(t *testing.T) {
 		t.Errorf("Expected is active to be false, got %v", jsonResults[1]["is active"])
 	}
 }
+
+func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
+	logger := slog.Default()
+	client, err := duckdb.NewInMemoryClient(logger)
+	if err != nil {
+		t.Fatalf("Failed to create in-memory client: %v", err)
+	}
+	defer client.Close()
+
+	// Test data with column names that contain quotes and need consistent ordering
+	data := []map[string]any{
+		{
+			`col"with"quotes`: "value1",
+			"zebra_column":    "zebra1",
+			"alpha_column":    "alpha1",
+		},
+		{
+			`col"with"quotes`: "value2",
+			"zebra_column":    "zebra2",
+			"alpha_column":    "alpha2",
+		},
+	}
+
+	err = client.CreateTableFromData("test_quotes", data)
+	if err != nil {
+		t.Fatalf("Failed to create table with quoted column names: %v", err)
+	}
+
+	// Verify the table was created and has correct data
+	rows, err := client.ExecuteQuery("SELECT COUNT(*) FROM test_quotes")
+	if err != nil {
+		t.Fatalf("Failed to query table: %v", err)
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		t.Fatal("No rows returned from count query")
+	}
+
+	var count int
+	if err := rows.Scan(&count); err != nil {
+		t.Fatalf("Failed to scan count: %v", err)
+	}
+
+	if count != 2 {
+		t.Errorf("Expected 2 rows, got %d", count)
+	}
+
+	// Verify data integrity by checking the values are inserted in correct columns
+	resultRows, err := client.ExecuteQuery(`SELECT "col""with""quotes", "alpha_column", "zebra_column" FROM test_quotes ORDER BY "alpha_column"`)
+	if err != nil {
+		t.Fatalf("Failed to query table data: %v", err)
+	}
+	defer resultRows.Close()
+
+	// Check first row
+	if !resultRows.Next() {
+		t.Fatal("Expected first row but got none")
+	}
+	var quotedCol, alphaCol, zebraCol string
+	if err := resultRows.Scan(&quotedCol, &alphaCol, &zebraCol); err != nil {
+		t.Fatalf("Failed to scan first row: %v", err)
+	}
+	if quotedCol != "value1" || alphaCol != "alpha1" || zebraCol != "zebra1" {
+		t.Errorf("First row data mismatch: got (%s, %s, %s), expected (value1, alpha1, zebra1)", quotedCol, alphaCol, zebraCol)
+	}
+
+	// Check second row
+	if !resultRows.Next() {
+		t.Fatal("Expected second row but got none")
+	}
+	if err := resultRows.Scan(&quotedCol, &alphaCol, &zebraCol); err != nil {
+		t.Fatalf("Failed to scan second row: %v", err)
+	}
+	if quotedCol != "value2" || alphaCol != "alpha2" || zebraCol != "zebra2" {
+		t.Errorf("Second row data mismatch: got (%s, %s, %s), expected (value2, alpha2, zebra2)", quotedCol, alphaCol, zebraCol)
+	}
+}
