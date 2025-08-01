@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -73,7 +72,7 @@ func (c *InMemoryClient) MergeDataSources(
 	totalRows := 0
 
 	for sourceName, data := range dataSources {
-		tempTableName := fmt.Sprintf("temp_%s_%s", targetTableName, cleanTableName(sourceName))
+		tempTableName := fmt.Sprintf("temp_%s_%s", targetTableName, CleanTableName(sourceName))
 		tempTableNames = append(tempTableNames, tempTableName)
 		sourceNames = append(sourceNames, sourceName)
 		totalRows += len(data)
@@ -153,7 +152,7 @@ func (c *InMemoryClient) processFilesForMerge(
 	var cleanup []func()
 
 	for filename, content := range sourceFiles {
-		tempFile, createTempErr := os.CreateTemp("", fmt.Sprintf("duckdb_merge_*_%s", cleanTableName(filename)))
+		tempFile, createTempErr := os.CreateTemp("", fmt.Sprintf("duckdb_merge_*_%s", CleanTableName(filename)))
 		if createTempErr != nil {
 			return nil, nil, cleanup, fmt.Errorf("failed to create temp file for %s: %w", filename, createTempErr)
 		}
@@ -171,7 +170,7 @@ func (c *InMemoryClient) processFilesForMerge(
 			return nil, nil, cleanup, writeErr
 		}
 
-		tempTableName := fmt.Sprintf("temp_%s_%s", targetTableName, cleanTableName(filename))
+		tempTableName := fmt.Sprintf("temp_%s_%s", targetTableName, CleanTableName(filename))
 		tempTableNames = append(tempTableNames, tempTableName)
 		sourceNames = append(sourceNames, filename)
 
@@ -254,7 +253,7 @@ func (c *InMemoryClient) loadFileAsTable(data []byte, originalFilename, tableNam
 	}
 
 	// Create temporary file from byte data
-	tempFile, err := os.CreateTemp("", fmt.Sprintf("duckdb_load_*_%s", cleanTableName(originalFilename)))
+	tempFile, err := os.CreateTemp("", fmt.Sprintf("duckdb_load_*_%s", CleanTableName(originalFilename)))
 	if err != nil {
 		return fmt.Errorf("failed to create temp file for %s: %w", originalFilename, err)
 	}
@@ -394,8 +393,9 @@ func (c *InMemoryClient) buildMergeQuery(
 	}
 }
 
-// cleanTableName removes special characters from table names to make them valid SQL identifiers.
-func cleanTableName(name string) string {
+// CleanTableName removes special characters from table names to make them valid SQL identifiers.
+// Ensures the resulting name starts with a letter or underscore and contains only valid characters.
+func CleanTableName(name string) string {
 	// Remove file extensions first (before replacing dots)
 	if idx := strings.LastIndex(name, "."); idx != -1 {
 		name = name[:idx]
@@ -408,19 +408,33 @@ func cleanTableName(name string) string {
 	name = strings.ReplaceAll(name, "/", "_")
 	name = strings.ReplaceAll(name, "\\", "_")
 
+	// Remove any remaining invalid characters (keep only alphanumeric and underscore)
+	var cleaned strings.Builder
+	for _, char := range name {
+		if (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') ||
+			(char >= '0' && char <= '9') || char == '_' {
+			cleaned.WriteRune(char)
+		}
+	}
+	name = cleaned.String()
+
+	// Handle empty result or result that would be invalid
+	if name == "" {
+		return "table_default"
+	}
+
+	// Ensure the name starts with a letter or underscore (SQL identifier requirement)
+	if name[0] >= '0' && name[0] <= '9' {
+		return "table_" + name
+	}
+
 	return name
 }
 
 // validateSQLIdentifierForMerge validates and safely quotes SQL identifiers for merge operations.
 // This helps prevent SQL injection by ensuring only valid identifiers are used.
 func validateSQLIdentifierForMerge(identifier string) (string, error) {
-	// Check for valid SQL identifier (alphanumeric and underscore only)
-	validIdentifier := regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
-	if !validIdentifier.MatchString(identifier) {
-		return "", fmt.Errorf("invalid SQL identifier: %s", identifier)
-	}
-	// Return quoted identifier to prevent SQL injection
-	return fmt.Sprintf(`"%s"`, identifier), nil
+	return ValidateSQLIdentifier(identifier)
 }
 
 // buildCountQuery safely constructs a COUNT query for a table.
