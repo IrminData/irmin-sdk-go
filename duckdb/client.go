@@ -118,7 +118,7 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 	for _, key := range columnNames {
 		value := firstRow[key]
 		// Properly escape column name to handle quotes and special characters
-		quotedKey := escapeSQLIdentifier(key)
+		quotedKey := EscapeSQLIdentifier(key)
 		columnDef := quotedKey
 		switch value.(type) {
 		case int, int32, int64:
@@ -208,18 +208,17 @@ func (c *InMemoryClient) Close() error {
 	return nil
 }
 
-// validateSQLIdentifier validates and safely quotes SQL identifiers.
-// escapeSQLIdentifier properly escapes a SQL identifier by doubling any internal quotes
+// EscapeSQLIdentifier properly escapes a SQL identifier by doubling any internal quotes
 // and wrapping the result in double quotes.
-func escapeSQLIdentifier(identifier string) string {
+func EscapeSQLIdentifier(identifier string) string {
 	// Escape any existing double quotes by doubling them
 	escaped := strings.ReplaceAll(identifier, `"`, `""`)
 	// Wrap in double quotes
 	return fmt.Sprintf(`"%s"`, escaped)
 }
 
-// This helps prevent SQL injection by ensuring only valid identifiers are used.
-func validateSQLIdentifier(identifier string) (string, error) {
+// ValidateSQLIdentifier helps prevent SQL injection by ensuring only valid identifiers are used.
+func ValidateSQLIdentifier(identifier string) (string, error) {
 	// Check for valid SQL identifier (alphanumeric and underscore only)
 	validIdentifier := regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
 	if !validIdentifier.MatchString(identifier) {
@@ -231,7 +230,7 @@ func validateSQLIdentifier(identifier string) (string, error) {
 
 // buildInsertQuery safely constructs an INSERT query for a table.
 func buildInsertQuery(tableName string, placeholderCount int) (string, error) {
-	safeTableName, err := validateSQLIdentifier(tableName)
+	safeTableName, err := ValidateSQLIdentifier(tableName)
 	if err != nil {
 		return "", err
 	}
@@ -249,7 +248,7 @@ func buildInsertQuery(tableName string, placeholderCount int) (string, error) {
 
 // buildCreateTableWithColumnsQuery safely constructs a CREATE TABLE query with column definitions.
 func buildCreateTableWithColumnsQuery(tableName string, columnDefinitions []string) (string, error) {
-	safeTableName, err := validateSQLIdentifier(tableName)
+	safeTableName, err := ValidateSQLIdentifier(tableName)
 	if err != nil {
 		return "", err
 	}
