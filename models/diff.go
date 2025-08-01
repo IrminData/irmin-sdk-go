@@ -27,7 +27,7 @@ type ChangeItem struct {
 	// Type of the change (e.g., added, removed, changed, etc.)
 	Type ChangeType `json:"type"   validate:"required,oneof=added removed changed conflict moved" example:"added"`
 	// Size of the change
-	Size int `json:"size"   validate:"required,min=0" example:"100"`
+	Size int `json:"size"   validate:"required,min=0"                                      example:"100"`
 }
 
 // Diff represents the difference between two refs.
@@ -35,9 +35,9 @@ type Diff struct {
 	// Slug of the repository
 	Repository string `json:"repository"        validate:"required,validslug" example:"customer-analytics"`
 	// Base reference
-	BaseRef string `json:"base_ref"          validate:"required" example:"main"`
+	BaseRef string `json:"base_ref"          validate:"required"           example:"main"`
 	// Compare reference
-	CompareRef string `json:"compare_ref"       validate:"required" example:"development"`
+	CompareRef string `json:"compare_ref"       validate:"required"           example:"development"`
 	// List of changes in the diff
 	Items []ChangeItem `json:"items"             validate:"required,dive"`
 	// List of commits between the refs
