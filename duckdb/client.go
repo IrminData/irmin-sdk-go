@@ -104,19 +104,24 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 	// Analyze the first row to determine column types
 	firstRow := data[0]
 	var columns []string
+	var columnNames []string
 
 	for key, value := range firstRow {
-		columns = append(columns, key)
+		columnNames = append(columnNames, key)
+		// Quote column name to handle spaces and special characters
+		quotedKey := fmt.Sprintf("\"%s\"", key)
+		columnDef := quotedKey
 		switch value.(type) {
 		case int, int32, int64:
-			columns[len(columns)-1] += " INTEGER"
+			columnDef += " INTEGER"
 		case float32, float64:
-			columns[len(columns)-1] += " DOUBLE"
+			columnDef += " DOUBLE"
 		case bool:
-			columns[len(columns)-1] += " BOOLEAN"
+			columnDef += " BOOLEAN"
 		default:
-			columns[len(columns)-1] += " VARCHAR"
+			columnDef += " VARCHAR"
 		}
+		columns = append(columns, columnDef)
 	}
 
 	// Create the table
@@ -132,9 +137,7 @@ func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string
 	for _, row := range data {
 		var rowValues []any
 
-		for _, col := range columns {
-			// Extract column name (remove type suffix)
-			colName := col[:findString(col, " ")]
+		for _, colName := range columnNames {
 			rowValues = append(rowValues, row[colName])
 		}
 
@@ -194,16 +197,6 @@ func (c *InMemoryClient) Close() error {
 		return err
 	}
 	return nil
-}
-
-// Helper functions.
-func findString(s, substr string) int {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return i
-		}
-	}
-	return -1
 }
 
 // validateSQLIdentifier validates and safely quotes SQL identifiers.

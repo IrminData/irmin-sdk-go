@@ -270,3 +270,61 @@ Bob,35,Chicago`)
 		t.Errorf("Expected first name to be Alice, got %v", jsonResults[0]["name"])
 	}
 }
+
+func TestCreateTableFromDataWithSpacesInColumnNames(t *testing.T) {
+	logger := slog.Default()
+	client, err := duckdb.NewInMemoryClient(logger)
+	if err != nil {
+		t.Fatalf("Failed to create in-memory client: %v", err)
+	}
+	defer client.Close()
+
+	// Test data with column names that contain spaces
+	data := []map[string]any{
+		{"user id": 1, "first name": "John", "last name": "Doe", "is active": true},
+		{"user id": 2, "first name": "Jane", "last name": "Smith", "is active": false},
+	}
+
+	err = client.CreateTableFromData("test_users_spaces", data)
+	if err != nil {
+		t.Fatalf("Failed to create table from data with spaces in column names: %v", err)
+	}
+
+	// Verify the table was created and has correct data
+	jsonResults, err := client.QueryToMap("SELECT * FROM test_users_spaces ORDER BY \"user id\"")
+	if err != nil {
+		t.Fatalf("Failed to query table: %v", err)
+	}
+
+	if len(jsonResults) != 2 {
+		t.Fatalf("Expected 2 rows, got %d", len(jsonResults))
+	}
+
+	// Verify first row data
+	if jsonResults[0]["user id"] != int32(1) {
+		t.Errorf("Expected user id to be 1, got %v", jsonResults[0]["user id"])
+	}
+	if jsonResults[0]["first name"] != "John" {
+		t.Errorf("Expected first name to be John, got %v", jsonResults[0]["first name"])
+	}
+	if jsonResults[0]["last name"] != "Doe" {
+		t.Errorf("Expected last name to be Doe, got %v", jsonResults[0]["last name"])
+	}
+	if jsonResults[0]["is active"] != true {
+		t.Errorf("Expected is active to be true, got %v", jsonResults[0]["is active"])
+	}
+
+	// Verify second row data
+	if jsonResults[1]["user id"] != int32(2) {
+		t.Errorf("Expected user id to be 2, got %v", jsonResults[1]["user id"])
+	}
+	if jsonResults[1]["first name"] != "Jane" {
+		t.Errorf("Expected first name to be Jane, got %v", jsonResults[1]["first name"])
+	}
+	if jsonResults[1]["last name"] != "Smith" {
+		t.Errorf("Expected last name to be Smith, got %v", jsonResults[1]["last name"])
+	}
+	if jsonResults[1]["is active"] != false {
+		t.Errorf("Expected is active to be false, got %v", jsonResults[1]["is active"])
+	}
+}
