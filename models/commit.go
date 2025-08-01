@@ -7,7 +7,7 @@ type Commit struct {
 	// Commit message
 	Message string `json:"message"                 validate:"required"          example:"Initial commit"`
 	// Commit timestamp
-	Timestamp string `json:"timestamp"               validate:"required,datetime" example:"2023-01-15T10:30:00Z"`
+	Timestamp string `json:"timestamp"               validate:"required,datetime" example:"2025-01-15T10:30:00Z"`
 	// Commit author
 	Author string `json:"author"                  validate:"required"          example:"John Doe"`
 	// Previous commit hash, if any (optional)
