@@ -21,7 +21,7 @@ type IrminAPIPaginationMetadata struct {
 type IrminAPIResponse struct {
 	Pagination *IrminAPIPaginationMetadata `json:"pagination,omitempty"`
 	Metadata   map[string]string           `json:"metadata,omitempty"   example:"{'request_id':'req_123','version':'1.0'}"`
-	Message    string                      `json:"message,omitempty"    validate:"max=140"         example:"Operation completed successfully"`
-	Errors     []string                    `json:"errors,omitempty"     validate:"dive"            example:"['Field validation failed','Invalid input format']"`
-	Data       any                         `json:"data,omitempty"       swaggertype:"object"       example:"{}"`
+	Message    string                      `json:"message,omitempty"    example:"Operation completed successfully"                   validate:"max=140"`
+	Errors     []string                    `json:"errors,omitempty"     example:"['Field validation failed','Invalid input format']" validate:"dive"`
+	Data       any                         `json:"data,omitempty"       example:"{}"                                                                    swaggertype:"object"`
 }

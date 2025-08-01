@@ -40,12 +40,12 @@ type ScheduleTrigger struct {
 	Cron  *string `json:"cron,omitempty"  example:"0 9 * * *"`
 
 	// Repository event trigger
-	RepositoryEvent *RepositoryEvent `json:"repository_event,omitempty" validate:"required_if=Type repository-event" example:"post-commit"`
+	RepositoryEvent *RepositoryEvent `json:"repository_event,omitempty" validate:"required_if=Type repository-event"       example:"post-commit"`
 	Repository      *string          `json:"repository,omitempty"       validate:"required_with=RepositoryEvent,validslug" example:"customer-analytics"` // Slug of the repository
-	RepositoryRef   *string          `json:"repository_ref,omitempty"   validate:"required_with=RepositoryEvent"            example:"main"`
+	RepositoryRef   *string          `json:"repository_ref,omitempty"   validate:"required_with=RepositoryEvent"           example:"main"`
 
 	// Workflow run event trigger
-	WorkflowRunEvent *WorkflowRunEvent `json:"workflow_run_event,omitempty" validate:"required_if=Type workflow-run-event" example:"post-workflow-run"`
+	WorkflowRunEvent *WorkflowRunEvent `json:"workflow_run_event,omitempty" validate:"required_if=Type workflow-run-event"                example:"post-workflow-run"`
 	WorkflowID       *string           `json:"workflow_id,omitempty"        validate:"required_with=WorkflowRunEvent,validsqid=workflows" example:"wf_8x2m9k4n7p5q"` // Sqid of the workflow
 }
 

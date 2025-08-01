@@ -16,7 +16,7 @@ type Tag struct {
 type TagWithAssets struct {
 	Tag    Tag            `json:"tag"    validate:"required"`
 	Assets TaggedAssets   `json:"assets" validate:"required"`
-	Counts map[string]int `json:"counts" validate:"required" example:"{\"repositories\":5,\"queries\":12,\"workflows\":3}"`
+	Counts map[string]int `json:"counts" validate:"required" example:"{'repositories':5,'queries':12,'workflows':3}"`
 }
 
 // TaggedAssets represents all assets associated with a specific tag.

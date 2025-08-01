@@ -11,7 +11,7 @@ type BranchGarbageCollectionRules struct {
 // GarbageCollectionRules represents the garbage collection rules for a repository.
 type GarbageCollectionRules struct {
 	DefaultRetentionDays *int                           `json:"default_retention_days,omitempty" example:"90"`
-	Branches             []BranchGarbageCollectionRules `json:"branches,omitempty" validate:"dive"`
+	Branches             []BranchGarbageCollectionRules `json:"branches,omitempty"                            validate:"dive"`
 }
 
 type Repository struct {
@@ -19,7 +19,7 @@ type Repository struct {
 	Name                   string                  `json:"name"                               validate:"required,max=100"                example:"Customer Analytics"`
 	Slug                   string                  `json:"slug"                               validate:"required,validslug"              example:"customer-analytics"`
 	Description            string                  `json:"description"                        validate:"max=500"                         example:"Customer data analysis and reporting repository"`
-	Documentation          string                  `json:"documentation"                      validate:"validdocumentation"              example:"# Customer Analytics Repository\\n\\nThis repository contains customer data for analysis..."`
+	Documentation          string                  `json:"documentation"                      validate:"validdocumentation"              example:"# Customer Analytics Repository. ## This repository contains customer data for analysis..."`
 	IsImmutable            bool                    `json:"is_immutable"                                                                  example:"false"`
 	DefaultBranch          string                  `json:"default_branch"                     validate:"required,validslug"              example:"main"`
 	Owner                  User                    `json:"owner"                              validate:"required"`
