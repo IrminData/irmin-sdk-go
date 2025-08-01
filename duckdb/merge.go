@@ -294,7 +294,10 @@ func (c *InMemoryClient) loadFileAsTableFromPath(filePath, originalFilename, tab
 	}
 
 	// Create table from file
-	readQuery := BuildReadQuery(filePath, options)
+	readQuery, readErr := BuildReadQuery(filePath, options)
+	if readErr != nil {
+		return fmt.Errorf("failed to build read query: %w", readErr)
+	}
 	fromClause := "SELECT * FROM " + readQuery
 	createQuery, queryErr := buildCreateTableQuery(tableName, fromClause)
 	if queryErr != nil {

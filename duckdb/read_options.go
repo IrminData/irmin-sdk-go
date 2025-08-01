@@ -3,6 +3,7 @@ package duckdb
 import (
 	"fmt"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -117,13 +118,36 @@ func GetDuckDBReadOptions(filename string) (*ReadOptions, error) {
 	return GetDuckDBReadOptionsByExtension(ext)
 }
 
+// escapeSQLStringLiteral escapes a string literal for safe use in DuckDB SQL queries.
+// It escapes single quotes by doubling them, which is the standard SQL escaping method.
+func escapeSQLStringLiteral(value string) string {
+	return "'" + strings.ReplaceAll(value, "'", "''") + "'"
+}
+
+// validateParameterKey validates that a parameter key is a safe SQL identifier.
+// This helps prevent SQL injection through parameter names.
+func validateParameterKey(key string) error {
+	// Allow only alphanumeric characters and underscores, starting with a letter or underscore
+	validIdentifier := regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
+	if !validIdentifier.MatchString(key) {
+		return fmt.Errorf("invalid parameter key: %s (only alphanumeric and underscore characters allowed)", key)
+	}
+	return nil
+}
+
 // BuildReadQuery constructs a DuckDB query string for reading data with the given options.
-func BuildReadQuery(filePath string, options *ReadOptions) string {
+// This function now properly escapes all user input to prevent SQL injection.
+func BuildReadQuery(filePath string, options *ReadOptions) (string, error) {
 	var params []string
 
-	// Add parameters from the options
+	// Add parameters from the options with proper validation and escaping
 	for key, value := range options.Parameters {
-		params = append(params, fmt.Sprintf("%s='%s'", key, value))
+		// Validate parameter key to prevent SQL injection through parameter names
+		if err := validateParameterKey(key); err != nil {
+			return "", err
+		}
+		// Escape the parameter value to prevent SQL injection through values
+		params = append(params, fmt.Sprintf("%s=%s", key, escapeSQLStringLiteral(value)))
 	}
 
 	paramStr := ""
@@ -131,7 +155,9 @@ func BuildReadQuery(filePath string, options *ReadOptions) string {
 		paramStr = ", " + strings.Join(params, ", ")
 	}
 
-	return fmt.Sprintf("%s('%s'%s)", options.ReadFunction, filePath, paramStr)
+	// Escape the file path to prevent SQL injection through the file path
+	escapedFilePath := escapeSQLStringLiteral(filePath)
+	return fmt.Sprintf("%s(%s%s)", options.ReadFunction, escapedFilePath, paramStr), nil
 }
 
 // GetRequiredExtensions returns a list of required DuckDB extensions for the given read options.
