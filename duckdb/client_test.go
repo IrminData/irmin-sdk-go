@@ -381,7 +381,7 @@ func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
 		`SELECT "col""with""quotes", "alpha_column", "zebra_column" FROM test_quotes ORDER BY "alpha_column"`,
 	)
 	if executeQueryErr != nil {
-		t.Fatalf("Failed to query table data: %v", err)
+		t.Fatalf("Failed to query table data: %v", executeQueryErr)
 	}
 	defer resultRows.Close()
 
