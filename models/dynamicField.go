@@ -31,7 +31,7 @@ type DynamicField struct {
 	Example      string         `json:"example,omitempty"       validate:"max=100"                                                                                                 example:"Example value"`
 	Default      any            `json:"default,omitempty"                                                                                                                          example:"Default value"`
 	Required     bool           `json:"required,omitempty"                                                                                                                         example:"true"`
-	RequiredWith []string       `json:"required_with,omitempty" validate:"dive" example:"field1,field2"`
+	RequiredWith []string       `json:"required_with,omitempty" validate:"dive"                                                                                                    example:"field1,field2"`
 }
 
 // SelectOption represents an option for select/radio fields.

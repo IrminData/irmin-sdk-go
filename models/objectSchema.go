@@ -41,12 +41,12 @@ type JSONSchema struct {
 	Items                *JSONSchema           `json:"items,omitempty"`
 	Description          *string               `json:"description,omitempty"                                                                                    example:"Customer information schema"`
 	Default              any                   `json:"default,omitempty"                                                                                        example:"{}"                                                  swaggertype:"object"`
-	Enum                 []any                 `json:"enum,omitempty"                                                                                           example:"active,inactive,pending"                     swaggertype:"array,string"`
+	Enum                 []any                 `json:"enum,omitempty"                                                                                           example:"active,inactive,pending"                             swaggertype:"array,string"`
 	AdditionalProperties any                   `json:"additionalProperties,omitempty"                                                                           example:"false"                                               swaggertype:"boolean"`
 	Format               *string               `json:"format,omitempty"                                                                                         example:"email"`
 	Minimum              *float64              `json:"minimum,omitempty"                                                                                        example:"0"`
 	Maximum              *float64              `json:"maximum,omitempty"                                                                                        example:"100"`
 	MinLength            *int                  `json:"minLength,omitempty"                                                                                      example:"1"`
 	MaxLength            *int                  `json:"maxLength,omitempty"                                                                                      example:"255"`
-	Pattern              *string               `json:"pattern,omitempty" example:"email-pattern"`
+	Pattern              *string               `json:"pattern,omitempty"                                                                                        example:"email-pattern"`
 }

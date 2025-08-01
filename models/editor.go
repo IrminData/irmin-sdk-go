@@ -25,5 +25,5 @@ type ScriptResult struct {
 	Duration          time.Duration               `json:"duration,omitempty"           example:"1s"`
 	StartedAt         time.Time                   `json:"started_at,omitempty"         example:"2025-01-15T10:30:00Z"`
 	FinishedAt        time.Time                   `json:"finished_at,omitempty"        example:"2025-01-15T10:30:00Z"`
-	Logs              []string                    `json:"logs,omitempty"               example:"Log message 1,Log message 2" validate:"dive"`
+	Logs              []string                    `json:"logs,omitempty"               example:"Log message 1,Log message 2"                   validate:"dive"`
 }

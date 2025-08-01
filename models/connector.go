@@ -17,11 +17,11 @@ type Connector struct {
 	// URL to the connector's logo
 	LogoURL string `json:"logo_url"          validate:"required,validimageurl"                                                                                                                                         example:"https://cdn.irmin.dev/mysql.png"`
 	// Array of capabilities of the connector, eg. what kind of operations the connector can perform
-	Capabilities []ConnectorCapability `json:"capabilities" validate:"required,dive,oneof=pull push push_patch event_webhook" example:"[\"pull\",\"push\"]"`
+	Capabilities []ConnectorCapability `json:"capabilities"      validate:"required,dive,oneof=pull push push_patch event_webhook"                                                                                                         example:"pull,push"`
 	// Array of locales supported by the connector, eg. what languages the connector supports
-	Locales []string `json:"locales" validate:"required,dive,min=2,max=5" example:"[\"en\",\"fi\"]"`
+	Locales []string `json:"locales"           validate:"required,dive,min=2,max=5"                                                                                                                                      example:"en,fi"`
 	// Array of categories associated with the connector, eg. what kind of connector it is
-	Categories []ConnectorCategory `json:"categories" validate:"required,dive,oneof=database crm erp warehouse marketing analytics storage messaging payment social calendar project_management ecommerce iot monitoring other" example:"[\"database\"]"`
+	Categories []ConnectorCategory `json:"categories"        validate:"required,dive,oneof=database crm erp warehouse marketing analytics storage messaging payment social calendar project_management ecommerce iot monitoring other" example:"database"`
 	// Primary category of the connector
 	PrimaryCategory ConnectorCategory `json:"primary_category"  validate:"required,oneof=database crm erp warehouse marketing analytics storage messaging payment social calendar project_management ecommerce iot monitoring other"      example:"database"`
 	// Author's email address, eg. who to contact if there are any issues with the connector
@@ -77,5 +77,5 @@ type ConnectorConfigurationValidationResult struct {
 	// Indicates if the connection settings are valid
 	ConnectionSettingsValid bool `json:"connection_settings_valid" example:"true"`
 	// (Optional) Array of validation errors
-	Errors []string `json:"errors,omitempty" validate:"dive" example:"[\"Invalid host address\",\"Authentication failed\"]"`
+	Errors []string `json:"errors,omitempty"          example:"Invalid host address,Authentication failed" validate:"dive"`
 }
