@@ -368,8 +368,8 @@ func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
 	}
 
 	var count int
-	if err := rows.Scan(&count); err != nil {
-		t.Fatalf("Failed to scan count: %v", err)
+	if scanCountErr := rows.Scan(&count); scanCountErr != nil {
+		t.Fatalf("Failed to scan count: %v", scanCountErr)
 	}
 
 	if count != 2 {
@@ -377,10 +377,10 @@ func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
 	}
 
 	// Verify data integrity by checking the values are inserted in correct columns
-	resultRows, err := client.ExecuteQuery(
+	resultRows, executeQueryErr := client.ExecuteQuery(
 		`SELECT "col""with""quotes", "alpha_column", "zebra_column" FROM test_quotes ORDER BY "alpha_column"`,
 	)
-	if err != nil {
+	if executeQueryErr != nil {
 		t.Fatalf("Failed to query table data: %v", err)
 	}
 	defer resultRows.Close()
@@ -390,8 +390,8 @@ func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
 		t.Fatal("Expected first row but got none")
 	}
 	var quotedCol, alphaCol, zebraCol string
-	if err := resultRows.Scan(&quotedCol, &alphaCol, &zebraCol); err != nil {
-		t.Fatalf("Failed to scan first row: %v", err)
+	if scanResultRowsErr := resultRows.Scan(&quotedCol, &alphaCol, &zebraCol); scanResultRowsErr != nil {
+		t.Fatalf("Failed to scan first row: %v", scanResultRowsErr)
 	}
 	if quotedCol != "value1" || alphaCol != "alpha1" || zebraCol != "zebra1" {
 		t.Errorf(
@@ -406,8 +406,8 @@ func TestCreateTableFromDataWithQuotesAndConsistentOrdering(t *testing.T) {
 	if !resultRows.Next() {
 		t.Fatal("Expected second row but got none")
 	}
-	if err := resultRows.Scan(&quotedCol, &alphaCol, &zebraCol); err != nil {
-		t.Fatalf("Failed to scan second row: %v", err)
+	if scanResultRows2Err := resultRows.Scan(&quotedCol, &alphaCol, &zebraCol); scanResultRows2Err != nil {
+		t.Fatalf("Failed to scan second row: %v", scanResultRows2Err)
 	}
 	if quotedCol != "value2" || alphaCol != "alpha2" || zebraCol != "zebra2" {
 		t.Errorf(
