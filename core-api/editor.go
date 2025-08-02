@@ -16,18 +16,18 @@ const (
 
 // CreateEditorItemRequest represents the JSON request body for creating an editor file.
 type CreateEditorItemRequest struct {
-	Content *string        `json:"content,omitempty"`
-	Type    EditorItemType `json:"type"              validate:"required"`
+	Content *string        `json:"content,omitempty" example:"This is the content of the file"`
+	Type    EditorItemType `json:"type"              validate:"required" example:"file"`
 }
 
 // MoveEditorItemRequest represents the JSON request body for moving editor items.
 type MoveEditorItemRequest struct {
-	DestinationPath string `json:"destination_path" validate:"required"`
+	DestinationPath string `json:"destination_path" validate:"required" example:"/path/to/new/location"`
 }
 
 // ExecuteEditorItemRequest represents the JSON request body for executing editor items.
 type ExecuteEditorItemRequest struct {
-	Input []irminmodels.ActionInputData `json:"input,omitempty"`
+	Input []irminmodels.ActionInputData `json:"input,omitempty" example:"{'name':'John','age':30}"`
 }
 
 func (c *Client) ListEditorItems(
