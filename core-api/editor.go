@@ -17,7 +17,7 @@ const (
 // CreateEditorItemRequest represents the JSON request body for creating an editor file.
 type CreateEditorItemRequest struct {
 	Content *string        `json:"content,omitempty" example:"This is the content of the file"`
-	Type    EditorItemType `json:"type"              validate:"required" example:"file"`
+	Type    EditorItemType `json:"type"              example:"file"                            validate:"required"`
 }
 
 // MoveEditorItemRequest represents the JSON request body for moving editor items.

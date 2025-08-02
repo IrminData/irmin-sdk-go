@@ -9,8 +9,8 @@ import (
 
 // UpdateWorkflowRequest represents the JSON request body for updating basic workflow info.
 type UpdateWorkflowRequest struct {
-	Name          string `json:"name,omitempty"          validate:"omitempty,max=100" example:"Customer Analytics"`
-	Description   string `json:"description,omitempty"   validate:"omitempty,max=500" example:"Customer data analysis and reporting"`
+	Name          string `json:"name,omitempty"          validate:"omitempty,max=100"  example:"Customer Analytics"`
+	Description   string `json:"description,omitempty"   validate:"omitempty,max=500"  example:"Customer data analysis and reporting"`
 	Documentation string `json:"documentation,omitempty" validate:"validdocumentation" example:"# Customer Analytics Workflow"`
 }
 
@@ -22,9 +22,9 @@ type TransferWorkflowOwnershipRequest struct {
 // WorkflowRequest represents the JSON request body for creating a workflow.
 type WorkflowRequest struct {
 	Type          irminmodels.WorkflowableType `json:"type"                    validate:"required,oneof=import action export pipeline" example:"import"`
-	Name          string                       `json:"name"                    validate:"required,max=100" example:"Customer Analytics"`
-	Description   string                       `json:"description,omitempty"   validate:"omitempty,max=500" example:"Customer data analysis and reporting"`
-	Documentation string                       `json:"documentation,omitempty" validate:"validdocumentation" example:"# Customer Analytics Workflow"`
+	Name          string                       `json:"name"                    validate:"required,max=100"                             example:"Customer Analytics"`
+	Description   string                       `json:"description,omitempty"   validate:"omitempty,max=500"                            example:"Customer data analysis and reporting"`
+	Documentation string                       `json:"documentation,omitempty" validate:"validdocumentation"                           example:"# Customer Analytics Workflow"`
 
 	// Workflowable configuration
 	Workflowable irminmodels.Workflowable `json:"workflowable"`

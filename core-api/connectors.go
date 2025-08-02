@@ -10,12 +10,12 @@ import (
 // ConnectorRequest represents the JSON request body for creating/updating connectors.
 type ConnectorRequest struct {
 	URL         string `json:"url"          validate:"required,validurl" example:"https://example.com/connector"`
-	SystemToken string `json:"system_token" validate:"required,max=100" example:"system_token_123"`
+	SystemToken string `json:"system_token" validate:"required,max=100"  example:"system_token_123"`
 }
 
 // ConnectorConfigurationRequest represents the JSON request body for connector configuration operations.
 type ConnectorConfigurationRequest struct {
-	Details  map[string]any `json:"details" example:"{'host':'db.example.com'}"`
+	Details  map[string]any `json:"details"  example:"{'host':'db.example.com'}"`
 	Settings map[string]any `json:"settings" example:"{'ssl_enabled':'true'}"`
 }
 

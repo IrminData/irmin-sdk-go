@@ -9,7 +9,7 @@ import (
 
 // SendInviteRequest represents the JSON request body for sending an invite.
 type SendInviteRequest struct {
-	Email string `json:"email" validate:"required,email" example:"john.doe@example.com"`
+	Email string `json:"email" validate:"required,email"  example:"john.doe@example.com"`
 	Role  string `json:"role"  validate:"required,max=50" example:"admin"`
 }
 

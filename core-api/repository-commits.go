@@ -16,8 +16,8 @@ type CreateCommitRequest struct {
 // RevertUncommittedChangesRequest represents the JSON request body for reverting uncommitted changes.
 type RevertUncommittedChangesRequest struct {
 	Branch   string `json:"branch"              validate:"required" example:"main"`
-	Path     string `json:"path,omitempty" example:"path/to/file.txt"`
-	PathType string `json:"path_type,omitempty" example:"file"`
+	Path     string `json:"path,omitempty"                          example:"path/to/file.txt"`
+	PathType string `json:"path_type,omitempty"                     example:"file"`
 }
 
 func (c *Client) ListCommits(

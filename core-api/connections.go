@@ -9,22 +9,22 @@ import (
 
 // CreateConnectionRequest represents the JSON request body for creating connections.
 type CreateConnectionRequest struct {
-	Name          string         `json:"name"                    validate:"required,max=100" example:"Production MySQL Database"`
+	Name          string         `json:"name"                    validate:"required,max=100"              example:"Production MySQL Database"`
 	Connector     string         `json:"connector"               validate:"required,validsqid=connectors" example:"conn_5p8q2n7m9x4k"`
-	Description   string         `json:"description,omitempty"   validate:"max=500" example:"Primary MySQL database for production customer data"`
-	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation" example:"# Production Database"`
-	Details       map[string]any `json:"details" example:"{'host':'db.example.com'}"`
-	Settings      map[string]any `json:"settings" example:"{'ssl_enabled':'true'}"`
+	Description   string         `json:"description,omitempty"   validate:"max=500"                       example:"Primary MySQL database for production customer data"`
+	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation"            example:"# Production Database"`
+	Details       map[string]any `json:"details"                                                          example:"{'host':'db.example.com'}"`
+	Settings      map[string]any `json:"settings"                                                         example:"{'ssl_enabled':'true'}"`
 }
 
 // UpdateConnectionRequest represents the JSON request body for updating connections.
 type UpdateConnectionRequest struct {
-	Name          string         `json:"name,omitempty"          validate:"max=100" example:"Production MySQL Database"`
+	Name          string         `json:"name,omitempty"          validate:"max=100"              example:"Production MySQL Database"`
 	Connector     string         `json:"connector,omitempty"     validate:"validsqid=connectors" example:"conn_5p8q2n7m9x4k"`
-	Description   string         `json:"description,omitempty"   validate:"max=500" example:"Primary MySQL database for production customer data"`
-	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation" example:"# Production Database"`
-	Details       map[string]any `json:"details,omitempty" example:"{'host':'db.example.com'}"`
-	Settings      map[string]any `json:"settings,omitempty" example:"{'ssl_enabled':'true'}"`
+	Description   string         `json:"description,omitempty"   validate:"max=500"              example:"Primary MySQL database for production customer data"`
+	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation"   example:"# Production Database"`
+	Details       map[string]any `json:"details,omitempty"                                       example:"{'host':'db.example.com'}"`
+	Settings      map[string]any `json:"settings,omitempty"                                      example:"{'ssl_enabled':'true'}"`
 }
 
 // TransferConnectionOwnershipRequest represents the JSON request body for transferring connection ownership.

@@ -10,14 +10,14 @@ import (
 // CreateQueryRequest represents the JSON request body for creating a query.
 type CreateQueryRequest struct {
 	Name        string `json:"name"                  validate:"required,max=100" example:"Customer Analytics"`
-	Description string `json:"description,omitempty" validate:"max=500" example:"Customer data analysis and reporting"`
-	SQL         string `json:"sql,omitempty"         validate:"validsql" example:"select * from $['demo-data;Meteo.json@main'] WHERE 'Granularity' = 'Hour' LIMIT 2;"`
+	Description string `json:"description,omitempty" validate:"max=500"          example:"Customer data analysis and reporting"`
+	SQL         string `json:"sql,omitempty"         validate:"validsql"         example:"select * from $['demo-data;Meteo.json@main'] WHERE 'Granularity' = 'Hour' LIMIT 2;"`
 }
 
 // UpdateQueryRequest represents the JSON request body for updating a query.
 type UpdateQueryRequest struct {
-	Name        string `json:"name,omitempty"        validate:"max=100" example:"Customer Analytics"`
-	Description string `json:"description,omitempty" validate:"max=500" example:"Customer data analysis and reporting"`
+	Name        string `json:"name,omitempty"        validate:"max=100"  example:"Customer Analytics"`
+	Description string `json:"description,omitempty" validate:"max=500"  example:"Customer data analysis and reporting"`
 	SQL         string `json:"sql,omitempty"         validate:"validsql" example:"select * from $['demo-data;Meteo.json@main'] WHERE 'Granularity' = 'Hour' LIMIT 2;"`
 }
 
