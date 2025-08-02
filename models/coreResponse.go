@@ -23,5 +23,5 @@ type IrminAPIResponse struct {
 	Metadata   map[string]string           `json:"metadata,omitempty"   example:"{'request_id':'req_123','version':'1.0'}"`
 	Message    string                      `json:"message,omitempty"    example:"Operation completed successfully"                   validate:"max=140"`
 	Errors     []string                    `json:"errors,omitempty"     example:"['Field validation failed','Invalid input format']" validate:"dive"`
-	Data       any                         `json:"data,omitempty"       example:"{}"                                                                    swaggertype:"object"`
+	Data       any                         `json:"data,omitempty"`
 }
