@@ -27,7 +27,7 @@ type MoveEditorItemRequest struct {
 
 // ExecuteEditorItemRequest represents the JSON request body for executing editor items.
 type ExecuteEditorItemRequest struct {
-	Input []irminmodels.ActionInputData `json:"input,omitempty" example:"{'name':'John','age':30}"`
+	Input []irminmodels.ActionInputData `json:"input,omitempty"`
 }
 
 func (c *Client) ListEditorItems(

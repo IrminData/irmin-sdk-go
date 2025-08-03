@@ -7,8 +7,8 @@ type Connection struct {
 	Name          string            `json:"name"           validate:"required,max=100"               example:"Production MySQL Database"`
 	Description   string            `json:"description"    validate:"max=500"                        example:"Primary MySQL database"`
 	Documentation string            `json:"documentation"  validate:"validdocumentation"             example:"# Production Database"`
-	Details       CustomFieldValues `json:"details"        validate:"required"                       example:"{'host':'db.example.com'}"`
-	Settings      CustomFieldValues `json:"settings"       validate:"required"                       example:"{'ssl_enabled':'true'}"`
+	Details       CustomFieldValues `json:"details"`  // Values for the required connector configuration as JSON object, like {"host":"db.example.com"}
+	Settings      CustomFieldValues `json:"settings"` // Values for the optional connector configuration as JSON object, like {"ssl_enabled":"true"}
 	Owner         User              `json:"owner"          validate:"required"`
 	Connector     Connector         `json:"connector"      validate:"required"`
 	Tags          []Tag             `json:"tags,omitempty" validate:"dive"`

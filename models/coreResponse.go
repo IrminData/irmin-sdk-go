@@ -20,8 +20,8 @@ type IrminAPIPaginationMetadata struct {
 // This lets us unmarshal it a second time into the type we actually want.
 type IrminAPIResponse struct {
 	Pagination *IrminAPIPaginationMetadata `json:"pagination,omitempty"`
-	Metadata   map[string]string           `json:"metadata,omitempty"   example:"{'request_id':'req_123','version':'1.0'}"`
-	Message    string                      `json:"message,omitempty"    example:"Operation completed successfully"                   validate:"max=140"`
-	Errors     []string                    `json:"errors,omitempty"     example:"['Field validation failed','Invalid input format']" validate:"dive"`
+	Metadata   map[string]string           `json:"metadata,omitempty"`
+	Message    string                      `json:"message,omitempty"    example:"Operation completed successfully"             validate:"max=140"`
+	Errors     []string                    `json:"errors,omitempty"     example:"Field validation failed,Invalid input format" validate:"dive"`
 	Data       any                         `json:"data,omitempty"`
 }

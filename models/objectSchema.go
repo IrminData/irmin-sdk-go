@@ -36,13 +36,13 @@ type GroupSchemaRestrictions struct {
 // JSONSchema represents a JSON Schema for structured data.
 type JSONSchema struct {
 	Type                 string                `json:"type"                           validate:"required,oneof=object array string number integer boolean null" example:"object"` // e.g. "object", "array", etc.
-	Properties           map[string]JSONSchema `json:"properties,omitempty"                                                                                     example:"{'name':{'type':'string'},'age':{'type':'integer'}}"`
+	Properties           map[string]JSONSchema `json:"properties,omitempty"`                                                                                                      // Properties of the schema, formatted like {"name":{"type":"string"},"age":{"type":"integer"}}
 	Required             []string              `json:"required,omitempty"             validate:"dive"                                                           example:"name,email"`
 	Items                *JSONSchema           `json:"items,omitempty"`
 	Description          *string               `json:"description,omitempty"                                                                                    example:"Customer information schema"`
-	Default              any                   `json:"default,omitempty"                                                                                        example:"{}"                                                  swaggertype:"object"`
-	Enum                 []any                 `json:"enum,omitempty"                                                                                           example:"active,inactive,pending"                             swaggertype:"array,string"`
-	AdditionalProperties any                   `json:"additionalProperties,omitempty"                                                                           example:"false"                                               swaggertype:"boolean"`
+	Default              any                   `json:"default,omitempty"                                                                                        example:"{}"                          swaggertype:"object"`
+	Enum                 []any                 `json:"enum,omitempty"                                                                                           example:"active,inactive,pending"     swaggertype:"array,string"`
+	AdditionalProperties any                   `json:"additionalProperties,omitempty"                                                                           example:"false"                       swaggertype:"boolean"`
 	Format               *string               `json:"format,omitempty"                                                                                         example:"email"`
 	Minimum              *float64              `json:"minimum,omitempty"                                                                                        example:"0"`
 	Maximum              *float64              `json:"maximum,omitempty"                                                                                        example:"100"`

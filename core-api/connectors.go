@@ -15,8 +15,8 @@ type ConnectorRequest struct {
 
 // ConnectorConfigurationRequest represents the JSON request body for connector configuration operations.
 type ConnectorConfigurationRequest struct {
-	Details  map[string]any `json:"details"  example:"{'host':'db.example.com'}"`
-	Settings map[string]any `json:"settings" example:"{'ssl_enabled':'true'}"`
+	Details  irminmodels.CustomFieldValues `json:"details"`  // Values for the required connector configuration as JSON object, like {"host":"db.example.com"}
+	Settings irminmodels.CustomFieldValues `json:"settings"` // Values for the optional connector configuration as JSON object, like {"ssl_enabled":"true"}
 }
 
 func (c *Client) ListConnectors() ([]irminmodels.Connector, *irminmodels.IrminAPIResponse, error) {
