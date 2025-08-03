@@ -9,22 +9,22 @@ import (
 
 // CreateConnectionRequest represents the JSON request body for creating connections.
 type CreateConnectionRequest struct {
-	Name          string                        `json:"name"                    validate:"required,max=100"              example:"Production MySQL Database"`
-	Connector     string                        `json:"connector"               validate:"required,validsqid=connectors" example:"conn_5p8q2n7m9x4k"`
-	Description   string                        `json:"description,omitempty"   validate:"max=500"                       example:"Primary MySQL database for production customer data"`
-	Documentation string                        `json:"documentation,omitempty" validate:"validdocumentation"            example:"# Production Database"`
-	Details       irminmodels.CustomFieldValues `json:"details"`  // Values for the required connector configuration as JSON object, like {"host":"db.example.com"}
-	Settings      irminmodels.CustomFieldValues `json:"settings"` // Values for the optional connector configuration as JSON object, like {"ssl_enabled":"true"}
+	Name          string         `json:"name"                    validate:"required,max=100"              example:"Production MySQL Database"`
+	Connector     string         `json:"connector"               validate:"required,validsqid=connectors" example:"conn_5p8q2n7m9x4k"`
+	Description   string         `json:"description,omitempty"   validate:"max=500"                       example:"Primary MySQL database for production customer data"`
+	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation"            example:"# Production Database"`
+	Details       map[string]any `json:"details"`  // Values for the required connector configuration as JSON object, like {"host":"db.example.com"}
+	Settings      map[string]any `json:"settings"` // Values for the optional connector configuration as JSON object, like {"ssl_enabled":"true"}
 }
 
 // UpdateConnectionRequest represents the JSON request body for updating connections.
 type UpdateConnectionRequest struct {
-	Name          string                        `json:"name,omitempty"          validate:"max=100"              example:"Production MySQL Database"`
-	Connector     string                        `json:"connector,omitempty"     validate:"validsqid=connectors" example:"conn_5p8q2n7m9x4k"`
-	Description   string                        `json:"description,omitempty"   validate:"max=500"              example:"Primary MySQL database for production customer data"`
-	Documentation string                        `json:"documentation,omitempty" validate:"validdocumentation"   example:"# Production Database"`
-	Details       irminmodels.CustomFieldValues `json:"details,omitempty"`  // Values for the required connector configuration as JSON object, like {"host":"db.example.com"}
-	Settings      irminmodels.CustomFieldValues `json:"settings,omitempty"` // Values for the optional connector configuration as JSON object, like {"ssl_enabled":"true"}
+	Name          string         `json:"name,omitempty"          validate:"max=100"              example:"Production MySQL Database"`
+	Connector     string         `json:"connector,omitempty"     validate:"validsqid=connectors" example:"conn_5p8q2n7m9x4k"`
+	Description   string         `json:"description,omitempty"   validate:"max=500"              example:"Primary MySQL database for production customer data"`
+	Documentation string         `json:"documentation,omitempty" validate:"validdocumentation"   example:"# Production Database"`
+	Details       map[string]any `json:"details,omitempty"`  // Values for the required connector configuration as JSON object, like {"host":"db.example.com"}
+	Settings      map[string]any `json:"settings,omitempty"` // Values for the optional connector configuration as JSON object, like {"ssl_enabled":"true"}
 }
 
 // TransferConnectionOwnershipRequest represents the JSON request body for transferring connection ownership.
