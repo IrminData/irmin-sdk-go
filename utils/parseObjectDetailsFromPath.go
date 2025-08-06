@@ -161,13 +161,19 @@ func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
 
 // isGroup determines if a name should be treated as a group (directory)
 func isGroup(name, ext string) bool {
+	// Files ending with just a dot (like "file.") are groups
+	if strings.HasSuffix(name, ".") && len(ext) == 1 {
+		return true
+	}
+
 	// Empty extension means it's a directory/group
 	if ext == "" {
 		return true
 	}
 
-	// Files ending with just a dot (like "file.") are groups
-	if strings.HasSuffix(name, ".") && len(ext) == 1 {
+	// Hidden files/directories starting with . and having ext == name are groups
+	// e.g., ".config" where ext = ".config" and name = ".config"
+	if strings.HasPrefix(name, ".") && ext == name {
 		return true
 	}
 
