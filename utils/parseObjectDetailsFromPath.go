@@ -11,6 +11,7 @@ import (
 type ObjectDetails struct {
 	Name        string                 // The object name.
 	FullPath    string                 // The cleaned full path.
+	ParentPath  *string                // The parent directory object's path. Nil if the object is the root object.
 	Type        irminmodels.ObjectType // The object's type.
 	ContentType string                 // The MIME type of the object.
 }
@@ -96,6 +97,20 @@ func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
 	// Use the path package to obtain the base name and directory.
 	name := path.Base(cleanPath)
 
+	// Find the parent directory path.
+	var parentPath *string
+	if cleanPath != "/" && cleanPath != "" {
+		newParentPath := strings.TrimSuffix(cleanPath, "/")
+		newParentPath = strings.TrimSuffix(newParentPath, name)
+		if newParentPath == "/" {
+			newParentPath = ""
+		}
+		parentPath = &newParentPath
+	} else {
+		// For the root object, the parent path is nil.
+		parentPath = nil
+	}
+
 	// Determine the file extension in lower-case.
 	lowerName := strings.ToLower(name)
 	ext := path.Ext(lowerName)
@@ -129,6 +144,7 @@ func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
 	return ObjectDetails{
 		Name:        name,
 		FullPath:    cleanPath,
+		ParentPath:  parentPath,
 		Type:        objectType,
 		ContentType: contentType,
 	}
