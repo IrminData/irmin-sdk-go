@@ -106,10 +106,14 @@ func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
 	if cleanPath != "/" && cleanPath != "" {
 		newParentPath := strings.TrimSuffix(cleanPath, "/")
 		newParentPath = strings.TrimSuffix(newParentPath, name)
-		// Remove trailing slash from parent path
+		// Remove trailing slash temporarily
 		newParentPath = strings.TrimSuffix(newParentPath, "/")
-		if newParentPath == "/" {
+		if newParentPath == "/" || newParentPath == "" {
+			// Root parent path should be empty string
 			newParentPath = ""
+		} else {
+			// Non-root parent paths should have trailing slash since they are directories
+			newParentPath += "/"
 		}
 		parentPath = &newParentPath
 	} else {
