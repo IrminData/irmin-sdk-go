@@ -81,8 +81,12 @@ func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
 		".mp4":  "video/mp4",              // MP4
 	}
 
-	// Clean the path: remove extra slashes.
+	// Clean the path: normalize by removing extra slashes and trim leading slash.
 	cleanPath := strings.TrimPrefix(inputPath, "/")
+	// Normalize path by removing duplicate slashes
+	for strings.Contains(cleanPath, "//") {
+		cleanPath = strings.ReplaceAll(cleanPath, "//", "/")
+	}
 
 	// Handle empty path (or root path) explicitly.
 	if cleanPath == "" || strings.HasSuffix(cleanPath, "/") {
@@ -102,6 +106,8 @@ func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
 	if cleanPath != "/" && cleanPath != "" {
 		newParentPath := strings.TrimSuffix(cleanPath, "/")
 		newParentPath = strings.TrimSuffix(newParentPath, name)
+		// Remove trailing slash from parent path
+		newParentPath = strings.TrimSuffix(newParentPath, "/")
 		if newParentPath == "/" {
 			newParentPath = ""
 		}
@@ -120,11 +126,14 @@ func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
 
 	var objectType irminmodels.ObjectType
 
+	// Determine if this should be treated as a group (directory)
+	isGroup := isGroup(name, ext)
+
 	// If the extension is found in contentTypes, mark as structured.
 	switch {
 	case isStructured:
 		objectType = irminmodels.ObjectTypeStructured
-	case !strings.Contains(name, "."):
+	case isGroup:
 		objectType = irminmodels.ObjectTypeGroup
 		contentType = ""
 		cleanPath += "/" // Add a trailing slash since groups are bucket object prefixes.
@@ -148,4 +157,19 @@ func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
 		Type:        objectType,
 		ContentType: contentType,
 	}
+}
+
+// isGroup determines if a name should be treated as a group (directory)
+func isGroup(name, ext string) bool {
+	// Empty extension means it's a directory/group
+	if ext == "" {
+		return true
+	}
+
+	// Files ending with just a dot (like "file.") are groups
+	if strings.HasSuffix(name, ".") && len(ext) == 1 {
+		return true
+	}
+
+	return false
 }
