@@ -394,6 +394,118 @@ func TestCreateMultipartFormLargeContent(t *testing.T) {
 	}
 }
 
+// TestCreateMultipartFormContentType tests that the Content-Type header is properly set in multipart form file parts
+func TestCreateMultipartFormContentType(t *testing.T) {
+	tests := []struct {
+		name      string
+		content   string
+		mimeType  string
+		filename  string
+		fieldName string
+	}{
+		{
+			name:      "text/plain content",
+			content:   "Hello World",
+			mimeType:  "text/plain",
+			filename:  "hello.txt",
+			fieldName: "file",
+		},
+		{
+			name:      "application/json content",
+			content:   `{"key": "value"}`,
+			mimeType:  "application/json",
+			filename:  "data.json",
+			fieldName: "document",
+		},
+		{
+			name:      "image/png content",
+			content:   "fake png content",
+			mimeType:  "image/png",
+			filename:  "image.png",
+			fieldName: "upload",
+		},
+		{
+			name:      "application/pdf content",
+			content:   "fake pdf content",
+			mimeType:  "application/pdf",
+			filename:  "document.pdf",
+			fieldName: "attachment",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fileContent := irminutils.FileContentFromString(tt.content, tt.mimeType)
+			form, err := irminutils.CreateMultipartForm(fileContent, tt.filename, tt.fieldName)
+			if err != nil {
+				t.Fatalf("failed to create multipart form: %v", err)
+			}
+
+			// Parse the multipart form to check the Content-Type header
+			reader := multipart.NewReader(form.Buffer, form.Boundary)
+			part, partErr := reader.NextPart()
+			if partErr != nil {
+				t.Fatalf("failed to read multipart part: %v", partErr)
+			}
+
+			// Check the Content-Type header of the file part
+			contentType := part.Header.Get("Content-Type")
+			if contentType != tt.mimeType {
+				t.Errorf("expected Content-Type %q, got %q", tt.mimeType, contentType)
+			}
+
+			// Verify basic part properties are still correct
+			if part.FormName() != tt.fieldName {
+				t.Errorf("expected form name %q, got %q", tt.fieldName, part.FormName())
+			}
+			if part.FileName() != tt.filename {
+				t.Errorf("expected filename %q, got %q", tt.filename, part.FileName())
+			}
+		})
+	}
+}
+
+// TestCreateMultipartFormWithFieldsContentType tests that Content-Type header is properly set when using additional fields
+func TestCreateMultipartFormWithFieldsContentType(t *testing.T) {
+	content := "Hello World"
+	mimeType := "text/plain"
+	filename := "hello.txt"
+	fieldName := "file"
+	textFields := map[string]string{
+		"description": "A sample text file",
+	}
+
+	fileContent := irminutils.FileContentFromString(content, mimeType)
+	form, err := irminutils.CreateMultipartFormWithFields(fileContent, filename, fieldName, textFields)
+	if err != nil {
+		t.Fatalf("failed to create multipart form with fields: %v", err)
+	}
+
+	// Parse the multipart form to find the file part and check its Content-Type
+	reader := multipart.NewReader(form.Buffer, form.Boundary)
+
+	for {
+		part, partErr := reader.NextPart()
+		if partErr == io.EOF {
+			break
+		}
+		if partErr != nil {
+			t.Fatalf("failed to read multipart part: %v", partErr)
+		}
+
+		// Check if this is the file part (has a filename)
+		if part.FileName() != "" {
+			contentType := part.Header.Get("Content-Type")
+			if contentType != mimeType {
+				t.Errorf("expected Content-Type %q, got %q", mimeType, contentType)
+			}
+			return // Found and validated the file part
+		}
+	}
+
+	t.Error("file part not found in multipart form")
+}
+
 // TestMultipartFormDataStruct tests the MultipartFormData struct properties
 func TestMultipartFormDataStruct(t *testing.T) {
 	fileContent := irminutils.FileContentFromString("test", "text/plain")
