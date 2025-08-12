@@ -132,6 +132,22 @@ func getContentTypeHybrid(ext string) string {
 		".xlsb": "application/vnd.ms-excel.sheet.binary.macroEnabled.12", // Excel binary
 		".xlsm": "application/vnd.ms-excel.sheet.macroEnabled.12",        // Excel with macros
 
+		// Modern image formats that may not be universally recognized
+		".heic": "image/heic", // Apple HEIC format
+		".heif": "image/heif", // Apple HEIF format
+		".avif": "image/avif", // AV1 Image File Format (fallback if not detected)
+		".webp": "image/webp", // WebP (fallback if not detected)
+
+		// Modern audio formats that may not be universally recognized
+		".opus": "audio/opus", // Opus audio codec
+		".flac": "audio/flac", // FLAC lossless audio
+
+		// Font formats that may not be universally recognized
+		".woff":  "font/woff",  // Web Open Font Format
+		".woff2": "font/woff2", // Web Open Font Format 2.0
+		".otf":   "font/otf",   // OpenType Font
+		".ttf":   "font/ttf",   // TrueType Font
+
 		// Legacy overrides for backward compatibility
 		".js": "application/javascript", // Keep legacy JavaScript MIME type for compatibility
 	}
