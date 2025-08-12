@@ -24,7 +24,6 @@ type ObjectDetails struct {
 // - Specialized data analytics formats use predefined mappings
 // - Standard formats use the system's built-in MIME type database
 func ParseObjectDetailsFromPath(inputPath string) ObjectDetails {
-
 	// Clean the path: normalize by removing extra slashes and trim leading slash.
 	cleanPath := strings.TrimPrefix(inputPath, "/")
 	// Normalize path by removing duplicate slashes
