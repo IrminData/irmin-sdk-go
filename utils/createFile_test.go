@@ -1,6 +1,7 @@
 package irminutils_test
 
 import (
+	"bytes"
 	"io"
 	"strings"
 	"testing"
@@ -15,6 +16,59 @@ func TestNewFile(t *testing.T) {
 	file := irminutils.NewFile(content, filename)
 	if string(file.Content) != content {
 		t.Errorf("Expected content %q, got %q", content, string(file.Content))
+	}
+	if file.Filename != filename {
+		t.Errorf("Expected filename %q, got %q", filename, file.Filename)
+	}
+}
+
+func TestNewFileFromBytes(t *testing.T) {
+	content := []byte("Hello World")
+	filename := "test.txt"
+
+	file := irminutils.NewFileFromBytes(content, filename)
+	if !bytes.Equal(file.Content, content) {
+		t.Errorf("Expected content %v, got %v", content, file.Content)
+	}
+	if file.Filename != filename {
+		t.Errorf("Expected filename %q, got %q", filename, file.Filename)
+	}
+}
+
+func TestNewFileFromBytesEmpty(t *testing.T) {
+	content := []byte{}
+	filename := "empty.txt"
+
+	file := irminutils.NewFileFromBytes(content, filename)
+	if !bytes.Equal(file.Content, content) {
+		t.Errorf("Expected empty content, got %v", file.Content)
+	}
+	if file.Filename != filename {
+		t.Errorf("Expected filename %q, got %q", filename, file.Filename)
+	}
+}
+
+func TestNewFileFromBytesBinary(t *testing.T) {
+	// Test with binary content
+	content := []byte{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A} // PNG header
+	filename := "test.png"
+
+	file := irminutils.NewFileFromBytes(content, filename)
+	if !bytes.Equal(file.Content, content) {
+		t.Errorf("Expected binary content %v, got %v", content, file.Content)
+	}
+	if file.Filename != filename {
+		t.Errorf("Expected filename %q, got %q", filename, file.Filename)
+	}
+}
+
+func TestNewFileFromBytesNil(t *testing.T) {
+	var content []byte
+	filename := "nil.txt"
+
+	file := irminutils.NewFileFromBytes(content, filename)
+	if file.Content != nil {
+		t.Errorf("Expected nil content, got %v", file.Content)
 	}
 	if file.Filename != filename {
 		t.Errorf("Expected filename %q, got %q", filename, file.Filename)

@@ -103,7 +103,7 @@ func (fi *fileInfo) Size() int64        { return fi.size }
 func (fi *fileInfo) Mode() os.FileMode  { return defaultFileMode }
 func (fi *fileInfo) ModTime() time.Time { return time.Now() }
 func (fi *fileInfo) IsDir() bool        { return false }
-func (fi *fileInfo) Sys() interface{}   { return nil }
+func (fi *fileInfo) Sys() any           { return nil }
 
 // CreateMultipartForm creates a complete multipart/form-data form.
 func CreateMultipartForm(file *File, fieldName string) (*bytes.Buffer, string, error) {
