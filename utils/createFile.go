@@ -6,6 +6,7 @@ import (
 	"io"
 	"mime"
 	"mime/multipart"
+	"net/textproto"
 	"path/filepath"
 	"strings"
 )
@@ -139,8 +140,12 @@ func CreateMultipartForm(content *FileContent, filename, fieldName string) (*Mul
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
 
-	// Create the form file field with proper headers
-	fileWriter, err := writer.CreateFormFile(fieldName, filename)
+	// Create the form file field with proper headers including Content-Type
+	headers := make(textproto.MIMEHeader)
+	headers.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, fieldName, filename))
+	headers.Set("Content-Type", content.MimeType)
+
+	fileWriter, err := writer.CreatePart(headers)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create form file field: %w", err)
 	}
@@ -203,8 +208,12 @@ func CreateMultipartFormWithFields(
 		}
 	}
 
-	// Create the form file field with proper headers
-	fileWriter, err := writer.CreateFormFile(fieldName, filename)
+	// Create the form file field with proper headers including Content-Type
+	headers := make(textproto.MIMEHeader)
+	headers.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, fieldName, filename))
+	headers.Set("Content-Type", content.MimeType)
+
+	fileWriter, err := writer.CreatePart(headers)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create form file field: %w", err)
 	}
