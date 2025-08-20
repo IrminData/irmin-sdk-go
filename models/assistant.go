@@ -18,7 +18,7 @@ type AssistantConversation struct {
 
 	// Workspace this conversation belongs to
 	WorkspaceID string    `json:"workspace_id" validate:"required,validsqid=workspaces" example:"workspace_1a2b3c"`
-	Workspace   Workspace `json:"workspace" `
+	Workspace   Workspace `json:"workspace"`
 
 	// User who owns this conversation
 	UserID string `json:"user_id" validate:"required,validsqid=users" example:"user_1a2b3c"`
@@ -38,8 +38,8 @@ type AssistantConversation struct {
 
 	// Timestamps
 	LastMessageAt *time.Time `json:"last_message_at"`
-	CreatedAt     time.Time  `json:"created_at"      validate:"required"                      example:"2025-01-15T10:30:00Z"`
-	UpdatedAt     time.Time  `json:"updated_at"      validate:"required"                      example:"2025-12-01T14:22:30Z"`
+	CreatedAt     time.Time  `json:"created_at"      validate:"required" example:"2025-01-15T10:30:00Z"`
+	UpdatedAt     time.Time  `json:"updated_at"      validate:"required" example:"2025-12-01T14:22:30Z"`
 }
 
 type AssistantMessage struct {
@@ -67,8 +67,8 @@ type AssistantMessage struct {
 
 	// Timestamps
 	SentAt    time.Time `json:"sent_at"`
-	CreatedAt time.Time `json:"created_at"      validate:"required"                      example:"2025-01-15T10:30:00Z"`
-	UpdatedAt time.Time `json:"updated_at"      validate:"required"                      example:"2025-12-01T14:22:30Z"`
+	CreatedAt time.Time `json:"created_at" validate:"required" example:"2025-01-15T10:30:00Z"`
+	UpdatedAt time.Time `json:"updated_at" validate:"required" example:"2025-12-01T14:22:30Z"`
 }
 
 type AssistantConversationStats struct {
