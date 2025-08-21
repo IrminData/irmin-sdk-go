@@ -38,19 +38,19 @@ type AssistantConversation struct {
 }
 
 type AssistantMessage struct {
-	ID             string                 `json:"id"              validate:"required,validsqid=assistant_messages"      example:"assistant_message_1a2b3c"`
-	ConversationID string                 `json:"conversation_id" validate:"required,validsqid=assistant_conversations" example:"assistant_conversation_1a2b3c"`
+	ID             string                 `json:"id"                      validate:"required,validsqid=assistant_messages"      example:"assistant_message_1a2b3c"`
+	ConversationID string                 `json:"conversation_id"         validate:"required,validsqid=assistant_conversations" example:"assistant_conversation_1a2b3c"`
 	Role           AssistantMessageRole   `json:"role"`
 	Content        string                 `json:"content"`
 	Metadata       map[string]any         `json:"metadata"`
 	InputTokens    *int                   `json:"input_tokens"`
 	OutputTokens   *int                   `json:"output_tokens"`
 	AIModel        string                 `json:"ai_model"`
-	Status         AssistantMessageStatus `json:"status" validate:"required,oneof=pending sent error failed"`
+	Status         AssistantMessageStatus `json:"status"                  validate:"required,oneof=pending sent error failed"`
 	ErrorMessage   *string                `json:"error_message,omitempty"`
 	SentAt         time.Time              `json:"sent_at"`
-	CreatedAt      time.Time              `json:"created_at"      validate:"required"                                   example:"2025-01-15T10:30:00Z"`
-	UpdatedAt      time.Time              `json:"updated_at"      validate:"required"                                   example:"2025-12-01T14:22:30Z"`
+	CreatedAt      time.Time              `json:"created_at"              validate:"required"                                   example:"2025-01-15T10:30:00Z"`
+	UpdatedAt      time.Time              `json:"updated_at"              validate:"required"                                   example:"2025-12-01T14:22:30Z"`
 }
 
 type AssistantConversationStats struct {
