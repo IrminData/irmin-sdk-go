@@ -13,8 +13,8 @@ const (
 
 // AssistantConversation represents a conversation with the AI assistant
 type AssistantConversation struct {
+	ID                string             `json:"id"                 validate:"required,validsqid=assistant_conversations" example:"assistant_conversation_1a2b3c"`
 	Title             string             `json:"title"              validate:"required"                      example:"My conversation"`
-	ConversationID    string             `json:"conversation_id"` // Note, that this is not a SQID
 	WorkspaceID       string             `json:"workspace_id"       validate:"required,validsqid=workspaces" example:"workspace_1a2b3c"`
 	UserID            string             `json:"user_id"            validate:"required,validsqid=users"      example:"user_1a2b3c"`
 	Metadata          map[string]any     `json:"metadata"`
@@ -29,8 +29,8 @@ type AssistantConversation struct {
 }
 
 type AssistantMessage struct {
-	MessageID      string               `json:"message_id"`      // Note, that this is not a SQID
-	ConversationID string               `json:"conversation_id"` // Note, that this is not a SQID
+	ID             string               `json:"id"             validate:"required,validsqid=assistant_messages" example:"assistant_message_1a2b3c"`
+	ConversationID string               `json:"conversation_id" validate:"required,validsqid=assistant_conversations" example:"assistant_conversation_1a2b3c"`
 	Role           AssistantMessageRole `json:"role"`
 	Content        string               `json:"content"`
 	Metadata       map[string]any       `json:"metadata"`
