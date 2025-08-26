@@ -70,6 +70,6 @@ jobs:
 
             Generated files:
             - docs/html/index.html
-            - docs/SDK.md
+            - docs/docs.md
 
             ${{ steps.check-changes.outputs.changes == 'true' && 'The workflow re-ran after pushing the docs to verify the changes.' || '' }}
