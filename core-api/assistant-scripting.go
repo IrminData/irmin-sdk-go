@@ -1,4 +1,3 @@
-//nolint:dupl // Assistant query and script generation are similar in structure, but I don't think it's worth a refactor
 package irmincore
 
 import (
