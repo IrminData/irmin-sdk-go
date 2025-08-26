@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Generate Go SDK docs:
+# Generate Go docs:
 # - HTML per package (go doc) under docs/html with an index.html
-# - Combined Markdown SDK reference (gomarkdoc) at docs/SDK.md
+# - Combined Markdown reference (gomarkdoc) at docs/docs.md
 
 DOCS_DIR="${DOCS_DIR:-docs}"
 HTML_DIR="${DOCS_DIR}/html"
-MD_FILE="${DOCS_DIR}/SDK.md"
+MD_FILE="${DOCS_DIR}/docs.md"
 INDEX_FILE="${HTML_DIR}/index.html"
 
 # Resolve module path for nicer titles (optional)
@@ -73,6 +73,9 @@ if [[ "${#PKGS[@]}" -eq 0 ]]; then
   exit 0
 fi
 
+# Clean up old docs and recreate directories
+echo "Cleaning up old docs..."
+rm -rf "${DOCS_DIR}"
 mkdir -p "${HTML_DIR}" "${DOCS_DIR}"
 
 safe_name() {
@@ -104,7 +107,7 @@ echo "Writing index: ${INDEX_FILE}"
 {
   echo "<!doctype html>"
   echo "<meta charset=\"utf-8\"/>"
-  title="${MOD_PATH:-Go SDK} documentation"
+  title="${MOD_PATH:-Go} documentation"
   echo "<title>${title}</title>"
   echo "<h1>${title}</h1>"
   echo "<p>Generated on $(date -u '+%Y-%m-%d %H:%M UTC')</p>"
@@ -118,7 +121,7 @@ echo "Writing index: ${INDEX_FILE}"
   echo "</ul>"
 } > "${INDEX_FILE}"
 
-echo "Generating Markdown SDK reference (gomarkdoc) -> ${MD_FILE}"
+echo "Generating Markdown reference (gomarkdoc) -> ${MD_FILE}"
 "$GOMARKDOC_CMD" ${GOMARKDOC_FLAGS:-} ./... > "${MD_FILE}"
 
 echo "Done."
