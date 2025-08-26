@@ -32,7 +32,7 @@ func (c *Client) ListScriptGenerationConversations(
 	var conversations []irminmodels.AssistantConversation
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
-		Endpoint: fmt.Sprintf("/v1/workspaces/%s/assistant/scripting", workspace),
+		Endpoint: fmt.Sprintf("/v1/workspaces/%s/assistant/script", workspace),
 	}, &conversations)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch script generation conversations error: %w", err)
@@ -48,7 +48,7 @@ func (c *Client) GenerateScript(
 	var messages []irminmodels.AssistantMessage
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodPost,
-		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/assistant/scripting", workspace),
+		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/assistant/script", workspace),
 		ContentType: "application/json",
 		Body:        req,
 	}, &messages)
@@ -65,7 +65,7 @@ func (c *Client) GetScriptGenerationConversation(
 	var conversation irminmodels.AssistantConversation
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:   http.MethodGet,
-		Endpoint: fmt.Sprintf("/v1/workspaces/%s/assistant/scripting/%s", workspace, conversationID),
+		Endpoint: fmt.Sprintf("/v1/workspaces/%s/assistant/script/%s", workspace, conversationID),
 	}, &conversation)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch script generation conversation error: %w", err)
@@ -79,7 +79,7 @@ func (c *Client) DeleteScriptGenerationConversation(
 ) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(RequestOptions{
 		Method:      http.MethodDelete,
-		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/assistant/scripting/%s", workspace, conversationID),
+		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/assistant/script/%s", workspace, conversationID),
 		ContentType: "application/json",
 	}, nil)
 	if err != nil {
