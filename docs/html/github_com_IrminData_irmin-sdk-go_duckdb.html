@@ -44,7 +44,7 @@ type InMemoryClient struct {
     InMemoryClient is a client for interacting with DuckDB for in-memory data
     processing.
 
-func NewInMemoryClient(logger *slog.Logger) (*InMemoryClient, error)
+func NewInMemoryClient(ctx context.Context, logger *slog.Logger) (*InMemoryClient, error)
     NewInMemoryClient creates a new client for in-memory data processing
     with DuckDB. It configures the DuckDB connection without external storage
     dependencies. Returns the client and an error if encountered.
@@ -52,25 +52,25 @@ func NewInMemoryClient(logger *slog.Logger) (*InMemoryClient, error)
 func (c *InMemoryClient) Close() error
     Close closes the DuckDB connection held by the client.
 
-func (c *InMemoryClient) CreateTableFromData(tableName string, data []map[string]any) error
+func (c *InMemoryClient) CreateTableFromData(ctx context.Context, tableName string, data []map[string]any) error
     CreateTableFromData creates a table in DuckDB from in-memory data. This is
     useful for loading data directly into DuckDB for processing.
 
-func (c *InMemoryClient) ExecuteNonQuery(query string, args ...any) (sql.Result, error)
+func (c *InMemoryClient) ExecuteNonQuery(ctx context.Context, query string, args ...any) (sql.Result, error)
     ExecuteNonQuery executes a SQL statement that does not return rows (such as
     INSERT, UPDATE, DELETE).
 
     query: the SQL statement to execute. args: optional arguments for the
     statement.
 
-func (c *InMemoryClient) ExecuteQuery(query string, args ...any) (*sql.Rows, error)
+func (c *InMemoryClient) ExecuteQuery(ctx context.Context, query string, args ...any) (*sql.Rows, error)
     ExecuteQuery executes a SQL query using the client's DuckDB connection and
     returns the resulting rows. It is suitable for queries that return rows
     (e.g. SELECT statements).
 
     query: the SQL query to execute. args: optional arguments for the query.
 
-func (c *InMemoryClient) LoadFileFromBytes(data []byte, filename string, tableName string) error
+func (c *InMemoryClient) LoadFileFromBytes(ctx context.Context, data []byte, filename string, tableName string) error
     LoadFileFromBytes loads data from byte content into DuckDB as a table.
     This is useful for processing binary file content like CSV, JSON, etc.
 
@@ -85,6 +85,7 @@ func (c *InMemoryClient) LoadFileFromBytes(data []byte, filename string, tableNa
         err := client.LoadFileFromBytes(csvData, "users.csv", "users")
 
 func (c *InMemoryClient) MergeDataSources(
+	ctx context.Context,
 	dataSources map[string][]map[string]any,
 	targetTableName string,
 	strategy MergeStrategy,
@@ -100,6 +101,7 @@ func (c *InMemoryClient) MergeDataSources(
     Returns the merge result or an error.
 
 func (c *InMemoryClient) MergeFiles(
+	ctx context.Context,
 	sourceFiles map[string][]byte,
 	targetTableName string,
 	strategy MergeStrategy,
@@ -107,7 +109,7 @@ func (c *InMemoryClient) MergeFiles(
     MergeFiles merges multiple files from byte content into a single table.
     This is useful for processing files loaded into memory.
 
-func (c *InMemoryClient) QueryToMap(query string, args ...any) ([]map[string]any, error)
+func (c *InMemoryClient) QueryToMap(ctx context.Context, query string, args ...any) ([]map[string]any, error)
     QueryToMap executes a query and returns the results as a slice of maps.
     This is convenient for working with query results in Go.
 
