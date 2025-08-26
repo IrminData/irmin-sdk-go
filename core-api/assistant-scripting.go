@@ -13,12 +13,6 @@ type ScriptGenerationRequest struct {
 	// Natural language prompt describing the desired script
 	Prompt string `json:"prompt" validate:"required,min=1,max=1000"`
 
-	// Optional repository slug for repository-specific scripts
-	RepositorySlug *string `json:"repository_slug,omitempty"`
-
-	// Optional repository reference (branch, tag, commit)
-	RepositoryRef *string `json:"repository_ref,omitempty"`
-
 	// Optional conversation ID to continue an existing conversation
 	ConversationID *string `json:"conversation_id,omitempty" validate:"validsqid=assistant_conversations"`
 
