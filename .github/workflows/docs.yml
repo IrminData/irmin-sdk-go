@@ -1,4 +1,4 @@
-name: Generate docs on PR
+name: Generate docs
 
 on:
   pull_request:
