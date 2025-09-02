@@ -161,7 +161,7 @@ import "github.com/IrminData/irmin-sdk-go/connector"
 
 
 <a name="Client"></a>
-## type Client
+## type [Client](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/client.go#L25-L37>)
 
 Client represents the Connector API client.
 
@@ -182,7 +182,7 @@ type Client struct {
 ```
 
 <a name="NewClient"></a>
-### func NewClient
+### func [NewClient](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/client.go#L40>)
 
 ```go
 func NewClient(baseURL, token, locale string) *Client
@@ -191,7 +191,7 @@ func NewClient(baseURL, token, locale string) *Client
 NewClient creates a new Connector API client with default settings.
 
 <a name="Client.CancelOperation"></a>
-### func \(\*Client\) CancelOperation
+### func \(\*Client\) [CancelOperation](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/operation.go#L77>)
 
 ```go
 func (c *Client) CancelOperation(operationID uint) error
@@ -206,7 +206,7 @@ Parameters: \- operationID: The ID of the operation to cancel.
 Returns: \- An error if the operation cannot be cancelled.
 
 <a name="Client.FetchAPI"></a>
-### func \(\*Client\) FetchAPI
+### func \(\*Client\) [FetchAPI](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/client.go#L293>)
 
 ```go
 func (c *Client) FetchAPI(opts RequestOptions, out any) error
@@ -215,7 +215,7 @@ func (c *Client) FetchAPI(opts RequestOptions, out any) error
 FetchAPI sends a request and attempts to parse the JSON response into a struct if provided.
 
 <a name="Client.FetchStreamFiles"></a>
-### func \(\*Client\) FetchStreamFiles
+### func \(\*Client\) [FetchStreamFiles](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/client.go#L313>)
 
 ```go
 func (c *Client) FetchStreamFiles(opts RequestOptions) ([]PulledFile, error)
@@ -224,7 +224,7 @@ func (c *Client) FetchStreamFiles(opts RequestOptions) ([]PulledFile, error)
 FetchStreamFiles sends a request based on the provided RequestOptions and returns a slice of PulledFile. If the response is multipart, each part is parsed as a separate file. Otherwise, the response is treated as a single file.
 
 <a name="Client.GetConfigFields"></a>
-### func \(\*Client\) GetConfigFields
+### func \(\*Client\) [GetConfigFields](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/configFields.go#L22-L26>)
 
 ```go
 func (c *Client) GetConfigFields(configType string, details map[string]string, settings map[string]string) (map[string]irminmodels.DynamicField, error)
@@ -239,7 +239,7 @@ Parameters: \- configType: The type of configuration, e.g. "details" or "setting
 Returns: \- A list of DynamicField objects representing the configuration fields if the request is successful. \- An error if the request fails.
 
 <a name="Client.GetInfo"></a>
-### func \(\*Client\) GetInfo
+### func \(\*Client\) [GetInfo](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/info.go#L32>)
 
 ```go
 func (c *Client) GetInfo() (*ConnectorInfo, error)
@@ -252,7 +252,7 @@ Note: System token is required for this operation.
 Returns: \- A pointer to ConnectorInfo if the request is successful. \- An error if the API call fails or the response cannot be unmarshalled.
 
 <a name="Client.GetOperationStatus"></a>
-### func \(\*Client\) GetOperationStatus
+### func \(\*Client\) [GetOperationStatus](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/operation.go#L107>)
 
 ```go
 func (c *Client) GetOperationStatus(operationID uint) (*OperationStatus, error)
@@ -267,7 +267,7 @@ Parameters: \- operationID: The ID of the operation to get the status of.
 Returns: \- The status of the operation if the request is successful. \- An error if the operation cannot be retrieved.
 
 <a name="Client.GetSchema"></a>
-### func \(\*Client\) GetSchema
+### func \(\*Client\) [GetSchema](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/schema.go#L20>)
 
 ```go
 func (c *Client) GetSchema(method string) (*irminmodels.ObjectSchema, error)
@@ -282,7 +282,7 @@ Parameters: \- method: The operation method for which to retrieve the schema, e.
 Returns: \- The schema for the specified operation method if the request is successful. \- An error if the request fails.
 
 <a name="Client.InitOperation"></a>
-### func \(\*Client\) InitOperation
+### func \(\*Client\) [InitOperation](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/operation.go#L41>)
 
 ```go
 func (c *Client) InitOperation(details map[string]string, settings map[string]string) (*Operation, error)
@@ -297,7 +297,7 @@ Parameters: \- details: A map containing configuration details \(e.g. host, port
 Returns: \- The newly created operation if the request is successful. \- An error if the request fails.
 
 <a name="Client.OperationPatch"></a>
-### func \(\*Client\) OperationPatch
+### func \(\*Client\) [OperationPatch](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/patch.go#L15>)
 
 ```go
 func (c *Client) OperationPatch(patchFile FormFile) (string, error)
@@ -312,7 +312,7 @@ Parameters: \- A JSON form file "patches" containing the list of JSON patch oper
 Returns: \- A string containing the response message from the push operation. \- An error if the request fails.
 
 <a name="Client.OperationPull"></a>
-### func \(\*Client\) OperationPull
+### func \(\*Client\) [OperationPull](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/pull.go#L19>)
 
 ```go
 func (c *Client) OperationPull(path string) ([]PulledFile, error)
@@ -332,7 +332,7 @@ Returns: \- A slice of PulledFile objects containing the following:
 \- An error if the request fails.
 
 <a name="Client.OperationPush"></a>
-### func \(\*Client\) OperationPush
+### func \(\*Client\) [OperationPush](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/push.go#L16>)
 
 ```go
 func (c *Client) OperationPush(path string, file FormFile) (string, error)
@@ -347,7 +347,7 @@ Parameters: \- A form field "path" with the provided path value. \- A form file 
 Returns: \- A string containing the response message from the push operation. \- An error if the request fails.
 
 <a name="Client.Request"></a>
-### func \(\*Client\) Request
+### func \(\*Client\) [Request](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/client.go#L246>)
 
 ```go
 func (c *Client) Request(opts RequestOptions) ([]byte, error)
@@ -356,7 +356,7 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error)
 Request sends requests to the REST API of the connector and returns the raw response data. It utilises prepareBodyAndHeaders and doRequest to reduce code duplication.
 
 <a name="Client.SubscribeToChanges"></a>
-### func \(\*Client\) SubscribeToChanges
+### func \(\*Client\) [SubscribeToChanges](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/subscribe.go#L29>)
 
 ```go
 func (c *Client) SubscribeToChanges(webhook, webhookAccessToken string) (*Subscription, error)
@@ -371,7 +371,7 @@ Parameters: \- webhook: The URL of the webhook to send the changes to. \- webhoo
 Returns: \- The schema for the specified operation method if the request is successful. \- An error if the request fails.
 
 <a name="Client.ValidateConfigFields"></a>
-### func \(\*Client\) ValidateConfigFields
+### func \(\*Client\) [ValidateConfigFields](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/configFields.go#L69-L72>)
 
 ```go
 func (c *Client) ValidateConfigFields(details map[string]string, settings map[string]string) (*irminmodels.ConnectorConfigurationValidationResult, error)
@@ -386,7 +386,7 @@ Parameters: \- details: A map containing configuration details provided by the u
 Returns: \- A validation result from the connector if the request is successful. \- An error if there is a problem with the request.
 
 <a name="ConnectorInfo"></a>
-## type ConnectorInfo
+## type [ConnectorInfo](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/info.go#L8-L23>)
 
 ConnectorInfo holds metadata about a connector returned from the connector's /info endpoint.
 
@@ -410,7 +410,7 @@ type ConnectorInfo struct {
 ```
 
 <a name="FormFile"></a>
-## type FormFile
+## type [FormFile](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/client.go#L64-L69>)
 
 FormFile holds information about a file you want to upload with multipart/form\-data.
 
@@ -424,7 +424,7 @@ type FormFile struct {
 ```
 
 <a name="Operation"></a>
-## type Operation
+## type [Operation](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/operation.go#L10-L19>)
 
 Operation represents a record of an initiated operation tied to a connector.
 
@@ -442,7 +442,7 @@ type Operation struct {
 ```
 
 <a name="OperationStatus"></a>
-## type OperationStatus
+## type [OperationStatus](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/operation.go#L22-L27>)
 
 OperationStatus represents the response for an operation status check.
 
@@ -456,7 +456,7 @@ type OperationStatus struct {
 ```
 
 <a name="PulledFile"></a>
-## type PulledFile
+## type [PulledFile](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/client.go#L72-L77>)
 
 PulledFile represents a file returned with a stream request.
 
@@ -470,7 +470,7 @@ type PulledFile struct {
 ```
 
 <a name="RequestOptions"></a>
-## type RequestOptions
+## type [RequestOptions](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/client.go#L52-L61>)
 
 RequestOptions allows you to specify how you'd like to send data in the request.
 
@@ -488,7 +488,7 @@ type RequestOptions struct {
 ```
 
 <a name="Subscription"></a>
-## type Subscription
+## type [Subscription](<https://github.com/IrminData/irmin-sdk-go/blob/development/connector/subscribe.go#L7-L16>)
 
 
 
@@ -521,11 +521,9 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
   - [func \(c \*Client\) CallSystemWebhook\(webhookType string, headers map\[string\]string, body any\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.CallSystemWebhook>)
   - [func \(c \*Client\) CancelWorkflowRun\(workspace, workflowID, runID string\) \(\*irminmodels.WorkflowRun, \*irminmodels.IrminAPIResponse, error\)](<#Client.CancelWorkflowRun>)
   - [func \(c \*Client\) CheckPermission\(workspace string, resource irminmodels.PolicyResource, action irminmodels.PolicyAction, resourceID \*string\) \(bool, error\)](<#Client.CheckPermission>)
-  - [func \(c \*Client\) ClearAssistantConversation\(workspace, conversationID string\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.ClearAssistantConversation>)
   - [func \(c \*Client\) CompareRefs\(workspace, repository, baseRef, compareRef string\) \(\*irminmodels.Diff, \*irminmodels.IrminAPIResponse, error\)](<#Client.CompareRefs>)
   - [func \(c \*Client\) CopyEditorItem\(workspace, path string, req MoveEditorItemRequest\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.CopyEditorItem>)
   - [func \(c \*Client\) CopyObject\(workspace, repository, path, ref string, req MoveObjectRequest\) \(\*irminmodels.Object, \*irminmodels.IrminAPIResponse, error\)](<#Client.CopyObject>)
-  - [func \(c \*Client\) CreateAssistantConversation\(workspace string, req CreateAssistantConversationRequest\) \(\*irminmodels.AssistantConversation, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateAssistantConversation>)
   - [func \(c \*Client\) CreateBranch\(workspace, repository string, req CreateBranchRequest\) \(\*irminmodels.Branch, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateBranch>)
   - [func \(c \*Client\) CreateCommit\(workspace, repository string, req CreateCommitRequest\) \(\*irminmodels.Commit, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateCommit>)
   - [func \(c \*Client\) CreateConnection\(workspace string, req CreateConnectionRequest\) \(\*irminmodels.Connection, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateConnection>)
@@ -539,7 +537,6 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
   - [func \(c \*Client\) CreateWorkspace\(req CreateWorkspaceRequest\) \(\*irminmodels.Workspace, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateWorkspace>)
   - [func \(c \*Client\) CreateWorkspaceTag\(workspace string, req CreateTagRequest\) \(\*irminmodels.Tag, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateWorkspaceTag>)
   - [func \(c \*Client\) DeclineInvite\(inviteID string\) \(\*irminmodels.Invite, \*irminmodels.IrminAPIResponse, error\)](<#Client.DeclineInvite>)
-  - [func \(c \*Client\) DeleteAssistantConversation\(workspace, conversationID string\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.DeleteAssistantConversation>)
   - [func \(c \*Client\) DeleteBranch\(workspace, repository, branch string\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.DeleteBranch>)
   - [func \(c \*Client\) DeleteConnection\(workspace, connectionID string\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.DeleteConnection>)
   - [func \(c \*Client\) DeleteConnector\(connectorID string\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.DeleteConnector>)
@@ -569,10 +566,6 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
   - [func \(c \*Client\) FetchLogEventsForStoredQuery\(workspace, storedQueryID, search string, page, perPage int\) \(\[\]irminmodels.LogEvent, \*irminmodels.IrminAPIResponse, error\)](<#Client.FetchLogEventsForStoredQuery>)
   - [func \(c \*Client\) FetchLogEventsForUser\(workspace, userID, search string, page, perPage int\) \(\[\]irminmodels.LogEvent, \*irminmodels.IrminAPIResponse, error\)](<#Client.FetchLogEventsForUser>)
   - [func \(c \*Client\) FetchLogEventsForWorkflow\(workspace, workflowID, search string, page, perPage int\) \(\[\]irminmodels.LogEvent, \*irminmodels.IrminAPIResponse, error\)](<#Client.FetchLogEventsForWorkflow>)
-  - [func \(c \*Client\) GenerateQuery\(workspace string, req QueryGenerationRequest\) \(\[\]irminmodels.AssistantMessage, \*irminmodels.IrminAPIResponse, error\)](<#Client.GenerateQuery>)
-  - [func \(c \*Client\) GenerateScript\(workspace string, req ScriptGenerationRequest\) \(\[\]irminmodels.AssistantMessage, \*irminmodels.IrminAPIResponse, error\)](<#Client.GenerateScript>)
-  - [func \(c \*Client\) GetAssistantConversation\(workspace, conversationID string\) \(\*irminmodels.AssistantConversation, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetAssistantConversation>)
-  - [func \(c \*Client\) GetAssistantConversationStats\(workspace, conversationID string\) \(map\[string\]any, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetAssistantConversationStats>)
   - [func \(c \*Client\) GetBranch\(workspace, repository, branchName string\) \(\*irminmodels.Branch, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetBranch>)
   - [func \(c \*Client\) GetCommit\(workspace, repository, hash string\) \(\*irminmodels.Commit, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetCommit>)
   - [func \(c \*Client\) GetConnection\(workspace, connectionID string\) \(\*irminmodels.Connection, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetConnection>)
@@ -601,7 +594,6 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
   - [func \(c \*Client\) GetWorkspaceSchema\(slug string\) \(\*irminmodels.ObjectSchema, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetWorkspaceSchema>)
   - [func \(c \*Client\) GetWorkspaceTag\(workspace, tagID string\) \(\*irminmodels.TagWithAssets, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetWorkspaceTag>)
   - [func \(c \*Client\) LeaveWorkspace\(slug string\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.LeaveWorkspace>)
-  - [func \(c \*Client\) ListAssistantConversations\(workspace string\) \(\[\]irminmodels.AssistantConversation, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListAssistantConversations>)
   - [func \(c \*Client\) ListBranches\(workspace, repository string\) \(\[\]irminmodels.Branch, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListBranches>)
   - [func \(c \*Client\) ListCommits\(workspace, repository, ref, after string, perPage int\) \(\[\]irminmodels.Commit, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListCommits>)
   - [func \(c \*Client\) ListConnections\(workspace string\) \(\[\]irminmodels.Connection, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListConnections>)
@@ -610,10 +602,8 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
   - [func \(c \*Client\) ListInviteInbox\(\) \(\[\]irminmodels.Invite, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListInviteInbox>)
   - [func \(c \*Client\) ListInvitesToWorkspace\(workspace string\) \(\[\]irminmodels.Invite, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListInvitesToWorkspace>)
   - [func \(c \*Client\) ListPolicies\(workspace string, params ListPoliciesParams\) \(\[\]irminmodels.Policy, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListPolicies>)
-  - [func \(c \*Client\) ListQueryGenerationConversations\(workspace string\) \(\[\]irminmodels.AssistantConversation, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListQueryGenerationConversations>)
   - [func \(c \*Client\) ListRepositories\(workspace string\) \(\[\]irminmodels.Repository, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListRepositories>)
   - [func \(c \*Client\) ListRoles\(\) \(\[\]irminmodels.Role, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListRoles>)
-  - [func \(c \*Client\) ListScriptGenerationConversations\(workspace string\) \(\[\]irminmodels.AssistantConversation, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListScriptGenerationConversations>)
   - [func \(c \*Client\) ListStoredQueries\(workspace string\) \(\[\]irminmodels.StoredQuery, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListStoredQueries>)
   - [func \(c \*Client\) ListTags\(workspace, repository string\) \(\[\]irminmodels.GitTag, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListTags>)
   - [func \(c \*Client\) ListTokens\(\) \(\[\]irminmodels.APIToken, \*irminmodels.IrminAPIResponse, error\)](<#Client.ListTokens>)
@@ -636,7 +626,6 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
   - [func \(c \*Client\) RunScript\(workspace, path string, inputs \[\]irminmodels.ActionInputData\) \(\*irminmodels.ScriptResult, \*irminmodels.IrminAPIResponse, error\)](<#Client.RunScript>)
   - [func \(c \*Client\) SaveEditorItem\(workspace, path string, req CreateEditorItemRequest\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.SaveEditorItem>)
   - [func \(c \*Client\) Search\(workspace string, params irminmodels.SearchFilters\) \(\*irminmodels.SearchResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.Search>)
-  - [func \(c \*Client\) SendAssistantMessage\(workspace string, conversationID string, req CreateAssistantMessageRequest\) \(\[\]irminmodels.AssistantMessage, \*irminmodels.IrminAPIResponse, error\)](<#Client.SendAssistantMessage>)
   - [func \(c \*Client\) SendInvite\(workspace string, req SendInviteRequest\) \(\*irminmodels.Invite, \*irminmodels.IrminAPIResponse, error\)](<#Client.SendInvite>)
   - [func \(c \*Client\) StartWorkflow\(workspace, workflowID string\) \(\*irminmodels.Workflow, \*irminmodels.IrminAPIResponse, error\)](<#Client.StartWorkflow>)
   - [func \(c \*Client\) TransferConnection\(workspace, connectionID string, req TransferConnectionOwnershipRequest\) \(\*irminmodels.Connection, \*irminmodels.IrminAPIResponse, error\)](<#Client.TransferConnection>)
@@ -645,7 +634,6 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
   - [func \(c \*Client\) TransferWorkflow\(workspace, workflowID, newOwnerID string\) \(\*irminmodels.Workflow, \*irminmodels.IrminAPIResponse, error\)](<#Client.TransferWorkflow>)
   - [func \(c \*Client\) TransferWorkspace\(workspaceSlug string, req TransferOwnershipRequest\) \(\*irminmodels.Workspace, \*irminmodels.IrminAPIResponse, error\)](<#Client.TransferWorkspace>)
   - [func \(c \*Client\) TriggerWorkflowRun\(workspace, workflowID string\) \(\*irminmodels.WorkflowRun, \*irminmodels.IrminAPIResponse, error\)](<#Client.TriggerWorkflowRun>)
-  - [func \(c \*Client\) UpdateAssistantConversation\(workspace, conversationID string, req UpdateAssistantConversationRequest\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.UpdateAssistantConversation>)
   - [func \(c \*Client\) UpdateBranch\(workspace, repository, oldName string, req UpdateBranchRequest\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.UpdateBranch>)
   - [func \(c \*Client\) UpdateConnection\(workspace, connectionID string, req UpdateConnectionRequest\) \(\*irminmodels.Connection, \*irminmodels.IrminAPIResponse, error\)](<#Client.UpdateConnection>)
   - [func \(c \*Client\) UpdateInvite\(inviteID string, req UpdateInviteRequest\) \(\*irminmodels.Invite, \*irminmodels.IrminAPIResponse, error\)](<#Client.UpdateInvite>)
@@ -669,8 +657,6 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
   - [func \(c \*Client\) ValidateVarEnhanced\(field any, tag string\) \*irminvalidator.ValidationResultError](<#Client.ValidateVarEnhanced>)
 - [type ConnectorConfigurationRequest](<#ConnectorConfigurationRequest>)
 - [type ConnectorRequest](<#ConnectorRequest>)
-- [type CreateAssistantConversationRequest](<#CreateAssistantConversationRequest>)
-- [type CreateAssistantMessageRequest](<#CreateAssistantMessageRequest>)
 - [type CreateBranchRequest](<#CreateBranchRequest>)
 - [type CreateCommitRequest](<#CreateCommitRequest>)
 - [type CreateConnectionRequest](<#CreateConnectionRequest>)
@@ -690,17 +676,14 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
 - [type MergeRefsRequest](<#MergeRefsRequest>)
 - [type MoveEditorItemRequest](<#MoveEditorItemRequest>)
 - [type MoveObjectRequest](<#MoveObjectRequest>)
-- [type QueryGenerationRequest](<#QueryGenerationRequest>)
 - [type RequestOptions](<#RequestOptions>)
 - [type RevertUncommittedChangesRequest](<#RevertUncommittedChangesRequest>)
-- [type ScriptGenerationRequest](<#ScriptGenerationRequest>)
 - [type SendInviteRequest](<#SendInviteRequest>)
 - [type TransferConnectionOwnershipRequest](<#TransferConnectionOwnershipRequest>)
 - [type TransferOwnershipRequest](<#TransferOwnershipRequest>)
 - [type TransferQueryOwnershipRequest](<#TransferQueryOwnershipRequest>)
 - [type TransferRepositoryOwnershipRequest](<#TransferRepositoryOwnershipRequest>)
 - [type TransferWorkflowOwnershipRequest](<#TransferWorkflowOwnershipRequest>)
-- [type UpdateAssistantConversationRequest](<#UpdateAssistantConversationRequest>)
 - [type UpdateBranchRequest](<#UpdateBranchRequest>)
 - [type UpdateConnectionRequest](<#UpdateConnectionRequest>)
 - [type UpdateInviteRequest](<#UpdateInviteRequest>)
@@ -717,7 +700,7 @@ import "github.com/IrminData/irmin-sdk-go/core-api"
 
 
 <a name="Client"></a>
-## type Client
+## type [Client](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L27-L42>)
 
 Client represents the Irmin API client.
 
@@ -741,7 +724,7 @@ type Client struct {
 ```
 
 <a name="NewClient"></a>
-### func NewClient
+### func [NewClient](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L45>)
 
 ```go
 func NewClient(baseURL, token, locale string) *Client
@@ -750,7 +733,7 @@ func NewClient(baseURL, token, locale string) *Client
 NewClient creates a new Irmin API client with default settings.
 
 <a name="NewClientWithSQIDManager"></a>
-### func NewClientWithSQIDManager
+### func [NewClientWithSQIDManager](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L58>)
 
 ```go
 func NewClientWithSQIDManager(baseURL, token, locale string, sqidManager *irminsqids.SQIDManager) *Client
@@ -759,7 +742,7 @@ func NewClientWithSQIDManager(baseURL, token, locale string, sqidManager *irmins
 NewClientWithSQIDManager creates a new Irmin API client with a custom SQID manager.
 
 <a name="Client.AcceptInvite"></a>
-### func \(\*Client\) AcceptInvite
+### func \(\*Client\) [AcceptInvite](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L114>)
 
 ```go
 func (c *Client) AcceptInvite(inviteID string) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
@@ -768,7 +751,7 @@ func (c *Client) AcceptInvite(inviteID string) (*irminmodels.Invite, *irminmodel
 
 
 <a name="Client.AddTagToEntity"></a>
-### func \(\*Client\) AddTagToEntity
+### func \(\*Client\) [AddTagToEntity](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L101-L105>)
 
 ```go
 func (c *Client) AddTagToEntity(workspace, tagID string, entityType irminmodels.TagEntityType, entityID string) (*irminmodels.IrminAPIResponse, error)
@@ -777,7 +760,7 @@ func (c *Client) AddTagToEntity(workspace, tagID string, entityType irminmodels.
 AddTagToEntity adds an entity to a tag using the workspace tag route.
 
 <a name="Client.CallSystemWebhook"></a>
-### func \(\*Client\) CallSystemWebhook
+### func \(\*Client\) [CallSystemWebhook](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/system.go#L15-L19>)
 
 ```go
 func (c *Client) CallSystemWebhook(webhookType string, headers map[string]string, body any) (*irminmodels.IrminAPIResponse, error)
@@ -788,7 +771,7 @@ CallSystemWebhook calls the system webhook endpoint. The body is expected to be 
 Usable only with a system token.
 
 <a name="Client.CancelWorkflowRun"></a>
-### func \(\*Client\) CancelWorkflowRun
+### func \(\*Client\) [CancelWorkflowRun](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflow-runs.go#L45-L47>)
 
 ```go
 func (c *Client) CancelWorkflowRun(workspace, workflowID, runID string) (*irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error)
@@ -797,7 +780,7 @@ func (c *Client) CancelWorkflowRun(workspace, workflowID, runID string) (*irminm
 
 
 <a name="Client.CheckPermission"></a>
-### func \(\*Client\) CheckPermission
+### func \(\*Client\) [CheckPermission](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L177-L182>)
 
 ```go
 func (c *Client) CheckPermission(workspace string, resource irminmodels.PolicyResource, action irminmodels.PolicyAction, resourceID *string) (bool, error)
@@ -805,17 +788,8 @@ func (c *Client) CheckPermission(workspace string, resource irminmodels.PolicyRe
 
 CheckPermission checks if a user has permission to perform an action on a resource.
 
-<a name="Client.ClearAssistantConversation"></a>
-### func \(\*Client\) ClearAssistantConversation
-
-```go
-func (c *Client) ClearAssistantConversation(workspace, conversationID string) (*irminmodels.IrminAPIResponse, error)
-```
-
-ClearAssistantConversation clears all messages from an assistant conversation.
-
 <a name="Client.CompareRefs"></a>
-### func \(\*Client\) CompareRefs
+### func \(\*Client\) [CompareRefs](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/compare.go#L21-L23>)
 
 ```go
 func (c *Client) CompareRefs(workspace, repository, baseRef, compareRef string) (*irminmodels.Diff, *irminmodels.IrminAPIResponse, error)
@@ -824,7 +798,7 @@ func (c *Client) CompareRefs(workspace, repository, baseRef, compareRef string) 
 CompareRefs compares two refs in a repository and returns the differences.
 
 <a name="Client.CopyEditorItem"></a>
-### func \(\*Client\) CopyEditorItem
+### func \(\*Client\) [CopyEditorItem](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L75-L78>)
 
 ```go
 func (c *Client) CopyEditorItem(workspace, path string, req MoveEditorItemRequest) (*irminmodels.IrminAPIResponse, error)
@@ -833,7 +807,7 @@ func (c *Client) CopyEditorItem(workspace, path string, req MoveEditorItemReques
 
 
 <a name="Client.CopyObject"></a>
-### func \(\*Client\) CopyObject
+### func \(\*Client\) [CopyObject](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L225-L228>)
 
 ```go
 func (c *Client) CopyObject(workspace, repository, path, ref string, req MoveObjectRequest) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error)
@@ -841,17 +815,8 @@ func (c *Client) CopyObject(workspace, repository, path, ref string, req MoveObj
 
 
 
-<a name="Client.CreateAssistantConversation"></a>
-### func \(\*Client\) CreateAssistantConversation
-
-```go
-func (c *Client) CreateAssistantConversation(workspace string, req CreateAssistantConversationRequest) (*irminmodels.AssistantConversation, *irminmodels.IrminAPIResponse, error)
-```
-
-
-
 <a name="Client.CreateBranch"></a>
-### func \(\*Client\) CreateBranch
+### func \(\*Client\) [CreateBranch](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-branches.go#L52-L55>)
 
 ```go
 func (c *Client) CreateBranch(workspace, repository string, req CreateBranchRequest) (*irminmodels.Branch, *irminmodels.IrminAPIResponse, error)
@@ -860,7 +825,7 @@ func (c *Client) CreateBranch(workspace, repository string, req CreateBranchRequ
 CreateBranch creates a new branch in the repository.
 
 <a name="Client.CreateCommit"></a>
-### func \(\*Client\) CreateCommit
+### func \(\*Client\) [CreateCommit](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-commits.go#L63-L66>)
 
 ```go
 func (c *Client) CreateCommit(workspace, repository string, req CreateCommitRequest) (*irminmodels.Commit, *irminmodels.IrminAPIResponse, error)
@@ -869,7 +834,7 @@ func (c *Client) CreateCommit(workspace, repository string, req CreateCommitRequ
 
 
 <a name="Client.CreateConnection"></a>
-### func \(\*Client\) CreateConnection
+### func \(\*Client\) [CreateConnection](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L61-L64>)
 
 ```go
 func (c *Client) CreateConnection(workspace string, req CreateConnectionRequest) (*irminmodels.Connection, *irminmodels.IrminAPIResponse, error)
@@ -878,7 +843,7 @@ func (c *Client) CreateConnection(workspace string, req CreateConnectionRequest)
 
 
 <a name="Client.CreateEditorFolder"></a>
-### func \(\*Client\) CreateEditorFolder
+### func \(\*Client\) [CreateEditorFolder](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L118-L121>)
 
 ```go
 func (c *Client) CreateEditorFolder(workspace, path string, req CreateEditorItemRequest) (*irminmodels.IrminAPIResponse, error)
@@ -887,7 +852,7 @@ func (c *Client) CreateEditorFolder(workspace, path string, req CreateEditorItem
 
 
 <a name="Client.CreatePolicy"></a>
-### func \(\*Client\) CreatePolicy
+### func \(\*Client\) [CreatePolicy](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L99-L102>)
 
 ```go
 func (c *Client) CreatePolicy(workspace string, req CreatePolicyRequest) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error)
@@ -896,7 +861,7 @@ func (c *Client) CreatePolicy(workspace string, req CreatePolicyRequest) (*irmin
 CreatePolicy creates a new policy for a workspace.
 
 <a name="Client.CreateRepository"></a>
-### func \(\*Client\) CreateRepository
+### func \(\*Client\) [CreateRepository](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L60-L63>)
 
 ```go
 func (c *Client) CreateRepository(workspace string, req CreateRepositoryRequest) (*irminmodels.Repository, *irminmodels.IrminAPIResponse, error)
@@ -905,7 +870,7 @@ func (c *Client) CreateRepository(workspace string, req CreateRepositoryRequest)
 
 
 <a name="Client.CreateStoredQuery"></a>
-### func \(\*Client\) CreateStoredQuery
+### func \(\*Client\) [CreateStoredQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L60-L63>)
 
 ```go
 func (c *Client) CreateStoredQuery(workspace string, req CreateQueryRequest) (*irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error)
@@ -914,7 +879,7 @@ func (c *Client) CreateStoredQuery(workspace string, req CreateQueryRequest) (*i
 
 
 <a name="Client.CreateTag"></a>
-### func \(\*Client\) CreateTag
+### func \(\*Client\) [CreateTag](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-tags.go#L40-L43>)
 
 ```go
 func (c *Client) CreateTag(workspace, repository string, req CreateRepositoryTagRequest) (*irminmodels.GitTag, *irminmodels.IrminAPIResponse, error)
@@ -923,7 +888,7 @@ func (c *Client) CreateTag(workspace, repository string, req CreateRepositoryTag
 
 
 <a name="Client.CreateToken"></a>
-### func \(\*Client\) CreateToken
+### func \(\*Client\) [CreateToken](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/credentials.go#L28-L30>)
 
 ```go
 func (c *Client) CreateToken(req CreateCredentialRequest) (*irminmodels.APIToken, *irminmodels.IrminAPIResponse, error)
@@ -932,7 +897,7 @@ func (c *Client) CreateToken(req CreateCredentialRequest) (*irminmodels.APIToken
 
 
 <a name="Client.CreateWorkflow"></a>
-### func \(\*Client\) CreateWorkflow
+### func \(\*Client\) [CreateWorkflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L76-L79>)
 
 ```go
 func (c *Client) CreateWorkflow(workspace string, req WorkflowRequest) (*irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -941,7 +906,7 @@ func (c *Client) CreateWorkflow(workspace string, req WorkflowRequest) (*irminmo
 
 
 <a name="Client.CreateWorkspace"></a>
-### func \(\*Client\) CreateWorkspace
+### func \(\*Client\) [CreateWorkspace](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L51-L53>)
 
 ```go
 func (c *Client) CreateWorkspace(req CreateWorkspaceRequest) (*irminmodels.Workspace, *irminmodels.IrminAPIResponse, error)
@@ -950,7 +915,7 @@ func (c *Client) CreateWorkspace(req CreateWorkspaceRequest) (*irminmodels.Works
 
 
 <a name="Client.CreateWorkspaceTag"></a>
-### func \(\*Client\) CreateWorkspaceTag
+### func \(\*Client\) [CreateWorkspaceTag](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L53-L56>)
 
 ```go
 func (c *Client) CreateWorkspaceTag(workspace string, req CreateTagRequest) (*irminmodels.Tag, *irminmodels.IrminAPIResponse, error)
@@ -959,7 +924,7 @@ func (c *Client) CreateWorkspaceTag(workspace string, req CreateTagRequest) (*ir
 CreateWorkspaceTag creates a new workspace tag.
 
 <a name="Client.DeclineInvite"></a>
-### func \(\*Client\) DeclineInvite
+### func \(\*Client\) [DeclineInvite](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L126>)
 
 ```go
 func (c *Client) DeclineInvite(inviteID string) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
@@ -967,17 +932,8 @@ func (c *Client) DeclineInvite(inviteID string) (*irminmodels.Invite, *irminmode
 
 
 
-<a name="Client.DeleteAssistantConversation"></a>
-### func \(\*Client\) DeleteAssistantConversation
-
-```go
-func (c *Client) DeleteAssistantConversation(workspace, conversationID string) (*irminmodels.IrminAPIResponse, error)
-```
-
-DeleteAssistantConversation deletes an assistant conversation by its ID.
-
 <a name="Client.DeleteBranch"></a>
-### func \(\*Client\) DeleteBranch
+### func \(\*Client\) [DeleteBranch](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-branches.go#L71>)
 
 ```go
 func (c *Client) DeleteBranch(workspace, repository, branch string) (*irminmodels.IrminAPIResponse, error)
@@ -986,7 +942,7 @@ func (c *Client) DeleteBranch(workspace, repository, branch string) (*irminmodel
 DeleteBranch deletes a branch in the repository.
 
 <a name="Client.DeleteConnection"></a>
-### func \(\*Client\) DeleteConnection
+### func \(\*Client\) [DeleteConnection](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L114>)
 
 ```go
 func (c *Client) DeleteConnection(workspace, connectionID string) (*irminmodels.IrminAPIResponse, error)
@@ -995,7 +951,7 @@ func (c *Client) DeleteConnection(workspace, connectionID string) (*irminmodels.
 DeleteConnection deletes a connection by its ID.
 
 <a name="Client.DeleteConnector"></a>
-### func \(\*Client\) DeleteConnector
+### func \(\*Client\) [DeleteConnector](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L125>)
 
 ```go
 func (c *Client) DeleteConnector(connectorID string) (*irminmodels.IrminAPIResponse, error)
@@ -1004,7 +960,7 @@ func (c *Client) DeleteConnector(connectorID string) (*irminmodels.IrminAPIRespo
 DeleteConnector deletes a connector from the system. Requests to this endpoint must be authenticated with a system token.
 
 <a name="Client.DeleteEditorItem"></a>
-### func \(\*Client\) DeleteEditorItem
+### func \(\*Client\) [DeleteEditorItem](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L91>)
 
 ```go
 func (c *Client) DeleteEditorItem(workspace, path string) (*irminmodels.IrminAPIResponse, error)
@@ -1013,7 +969,7 @@ func (c *Client) DeleteEditorItem(workspace, path string) (*irminmodels.IrminAPI
 
 
 <a name="Client.DeleteInvite"></a>
-### func \(\*Client\) DeleteInvite
+### func \(\*Client\) [DeleteInvite](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L86>)
 
 ```go
 func (c *Client) DeleteInvite(inviteID string) (*irminmodels.IrminAPIResponse, error)
@@ -1022,7 +978,7 @@ func (c *Client) DeleteInvite(inviteID string) (*irminmodels.IrminAPIResponse, e
 
 
 <a name="Client.DeleteObject"></a>
-### func \(\*Client\) DeleteObject
+### func \(\*Client\) [DeleteObject](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L248>)
 
 ```go
 func (c *Client) DeleteObject(workspace, repository, ref, path string) (*irminmodels.IrminAPIResponse, error)
@@ -1031,7 +987,7 @@ func (c *Client) DeleteObject(workspace, repository, ref, path string) (*irminmo
 
 
 <a name="Client.DeletePolicy"></a>
-### func \(\*Client\) DeletePolicy
+### func \(\*Client\) [DeletePolicy](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L135>)
 
 ```go
 func (c *Client) DeletePolicy(workspace, policyID string) (*irminmodels.IrminAPIResponse, error)
@@ -1040,7 +996,7 @@ func (c *Client) DeletePolicy(workspace, policyID string) (*irminmodels.IrminAPI
 DeletePolicy deletes a policy.
 
 <a name="Client.DeleteRepository"></a>
-### func \(\*Client\) DeleteRepository
+### func \(\*Client\) [DeleteRepository](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L114>)
 
 ```go
 func (c *Client) DeleteRepository(workspace, slug string) (*irminmodels.IrminAPIResponse, error)
@@ -1049,7 +1005,7 @@ func (c *Client) DeleteRepository(workspace, slug string) (*irminmodels.IrminAPI
 
 
 <a name="Client.DeleteStoredQuery"></a>
-### func \(\*Client\) DeleteStoredQuery
+### func \(\*Client\) [DeleteStoredQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L94>)
 
 ```go
 func (c *Client) DeleteStoredQuery(workspace, queryID string) (*irminmodels.IrminAPIResponse, error)
@@ -1058,7 +1014,7 @@ func (c *Client) DeleteStoredQuery(workspace, queryID string) (*irminmodels.Irmi
 
 
 <a name="Client.DeleteTag"></a>
-### func \(\*Client\) DeleteTag
+### func \(\*Client\) [DeleteTag](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-tags.go#L57>)
 
 ```go
 func (c *Client) DeleteTag(workspace, repository, tag string) (*irminmodels.IrminAPIResponse, error)
@@ -1067,7 +1023,7 @@ func (c *Client) DeleteTag(workspace, repository, tag string) (*irminmodels.Irmi
 
 
 <a name="Client.DeleteToken"></a>
-### func \(\*Client\) DeleteToken
+### func \(\*Client\) [DeleteToken](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/credentials.go#L44>)
 
 ```go
 func (c *Client) DeleteToken(tokenID string) (*irminmodels.IrminAPIResponse, error)
@@ -1076,7 +1032,7 @@ func (c *Client) DeleteToken(tokenID string) (*irminmodels.IrminAPIResponse, err
 
 
 <a name="Client.DeleteWorkflow"></a>
-### func \(\*Client\) DeleteWorkflow
+### func \(\*Client\) [DeleteWorkflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L172>)
 
 ```go
 func (c *Client) DeleteWorkflow(workspace, workflowID string) (*irminmodels.IrminAPIResponse, error)
@@ -1085,7 +1041,7 @@ func (c *Client) DeleteWorkflow(workspace, workflowID string) (*irminmodels.Irmi
 
 
 <a name="Client.DeleteWorkspace"></a>
-### func \(\*Client\) DeleteWorkspace
+### func \(\*Client\) [DeleteWorkspace](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L84>)
 
 ```go
 func (c *Client) DeleteWorkspace(slug string) (*irminmodels.IrminAPIResponse, error)
@@ -1094,7 +1050,7 @@ func (c *Client) DeleteWorkspace(slug string) (*irminmodels.IrminAPIResponse, er
 
 
 <a name="Client.DeleteWorkspaceTag"></a>
-### func \(\*Client\) DeleteWorkspaceTag
+### func \(\*Client\) [DeleteWorkspaceTag](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L89>)
 
 ```go
 func (c *Client) DeleteWorkspaceTag(workspace, tagID string) (*irminmodels.IrminAPIResponse, error)
@@ -1103,7 +1059,7 @@ func (c *Client) DeleteWorkspaceTag(workspace, tagID string) (*irminmodels.Irmin
 DeleteWorkspaceTag deletes a workspace tag.
 
 <a name="Client.DownloadObject"></a>
-### func \(\*Client\) DownloadObject
+### func \(\*Client\) [DownloadObject](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L185>)
 
 ```go
 func (c *Client) DownloadObject(workspace, repository, path, ref string) ([]byte, error)
@@ -1112,7 +1068,7 @@ func (c *Client) DownloadObject(workspace, repository, path, ref string) ([]byte
 DownloadObject creates a zip file of the object at the given path and ref and returns the binary data.
 
 <a name="Client.ExecuteSQL"></a>
-### func \(\*Client\) ExecuteSQL
+### func \(\*Client\) [ExecuteSQL](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L137-L140>)
 
 ```go
 func (c *Client) ExecuteSQL(workspace string, req ExecuteSQLRequest) (*irminmodels.QueryResult, *irminmodels.IrminAPIResponse, error)
@@ -1121,7 +1077,7 @@ func (c *Client) ExecuteSQL(workspace string, req ExecuteSQLRequest) (*irminmode
 
 
 <a name="Client.ExecuteStoredQuery"></a>
-### func \(\*Client\) ExecuteStoredQuery
+### func \(\*Client\) [ExecuteStoredQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L122-L124>)
 
 ```go
 func (c *Client) ExecuteStoredQuery(workspace, queryID string) (*irminmodels.QueryResult, *irminmodels.IrminAPIResponse, error)
@@ -1130,7 +1086,7 @@ func (c *Client) ExecuteStoredQuery(workspace, queryID string) (*irminmodels.Que
 
 
 <a name="Client.FetchAPI"></a>
-### func \(\*Client\) FetchAPI
+### func \(\*Client\) [FetchAPI](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L271>)
 
 ```go
 func (c *Client) FetchAPI(opts RequestOptions, out any) (*irminmodels.IrminAPIResponse, error)
@@ -1139,7 +1095,7 @@ func (c *Client) FetchAPI(opts RequestOptions, out any) (*irminmodels.IrminAPIRe
 FetchAPI sends a request and attempts to parse the response into IrminAPIResponse\[T\].
 
 <a name="Client.FetchAPIEnhanced"></a>
-### func \(\*Client\) FetchAPIEnhanced
+### func \(\*Client\) [FetchAPIEnhanced](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L366-L369>)
 
 ```go
 func (c *Client) FetchAPIEnhanced(opts RequestOptions, out any) (*irminmodels.IrminAPIResponse, *irminvalidator.ValidationResultError, error)
@@ -1148,7 +1104,7 @@ func (c *Client) FetchAPIEnhanced(opts RequestOptions, out any) (*irminmodels.Ir
 FetchAPIEnhanced sends a request with enhanced validation and attempts to parse the response into IrminAPIResponse\[T\]. This method provides detailed validation results before sending the request.
 
 <a name="Client.FetchBinary"></a>
-### func \(\*Client\) FetchBinary
+### func \(\*Client\) [FetchBinary](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L424>)
 
 ```go
 func (c *Client) FetchBinary(opts RequestOptions) ([]byte, error)
@@ -1157,7 +1113,7 @@ func (c *Client) FetchBinary(opts RequestOptions) ([]byte, error)
 FetchBinary sends a request and returns the raw bytes \(which you can treat as a file, or parse further\).
 
 <a name="Client.FetchConnectorConfigurationFields"></a>
-### func \(\*Client\) FetchConnectorConfigurationFields
+### func \(\*Client\) [FetchConnectorConfigurationFields](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L46-L50>)
 
 ```go
 func (c *Client) FetchConnectorConfigurationFields(connectorID, configType string, currentDetails map[string]string, currentSettings map[string]string) ([]irminmodels.DynamicField, *irminmodels.IrminAPIResponse, error)
@@ -1166,7 +1122,7 @@ func (c *Client) FetchConnectorConfigurationFields(connectorID, configType strin
 
 
 <a name="Client.FetchLogEvents"></a>
-### func \(\*Client\) FetchLogEvents
+### func \(\*Client\) [FetchLogEvents](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/logs.go#L11-L14>)
 
 ```go
 func (c *Client) FetchLogEvents(workspace, search string, page, perPage int) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error)
@@ -1175,7 +1131,7 @@ func (c *Client) FetchLogEvents(workspace, search string, page, perPage int) ([]
 FetchLogEvents retrieves general audit log events for the current workspace.
 
 <a name="Client.FetchLogEventsForConnection"></a>
-### func \(\*Client\) FetchLogEventsForConnection
+### func \(\*Client\) [FetchLogEventsForConnection](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/logs.go#L73-L76>)
 
 ```go
 func (c *Client) FetchLogEventsForConnection(workspace, connectionID, search string, page, perPage int) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error)
@@ -1184,7 +1140,7 @@ func (c *Client) FetchLogEventsForConnection(workspace, connectionID, search str
 FetchLogEventsForConnection retrieves general audit log events for a connection.
 
 <a name="Client.FetchLogEventsForObject"></a>
-### func \(\*Client\) FetchLogEventsForObject
+### func \(\*Client\) [FetchLogEventsForObject](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/logs.go#L165-L168>)
 
 ```go
 func (c *Client) FetchLogEventsForObject(workspace, objectID, search string, page, perPage int) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error)
@@ -1193,7 +1149,7 @@ func (c *Client) FetchLogEventsForObject(workspace, objectID, search string, pag
 FetchLogEventsForObject retrieves general audit log events for an object.
 
 <a name="Client.FetchLogEventsForPolicy"></a>
-### func \(\*Client\) FetchLogEventsForPolicy
+### func \(\*Client\) [FetchLogEventsForPolicy](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/logs.go#L142-L145>)
 
 ```go
 func (c *Client) FetchLogEventsForPolicy(workspace, policyID, search string, page, perPage int) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error)
@@ -1202,7 +1158,7 @@ func (c *Client) FetchLogEventsForPolicy(workspace, policyID, search string, pag
 FetchLogEventsForPolicy retrieves general audit log events for a policy.
 
 <a name="Client.FetchLogEventsForRepository"></a>
-### func \(\*Client\) FetchLogEventsForRepository
+### func \(\*Client\) [FetchLogEventsForRepository](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/logs.go#L50-L53>)
 
 ```go
 func (c *Client) FetchLogEventsForRepository(workspace, repositorySlug, search string, page, perPage int) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error)
@@ -1211,7 +1167,7 @@ func (c *Client) FetchLogEventsForRepository(workspace, repositorySlug, search s
 FetchLogEventsForRepository retrieves general audit log events for a repository.
 
 <a name="Client.FetchLogEventsForStoredQuery"></a>
-### func \(\*Client\) FetchLogEventsForStoredQuery
+### func \(\*Client\) [FetchLogEventsForStoredQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/logs.go#L119-L122>)
 
 ```go
 func (c *Client) FetchLogEventsForStoredQuery(workspace, storedQueryID, search string, page, perPage int) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error)
@@ -1220,7 +1176,7 @@ func (c *Client) FetchLogEventsForStoredQuery(workspace, storedQueryID, search s
 FetchLogEventsForStoredQuery retrieves general audit log events for a stored query.
 
 <a name="Client.FetchLogEventsForUser"></a>
-### func \(\*Client\) FetchLogEventsForUser
+### func \(\*Client\) [FetchLogEventsForUser](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/logs.go#L27-L30>)
 
 ```go
 func (c *Client) FetchLogEventsForUser(workspace, userID, search string, page, perPage int) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error)
@@ -1229,7 +1185,7 @@ func (c *Client) FetchLogEventsForUser(workspace, userID, search string, page, p
 FetchLogEventsForUser retrieves general audit log events for a user.
 
 <a name="Client.FetchLogEventsForWorkflow"></a>
-### func \(\*Client\) FetchLogEventsForWorkflow
+### func \(\*Client\) [FetchLogEventsForWorkflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/logs.go#L96-L99>)
 
 ```go
 func (c *Client) FetchLogEventsForWorkflow(workspace, workflowID, search string, page, perPage int) ([]irminmodels.LogEvent, *irminmodels.IrminAPIResponse, error)
@@ -1237,44 +1193,8 @@ func (c *Client) FetchLogEventsForWorkflow(workspace, workflowID, search string,
 
 FetchLogEventsForWorkflow retrieves general audit log events for a workflow.
 
-<a name="Client.GenerateQuery"></a>
-### func \(\*Client\) GenerateQuery
-
-```go
-func (c *Client) GenerateQuery(workspace string, req QueryGenerationRequest) ([]irminmodels.AssistantMessage, *irminmodels.IrminAPIResponse, error)
-```
-
-GenerateQuery generates a SQL query from natural language using the QueryAI assistant.
-
-<a name="Client.GenerateScript"></a>
-### func \(\*Client\) GenerateScript
-
-```go
-func (c *Client) GenerateScript(workspace string, req ScriptGenerationRequest) ([]irminmodels.AssistantMessage, *irminmodels.IrminAPIResponse, error)
-```
-
-GenerateScript generates a Go script from natural language using the ScriptingAI assistant.
-
-<a name="Client.GetAssistantConversation"></a>
-### func \(\*Client\) GetAssistantConversation
-
-```go
-func (c *Client) GetAssistantConversation(workspace, conversationID string) (*irminmodels.AssistantConversation, *irminmodels.IrminAPIResponse, error)
-```
-
-
-
-<a name="Client.GetAssistantConversationStats"></a>
-### func \(\*Client\) GetAssistantConversationStats
-
-```go
-func (c *Client) GetAssistantConversationStats(workspace, conversationID string) (map[string]any, *irminmodels.IrminAPIResponse, error)
-```
-
-GetAssistantConversationStats retrieves statistics for a specific assistant conversation.
-
 <a name="Client.GetBranch"></a>
-### func \(\*Client\) GetBranch
+### func \(\*Client\) [GetBranch](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-branches.go#L37-L39>)
 
 ```go
 func (c *Client) GetBranch(workspace, repository, branchName string) (*irminmodels.Branch, *irminmodels.IrminAPIResponse, error)
@@ -1283,7 +1203,7 @@ func (c *Client) GetBranch(workspace, repository, branchName string) (*irminmode
 
 
 <a name="Client.GetCommit"></a>
-### func \(\*Client\) GetCommit
+### func \(\*Client\) [GetCommit](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-commits.go#L49-L51>)
 
 ```go
 func (c *Client) GetCommit(workspace, repository, hash string) (*irminmodels.Commit, *irminmodels.IrminAPIResponse, error)
@@ -1292,7 +1212,7 @@ func (c *Client) GetCommit(workspace, repository, hash string) (*irminmodels.Com
 
 
 <a name="Client.GetConnection"></a>
-### func \(\*Client\) GetConnection
+### func \(\*Client\) [GetConnection](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L47-L49>)
 
 ```go
 func (c *Client) GetConnection(workspace, connectionID string) (*irminmodels.Connection, *irminmodels.IrminAPIResponse, error)
@@ -1301,7 +1221,7 @@ func (c *Client) GetConnection(workspace, connectionID string) (*irminmodels.Con
 
 
 <a name="Client.GetConnectionSchema"></a>
-### func \(\*Client\) GetConnectionSchema
+### func \(\*Client\) [GetConnectionSchema](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L127-L129>)
 
 ```go
 func (c *Client) GetConnectionSchema(workspace, connectionID, operationMethod string) (*irminmodels.ObjectSchema, *irminmodels.IrminAPIResponse, error)
@@ -1310,7 +1230,7 @@ func (c *Client) GetConnectionSchema(workspace, connectionID, operationMethod st
 GetConnectionSchema retrieves the schema for a specific connection and operation method.
 
 <a name="Client.GetConnector"></a>
-### func \(\*Client\) GetConnector
+### func \(\*Client\) [GetConnector](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L34>)
 
 ```go
 func (c *Client) GetConnector(connectorID string) (*irminmodels.Connector, *irminmodels.IrminAPIResponse, error)
@@ -1319,7 +1239,7 @@ func (c *Client) GetConnector(connectorID string) (*irminmodels.Connector, *irmi
 
 
 <a name="Client.GetEditorItemContent"></a>
-### func \(\*Client\) GetEditorItemContent
+### func \(\*Client\) [GetEditorItemContent](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L47>)
 
 ```go
 func (c *Client) GetEditorItemContent(workspace, path string) (*string, *irminmodels.IrminAPIResponse, error)
@@ -1328,7 +1248,7 @@ func (c *Client) GetEditorItemContent(workspace, path string) (*string, *irminmo
 
 
 <a name="Client.GetInvite"></a>
-### func \(\*Client\) GetInvite
+### func \(\*Client\) [GetInvite](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L33>)
 
 ```go
 func (c *Client) GetInvite(inviteID string) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
@@ -1337,7 +1257,7 @@ func (c *Client) GetInvite(inviteID string) (*irminmodels.Invite, *irminmodels.I
 
 
 <a name="Client.GetObjectAtPath"></a>
-### func \(\*Client\) GetObjectAtPath
+### func \(\*Client\) [GetObjectAtPath](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L23-L25>)
 
 ```go
 func (c *Client) GetObjectAtPath(workspace, repository, path, ref string) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error)
@@ -1346,7 +1266,7 @@ func (c *Client) GetObjectAtPath(workspace, repository, path, ref string) (*irmi
 GetObjectAtPath fetches the object at the given path and ref.
 
 <a name="Client.GetObjectContent"></a>
-### func \(\*Client\) GetObjectContent
+### func \(\*Client\) [GetObjectContent](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L146>)
 
 ```go
 func (c *Client) GetObjectContent(workspace, repository, path, ref string) ([]byte, error)
@@ -1355,7 +1275,7 @@ func (c *Client) GetObjectContent(workspace, repository, path, ref string) ([]by
 GetObjectContent fetches the content of an object at the given path and ref.
 
 <a name="Client.GetObjectHistory"></a>
-### func \(\*Client\) GetObjectHistory
+### func \(\*Client\) [GetObjectHistory](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L44-L46>)
 
 ```go
 func (c *Client) GetObjectHistory(workspace, repository, path, ref string) ([]irminmodels.Commit, *irminmodels.IrminAPIResponse, error)
@@ -1364,7 +1284,7 @@ func (c *Client) GetObjectHistory(workspace, repository, path, ref string) ([]ir
 GetObjectHistory fetches the history of an object at the given path and ref.
 
 <a name="Client.GetObjectSchema"></a>
-### func \(\*Client\) GetObjectSchema
+### func \(\*Client\) [GetObjectSchema](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L65-L67>)
 
 ```go
 func (c *Client) GetObjectSchema(workspace, repository, path, ref string) (*irminmodels.ObjectSchema, *irminmodels.IrminAPIResponse, error)
@@ -1373,7 +1293,7 @@ func (c *Client) GetObjectSchema(workspace, repository, path, ref string) (*irmi
 GetObjectSchema fetches the schema of an object at the given path and ref.
 
 <a name="Client.GetObjectStructuredContent"></a>
-### func \(\*Client\) GetObjectStructuredContent
+### func \(\*Client\) [GetObjectStructuredContent](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L164-L166>)
 
 ```go
 func (c *Client) GetObjectStructuredContent(workspace, repository, path, ref string) (map[string]any, *irminmodels.IrminAPIResponse, error)
@@ -1382,7 +1302,7 @@ func (c *Client) GetObjectStructuredContent(workspace, repository, path, ref str
 GetObjectStructuredContent fetches the parsed structured content of an object at the given path and ref.
 
 <a name="Client.GetPolicy"></a>
-### func \(\*Client\) GetPolicy
+### func \(\*Client\) [GetPolicy](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L86>)
 
 ```go
 func (c *Client) GetPolicy(workspace, policyID string) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error)
@@ -1391,7 +1311,7 @@ func (c *Client) GetPolicy(workspace, policyID string) (*irminmodels.Policy, *ir
 GetPolicy returns a single policy.
 
 <a name="Client.GetPolicyResourceOptions"></a>
-### func \(\*Client\) GetPolicyResourceOptions
+### func \(\*Client\) [GetPolicyResourceOptions](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L199-L201>)
 
 ```go
 func (c *Client) GetPolicyResourceOptions(workspace string) (*irminmodels.PolicyResourceOptions, *irminmodels.IrminAPIResponse, error)
@@ -1400,7 +1320,7 @@ func (c *Client) GetPolicyResourceOptions(workspace string) (*irminmodels.Policy
 GetPolicyResourceOptions returns all possible policy resource options for a given workspace.
 
 <a name="Client.GetPolicyRoleSummary"></a>
-### func \(\*Client\) GetPolicyRoleSummary
+### func \(\*Client\) [GetPolicyRoleSummary](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L147-L149>)
 
 ```go
 func (c *Client) GetPolicyRoleSummary(workspace string) ([]irminmodels.RolePolicySummary, *irminmodels.IrminAPIResponse, error)
@@ -1409,7 +1329,7 @@ func (c *Client) GetPolicyRoleSummary(workspace string) ([]irminmodels.RolePolic
 GetPolicyRoleSummary returns a list of policies that apply to a role.
 
 <a name="Client.GetPolicyUserSummary"></a>
-### func \(\*Client\) GetPolicyUserSummary
+### func \(\*Client\) [GetPolicyUserSummary](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L162-L164>)
 
 ```go
 func (c *Client) GetPolicyUserSummary(workspace string) (*irminmodels.UserPolicySummary, *irminmodels.IrminAPIResponse, error)
@@ -1418,7 +1338,7 @@ func (c *Client) GetPolicyUserSummary(workspace string) (*irminmodels.UserPolicy
 GetPolicyUserSummary returns a list of policies that apply to a user.
 
 <a name="Client.GetProfile"></a>
-### func \(\*Client\) GetProfile
+### func \(\*Client\) [GetProfile](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/profile.go#L21>)
 
 ```go
 func (c *Client) GetProfile() (*irminmodels.User, *irminmodels.IrminAPIResponse, error)
@@ -1427,7 +1347,7 @@ func (c *Client) GetProfile() (*irminmodels.User, *irminmodels.IrminAPIResponse,
 
 
 <a name="Client.GetRepository"></a>
-### func \(\*Client\) GetRepository
+### func \(\*Client\) [GetRepository](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L48>)
 
 ```go
 func (c *Client) GetRepository(workspace, slug string) (*irminmodels.Repository, *irminmodels.IrminAPIResponse, error)
@@ -1436,7 +1356,7 @@ func (c *Client) GetRepository(workspace, slug string) (*irminmodels.Repository,
 
 
 <a name="Client.GetStoredQuery"></a>
-### func \(\*Client\) GetStoredQuery
+### func \(\*Client\) [GetStoredQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L46-L48>)
 
 ```go
 func (c *Client) GetStoredQuery(workspace, queryID string) (*irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error)
@@ -1445,7 +1365,7 @@ func (c *Client) GetStoredQuery(workspace, queryID string) (*irminmodels.StoredQ
 
 
 <a name="Client.GetTag"></a>
-### func \(\*Client\) GetTag
+### func \(\*Client\) [GetTag](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-tags.go#L28>)
 
 ```go
 func (c *Client) GetTag(workspace, repository, tag string) (*irminmodels.GitTag, *irminmodels.IrminAPIResponse, error)
@@ -1454,7 +1374,7 @@ func (c *Client) GetTag(workspace, repository, tag string) (*irminmodels.GitTag,
 
 
 <a name="Client.GetUncommittedChanges"></a>
-### func \(\*Client\) GetUncommittedChanges
+### func \(\*Client\) [GetUncommittedChanges](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-branches.go#L104-L106>)
 
 ```go
 func (c *Client) GetUncommittedChanges(workspace, repository, branch string) (*irminmodels.Diff, *irminmodels.IrminAPIResponse, error)
@@ -1463,7 +1383,7 @@ func (c *Client) GetUncommittedChanges(workspace, repository, branch string) (*i
 GetUncommittedChanges retrieves the list of uncommitted changes in a branch.
 
 <a name="Client.GetUser"></a>
-### func \(\*Client\) GetUser
+### func \(\*Client\) [GetUser](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/users.go#L27>)
 
 ```go
 func (c *Client) GetUser(workspace, userID string) (*irminmodels.User, *irminmodels.IrminAPIResponse, error)
@@ -1472,7 +1392,7 @@ func (c *Client) GetUser(workspace, userID string) (*irminmodels.User, *irminmod
 
 
 <a name="Client.GetWorkflow"></a>
-### func \(\*Client\) GetWorkflow
+### func \(\*Client\) [GetWorkflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L62-L64>)
 
 ```go
 func (c *Client) GetWorkflow(workspace, workflowID string) (*irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -1481,7 +1401,7 @@ func (c *Client) GetWorkflow(workspace, workflowID string) (*irminmodels.Workflo
 
 
 <a name="Client.GetWorkflowRun"></a>
-### func \(\*Client\) GetWorkflowRun
+### func \(\*Client\) [GetWorkflowRun](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflow-runs.go#L31-L33>)
 
 ```go
 func (c *Client) GetWorkflowRun(workspace, workflowID, runID string) (*irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error)
@@ -1490,7 +1410,7 @@ func (c *Client) GetWorkflowRun(workspace, workflowID, runID string) (*irminmode
 
 
 <a name="Client.GetWorkspace"></a>
-### func \(\*Client\) GetWorkspace
+### func \(\*Client\) [GetWorkspace](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L39>)
 
 ```go
 func (c *Client) GetWorkspace(slug string) (*irminmodels.Workspace, *irminmodels.IrminAPIResponse, error)
@@ -1499,7 +1419,7 @@ func (c *Client) GetWorkspace(slug string) (*irminmodels.Workspace, *irminmodels
 
 
 <a name="Client.GetWorkspaceSchema"></a>
-### func \(\*Client\) GetWorkspaceSchema
+### func \(\*Client\) [GetWorkspaceSchema](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L123>)
 
 ```go
 func (c *Client) GetWorkspaceSchema(slug string) (*irminmodels.ObjectSchema, *irminmodels.IrminAPIResponse, error)
@@ -1508,7 +1428,7 @@ func (c *Client) GetWorkspaceSchema(slug string) (*irminmodels.ObjectSchema, *ir
 
 
 <a name="Client.GetWorkspaceTag"></a>
-### func \(\*Client\) GetWorkspaceTag
+### func \(\*Client\) [GetWorkspaceTag](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L38-L40>)
 
 ```go
 func (c *Client) GetWorkspaceTag(workspace, tagID string) (*irminmodels.TagWithAssets, *irminmodels.IrminAPIResponse, error)
@@ -1517,7 +1437,7 @@ func (c *Client) GetWorkspaceTag(workspace, tagID string) (*irminmodels.TagWithA
 GetWorkspaceTag retrieves a specific workspace tag with all its associated assets.
 
 <a name="Client.LeaveWorkspace"></a>
-### func \(\*Client\) LeaveWorkspace
+### func \(\*Client\) [LeaveWorkspace](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L112>)
 
 ```go
 func (c *Client) LeaveWorkspace(slug string) (*irminmodels.IrminAPIResponse, error)
@@ -1525,17 +1445,8 @@ func (c *Client) LeaveWorkspace(slug string) (*irminmodels.IrminAPIResponse, err
 
 
 
-<a name="Client.ListAssistantConversations"></a>
-### func \(\*Client\) ListAssistantConversations
-
-```go
-func (c *Client) ListAssistantConversations(workspace string) ([]irminmodels.AssistantConversation, *irminmodels.IrminAPIResponse, error)
-```
-
-
-
 <a name="Client.ListBranches"></a>
-### func \(\*Client\) ListBranches
+### func \(\*Client\) [ListBranches](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-branches.go#L23-L25>)
 
 ```go
 func (c *Client) ListBranches(workspace, repository string) ([]irminmodels.Branch, *irminmodels.IrminAPIResponse, error)
@@ -1544,7 +1455,7 @@ func (c *Client) ListBranches(workspace, repository string) ([]irminmodels.Branc
 
 
 <a name="Client.ListCommits"></a>
-### func \(\*Client\) ListCommits
+### func \(\*Client\) [ListCommits](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-commits.go#L23-L26>)
 
 ```go
 func (c *Client) ListCommits(workspace, repository, ref, after string, perPage int) ([]irminmodels.Commit, *irminmodels.IrminAPIResponse, error)
@@ -1553,7 +1464,7 @@ func (c *Client) ListCommits(workspace, repository, ref, after string, perPage i
 
 
 <a name="Client.ListConnections"></a>
-### func \(\*Client\) ListConnections
+### func \(\*Client\) [ListConnections](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L35>)
 
 ```go
 func (c *Client) ListConnections(workspace string) ([]irminmodels.Connection, *irminmodels.IrminAPIResponse, error)
@@ -1562,7 +1473,7 @@ func (c *Client) ListConnections(workspace string) ([]irminmodels.Connection, *i
 
 
 <a name="Client.ListConnectors"></a>
-### func \(\*Client\) ListConnectors
+### func \(\*Client\) [ListConnectors](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L22>)
 
 ```go
 func (c *Client) ListConnectors() ([]irminmodels.Connector, *irminmodels.IrminAPIResponse, error)
@@ -1571,7 +1482,7 @@ func (c *Client) ListConnectors() ([]irminmodels.Connector, *irminmodels.IrminAP
 
 
 <a name="Client.ListEditorItems"></a>
-### func \(\*Client\) ListEditorItems
+### func \(\*Client\) [ListEditorItems](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L33-L35>)
 
 ```go
 func (c *Client) ListEditorItems(workspace, path string) ([]irminmodels.EditorItem, *irminmodels.IrminAPIResponse, error)
@@ -1580,7 +1491,7 @@ func (c *Client) ListEditorItems(workspace, path string) ([]irminmodels.EditorIt
 
 
 <a name="Client.ListInviteInbox"></a>
-### func \(\*Client\) ListInviteInbox
+### func \(\*Client\) [ListInviteInbox](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L21>)
 
 ```go
 func (c *Client) ListInviteInbox() ([]irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
@@ -1589,7 +1500,7 @@ func (c *Client) ListInviteInbox() ([]irminmodels.Invite, *irminmodels.IrminAPIR
 
 
 <a name="Client.ListInvitesToWorkspace"></a>
-### func \(\*Client\) ListInvitesToWorkspace
+### func \(\*Client\) [ListInvitesToWorkspace](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L45>)
 
 ```go
 func (c *Client) ListInvitesToWorkspace(workspace string) ([]irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
@@ -1598,7 +1509,7 @@ func (c *Client) ListInvitesToWorkspace(workspace string) ([]irminmodels.Invite,
 
 
 <a name="Client.ListPolicies"></a>
-### func \(\*Client\) ListPolicies
+### func \(\*Client\) [ListPolicies](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L45-L48>)
 
 ```go
 func (c *Client) ListPolicies(workspace string, params ListPoliciesParams) ([]irminmodels.Policy, *irminmodels.IrminAPIResponse, error)
@@ -1606,17 +1517,8 @@ func (c *Client) ListPolicies(workspace string, params ListPoliciesParams) ([]ir
 
 ListPolicies returns a list of all policies for a workspace.
 
-<a name="Client.ListQueryGenerationConversations"></a>
-### func \(\*Client\) ListQueryGenerationConversations
-
-```go
-func (c *Client) ListQueryGenerationConversations(workspace string) ([]irminmodels.AssistantConversation, *irminmodels.IrminAPIResponse, error)
-```
-
-ListQueryGenerationConversations retrieves all query generation conversations in a workspace.
-
 <a name="Client.ListRepositories"></a>
-### func \(\*Client\) ListRepositories
+### func \(\*Client\) [ListRepositories](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L36>)
 
 ```go
 func (c *Client) ListRepositories(workspace string) ([]irminmodels.Repository, *irminmodels.IrminAPIResponse, error)
@@ -1625,7 +1527,7 @@ func (c *Client) ListRepositories(workspace string) ([]irminmodels.Repository, *
 
 
 <a name="Client.ListRoles"></a>
-### func \(\*Client\) ListRoles
+### func \(\*Client\) [ListRoles](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/roles.go#L10>)
 
 ```go
 func (c *Client) ListRoles() ([]irminmodels.Role, *irminmodels.IrminAPIResponse, error)
@@ -1633,17 +1535,8 @@ func (c *Client) ListRoles() ([]irminmodels.Role, *irminmodels.IrminAPIResponse,
 
 
 
-<a name="Client.ListScriptGenerationConversations"></a>
-### func \(\*Client\) ListScriptGenerationConversations
-
-```go
-func (c *Client) ListScriptGenerationConversations(workspace string) ([]irminmodels.AssistantConversation, *irminmodels.IrminAPIResponse, error)
-```
-
-ListScriptGenerationConversations retrieves all script generation conversations in a workspace.
-
 <a name="Client.ListStoredQueries"></a>
-### func \(\*Client\) ListStoredQueries
+### func \(\*Client\) [ListStoredQueries](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L34>)
 
 ```go
 func (c *Client) ListStoredQueries(workspace string) ([]irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error)
@@ -1652,7 +1545,7 @@ func (c *Client) ListStoredQueries(workspace string) ([]irminmodels.StoredQuery,
 
 
 <a name="Client.ListTags"></a>
-### func \(\*Client\) ListTags
+### func \(\*Client\) [ListTags](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-tags.go#L16>)
 
 ```go
 func (c *Client) ListTags(workspace, repository string) ([]irminmodels.GitTag, *irminmodels.IrminAPIResponse, error)
@@ -1661,7 +1554,7 @@ func (c *Client) ListTags(workspace, repository string) ([]irminmodels.GitTag, *
 
 
 <a name="Client.ListTokens"></a>
-### func \(\*Client\) ListTokens
+### func \(\*Client\) [ListTokens](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/credentials.go#L16>)
 
 ```go
 func (c *Client) ListTokens() ([]irminmodels.APIToken, *irminmodels.IrminAPIResponse, error)
@@ -1670,7 +1563,7 @@ func (c *Client) ListTokens() ([]irminmodels.APIToken, *irminmodels.IrminAPIResp
 
 
 <a name="Client.ListUsers"></a>
-### func \(\*Client\) ListUsers
+### func \(\*Client\) [ListUsers](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/users.go#L15>)
 
 ```go
 func (c *Client) ListUsers(workspace string) ([]irminmodels.User, *irminmodels.IrminAPIResponse, error)
@@ -1679,7 +1572,7 @@ func (c *Client) ListUsers(workspace string) ([]irminmodels.User, *irminmodels.I
 
 
 <a name="Client.ListWorkflowRuns"></a>
-### func \(\*Client\) ListWorkflowRuns
+### func \(\*Client\) [ListWorkflowRuns](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflow-runs.go#L10-L13>)
 
 ```go
 func (c *Client) ListWorkflowRuns(workspace, workflowID string, page, perPage int) ([]irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error)
@@ -1688,7 +1581,7 @@ func (c *Client) ListWorkflowRuns(workspace, workflowID string, page, perPage in
 
 
 <a name="Client.ListWorkflows"></a>
-### func \(\*Client\) ListWorkflows
+### func \(\*Client\) [ListWorkflows](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L36>)
 
 ```go
 func (c *Client) ListWorkflows(workspace string) ([]irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -1697,7 +1590,7 @@ func (c *Client) ListWorkflows(workspace string) ([]irminmodels.Workflow, *irmin
 
 
 <a name="Client.ListWorkflowsOfType"></a>
-### func \(\*Client\) ListWorkflowsOfType
+### func \(\*Client\) [ListWorkflowsOfType](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L48-L50>)
 
 ```go
 func (c *Client) ListWorkflowsOfType(workspace, workflowType string) ([]irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -1706,7 +1599,7 @@ func (c *Client) ListWorkflowsOfType(workspace, workflowType string) ([]irminmod
 
 
 <a name="Client.ListWorkspaceTags"></a>
-### func \(\*Client\) ListWorkspaceTags
+### func \(\*Client\) [ListWorkspaceTags](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L25>)
 
 ```go
 func (c *Client) ListWorkspaceTags(workspace string) ([]irminmodels.Tag, *irminmodels.IrminAPIResponse, error)
@@ -1715,7 +1608,7 @@ func (c *Client) ListWorkspaceTags(workspace string) ([]irminmodels.Tag, *irminm
 ListWorkspaceTags retrieves all workspace tags for a workspace.
 
 <a name="Client.ListWorkspaces"></a>
-### func \(\*Client\) ListWorkspaces
+### func \(\*Client\) [ListWorkspaces](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L27>)
 
 ```go
 func (c *Client) ListWorkspaces() ([]irminmodels.Workspace, *irminmodels.IrminAPIResponse, error)
@@ -1724,7 +1617,7 @@ func (c *Client) ListWorkspaces() ([]irminmodels.Workspace, *irminmodels.IrminAP
 
 
 <a name="Client.MergeRefs"></a>
-### func \(\*Client\) MergeRefs
+### func \(\*Client\) [MergeRefs](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/compare.go#L42-L45>)
 
 ```go
 func (c *Client) MergeRefs(workspace, repository string, req MergeRefsRequest) (*irminmodels.Commit, *irminmodels.IrminAPIResponse, error)
@@ -1733,7 +1626,7 @@ func (c *Client) MergeRefs(workspace, repository string, req MergeRefsRequest) (
 MergeRefs merges one ref into another.
 
 <a name="Client.MoveEditorItem"></a>
-### func \(\*Client\) MoveEditorItem
+### func \(\*Client\) [MoveEditorItem](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L59-L62>)
 
 ```go
 func (c *Client) MoveEditorItem(workspace, path string, req MoveEditorItemRequest) (*irminmodels.IrminAPIResponse, error)
@@ -1742,7 +1635,7 @@ func (c *Client) MoveEditorItem(workspace, path string, req MoveEditorItemReques
 
 
 <a name="Client.MoveObject"></a>
-### func \(\*Client\) MoveObject
+### func \(\*Client\) [MoveObject](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L202-L205>)
 
 ```go
 func (c *Client) MoveObject(workspace, repository, path, ref string, req MoveObjectRequest) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error)
@@ -1751,7 +1644,7 @@ func (c *Client) MoveObject(workspace, repository, path, ref string, req MoveObj
 
 
 <a name="Client.PauseWorkflow"></a>
-### func \(\*Client\) PauseWorkflow
+### func \(\*Client\) [PauseWorkflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L144-L146>)
 
 ```go
 func (c *Client) PauseWorkflow(workspace, workflowID string) (*irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -1760,7 +1653,7 @@ func (c *Client) PauseWorkflow(workspace, workflowID string) (*irminmodels.Workf
 
 
 <a name="Client.RegisterNewConnector"></a>
-### func \(\*Client\) RegisterNewConnector
+### func \(\*Client\) [RegisterNewConnector](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L90-L92>)
 
 ```go
 func (c *Client) RegisterNewConnector(req ConnectorRequest) (*irminmodels.Connector, *irminmodels.IrminAPIResponse, error)
@@ -1769,7 +1662,7 @@ func (c *Client) RegisterNewConnector(req ConnectorRequest) (*irminmodels.Connec
 RegisterNewConnector registers a new connector with the system. Requests to this endpoint must be authenticated with a system token.
 
 <a name="Client.RemoveTagFromEntity"></a>
-### func \(\*Client\) RemoveTagFromEntity
+### func \(\*Client\) [RemoveTagFromEntity](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L117-L119>)
 
 ```go
 func (c *Client) RemoveTagFromEntity(workspace, tagID string, entityType irminmodels.TagEntityType, entityID string) (*irminmodels.IrminAPIResponse, error)
@@ -1778,7 +1671,7 @@ func (c *Client) RemoveTagFromEntity(workspace, tagID string, entityType irminmo
 RemoveTagFromEntity removes an entity from a tag using the workspace tag route.
 
 <a name="Client.RemoveUser"></a>
-### func \(\*Client\) RemoveUser
+### func \(\*Client\) [RemoveUser](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/users.go#L56>)
 
 ```go
 func (c *Client) RemoveUser(workspace, userID string) (*irminmodels.IrminAPIResponse, error)
@@ -1787,7 +1680,7 @@ func (c *Client) RemoveUser(workspace, userID string) (*irminmodels.IrminAPIResp
 
 
 <a name="Client.Request"></a>
-### func \(\*Client\) Request
+### func \(\*Client\) [Request](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L213>)
 
 ```go
 func (c *Client) Request(opts RequestOptions) ([]byte, error)
@@ -1796,7 +1689,7 @@ func (c *Client) Request(opts RequestOptions) ([]byte, error)
 Request is the main method that sends requests to the Irmin API and returns raw response data.
 
 <a name="Client.ResendInvite"></a>
-### func \(\*Client\) ResendInvite
+### func \(\*Client\) [ResendInvite](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L74>)
 
 ```go
 func (c *Client) ResendInvite(inviteID string) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
@@ -1805,7 +1698,7 @@ func (c *Client) ResendInvite(inviteID string) (*irminmodels.Invite, *irminmodel
 
 
 <a name="Client.RevertChanges"></a>
-### func \(\*Client\) RevertChanges
+### func \(\*Client\) [RevertChanges](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-commits.go#L80-L83>)
 
 ```go
 func (c *Client) RevertChanges(workspace, repository string, req RevertUncommittedChangesRequest) (*irminmodels.IrminAPIResponse, error)
@@ -1814,7 +1707,7 @@ func (c *Client) RevertChanges(workspace, repository string, req RevertUncommitt
 
 
 <a name="Client.RunScript"></a>
-### func \(\*Client\) RunScript
+### func \(\*Client\) [RunScript](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L134-L137>)
 
 ```go
 func (c *Client) RunScript(workspace, path string, inputs []irminmodels.ActionInputData) (*irminmodels.ScriptResult, *irminmodels.IrminAPIResponse, error)
@@ -1823,7 +1716,7 @@ func (c *Client) RunScript(workspace, path string, inputs []irminmodels.ActionIn
 
 
 <a name="Client.SaveEditorItem"></a>
-### func \(\*Client\) SaveEditorItem
+### func \(\*Client\) [SaveEditorItem](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L102-L105>)
 
 ```go
 func (c *Client) SaveEditorItem(workspace, path string, req CreateEditorItemRequest) (*irminmodels.IrminAPIResponse, error)
@@ -1832,7 +1725,7 @@ func (c *Client) SaveEditorItem(workspace, path string, req CreateEditorItemRequ
 
 
 <a name="Client.Search"></a>
-### func \(\*Client\) Search
+### func \(\*Client\) [Search](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/search.go#L14-L17>)
 
 ```go
 func (c *Client) Search(workspace string, params irminmodels.SearchFilters) (*irminmodels.SearchResponse, *irminmodels.IrminAPIResponse, error)
@@ -1840,17 +1733,8 @@ func (c *Client) Search(workspace string, params irminmodels.SearchFilters) (*ir
 
 Search performs a workspace\-wide search using the provided filters.
 
-<a name="Client.SendAssistantMessage"></a>
-### func \(\*Client\) SendAssistantMessage
-
-```go
-func (c *Client) SendAssistantMessage(workspace string, conversationID string, req CreateAssistantMessageRequest) ([]irminmodels.AssistantMessage, *irminmodels.IrminAPIResponse, error)
-```
-
-SendAssistantMessage sends a message to the AI assistant and gets a response.
-
 <a name="Client.SendInvite"></a>
-### func \(\*Client\) SendInvite
+### func \(\*Client\) [SendInvite](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L57-L60>)
 
 ```go
 func (c *Client) SendInvite(workspace string, req SendInviteRequest) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
@@ -1859,7 +1743,7 @@ func (c *Client) SendInvite(workspace string, req SendInviteRequest) (*irminmode
 
 
 <a name="Client.StartWorkflow"></a>
-### func \(\*Client\) StartWorkflow
+### func \(\*Client\) [StartWorkflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L158-L160>)
 
 ```go
 func (c *Client) StartWorkflow(workspace, workflowID string) (*irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -1868,7 +1752,7 @@ func (c *Client) StartWorkflow(workspace, workflowID string) (*irminmodels.Workf
 
 
 <a name="Client.TransferConnection"></a>
-### func \(\*Client\) TransferConnection
+### func \(\*Client\) [TransferConnection](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L96-L99>)
 
 ```go
 func (c *Client) TransferConnection(workspace, connectionID string, req TransferConnectionOwnershipRequest) (*irminmodels.Connection, *irminmodels.IrminAPIResponse, error)
@@ -1877,7 +1761,7 @@ func (c *Client) TransferConnection(workspace, connectionID string, req Transfer
 TransferConnection reassigns a connection to a new owner.
 
 <a name="Client.TransferRepository"></a>
-### func \(\*Client\) TransferRepository
+### func \(\*Client\) [TransferRepository](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L96-L99>)
 
 ```go
 func (c *Client) TransferRepository(workspace, slug string, req TransferRepositoryOwnershipRequest) (*irminmodels.Repository, *irminmodels.IrminAPIResponse, error)
@@ -1886,7 +1770,7 @@ func (c *Client) TransferRepository(workspace, slug string, req TransferReposito
 
 
 <a name="Client.TransferStoredQuery"></a>
-### func \(\*Client\) TransferStoredQuery
+### func \(\*Client\) [TransferStoredQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L105-L108>)
 
 ```go
 func (c *Client) TransferStoredQuery(workspace, queryID string, req TransferQueryOwnershipRequest) (*irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error)
@@ -1895,7 +1779,7 @@ func (c *Client) TransferStoredQuery(workspace, queryID string, req TransferQuer
 
 
 <a name="Client.TransferWorkflow"></a>
-### func \(\*Client\) TransferWorkflow
+### func \(\*Client\) [TransferWorkflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L183-L185>)
 
 ```go
 func (c *Client) TransferWorkflow(workspace, workflowID, newOwnerID string) (*irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -1904,7 +1788,7 @@ func (c *Client) TransferWorkflow(workspace, workflowID, newOwnerID string) (*ir
 
 
 <a name="Client.TransferWorkspace"></a>
-### func \(\*Client\) TransferWorkspace
+### func \(\*Client\) [TransferWorkspace](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L95-L98>)
 
 ```go
 func (c *Client) TransferWorkspace(workspaceSlug string, req TransferOwnershipRequest) (*irminmodels.Workspace, *irminmodels.IrminAPIResponse, error)
@@ -1913,7 +1797,7 @@ func (c *Client) TransferWorkspace(workspaceSlug string, req TransferOwnershipRe
 
 
 <a name="Client.TriggerWorkflowRun"></a>
-### func \(\*Client\) TriggerWorkflowRun
+### func \(\*Client\) [TriggerWorkflowRun](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflow-runs.go#L59-L61>)
 
 ```go
 func (c *Client) TriggerWorkflowRun(workspace, workflowID string) (*irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error)
@@ -1921,17 +1805,8 @@ func (c *Client) TriggerWorkflowRun(workspace, workflowID string) (*irminmodels.
 
 
 
-<a name="Client.UpdateAssistantConversation"></a>
-### func \(\*Client\) UpdateAssistantConversation
-
-```go
-func (c *Client) UpdateAssistantConversation(workspace, conversationID string, req UpdateAssistantConversationRequest) (*irminmodels.IrminAPIResponse, error)
-```
-
-UpdateAssistantConversation updates an assistant conversation.
-
 <a name="Client.UpdateBranch"></a>
-### func \(\*Client\) UpdateBranch
+### func \(\*Client\) [UpdateBranch](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-branches.go#L85-L88>)
 
 ```go
 func (c *Client) UpdateBranch(workspace, repository, oldName string, req UpdateBranchRequest) (*irminmodels.IrminAPIResponse, error)
@@ -1940,7 +1815,7 @@ func (c *Client) UpdateBranch(workspace, repository, oldName string, req UpdateB
 UpdateBranch updates a branch name in the repository.
 
 <a name="Client.UpdateConnection"></a>
-### func \(\*Client\) UpdateConnection
+### func \(\*Client\) [UpdateConnection](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L78-L81>)
 
 ```go
 func (c *Client) UpdateConnection(workspace, connectionID string, req UpdateConnectionRequest) (*irminmodels.Connection, *irminmodels.IrminAPIResponse, error)
@@ -1949,7 +1824,7 @@ func (c *Client) UpdateConnection(workspace, connectionID string, req UpdateConn
 
 
 <a name="Client.UpdateInvite"></a>
-### func \(\*Client\) UpdateInvite
+### func \(\*Client\) [UpdateInvite](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L97-L100>)
 
 ```go
 func (c *Client) UpdateInvite(inviteID string, req UpdateInviteRequest) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
@@ -1958,7 +1833,7 @@ func (c *Client) UpdateInvite(inviteID string, req UpdateInviteRequest) (*irminm
 
 
 <a name="Client.UpdatePolicy"></a>
-### func \(\*Client\) UpdatePolicy
+### func \(\*Client\) [UpdatePolicy](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L117-L120>)
 
 ```go
 func (c *Client) UpdatePolicy(workspace, policyID string, req UpdatePolicyRequest) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error)
@@ -1967,7 +1842,7 @@ func (c *Client) UpdatePolicy(workspace, policyID string, req UpdatePolicyReques
 UpdatePolicy updates an existing policy.
 
 <a name="Client.UpdateProfile"></a>
-### func \(\*Client\) UpdateProfile
+### func \(\*Client\) [UpdateProfile](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/profile.go#L33-L36>)
 
 ```go
 func (c *Client) UpdateProfile(firstName, lastName, email, phone, company string, profilePicture *os.File) (*irminmodels.User, *irminmodels.IrminAPIResponse, error)
@@ -1976,7 +1851,7 @@ func (c *Client) UpdateProfile(firstName, lastName, email, phone, company string
 
 
 <a name="Client.UpdateRegisteredConnector"></a>
-### func \(\*Client\) UpdateRegisteredConnector
+### func \(\*Client\) [UpdateRegisteredConnector](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L107-L110>)
 
 ```go
 func (c *Client) UpdateRegisteredConnector(connectorID string, req ConnectorRequest) (*irminmodels.Connector, *irminmodels.IrminAPIResponse, error)
@@ -1985,7 +1860,7 @@ func (c *Client) UpdateRegisteredConnector(connectorID string, req ConnectorRequ
 UpdateRegisteredConnector updates the details of a registered connector. Requests to this endpoint must be authenticated with a system token.
 
 <a name="Client.UpdateRepository"></a>
-### func \(\*Client\) UpdateRepository
+### func \(\*Client\) [UpdateRepository](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L78-L81>)
 
 ```go
 func (c *Client) UpdateRepository(workspace, slug string, req UpdateRepositoryRequest) (*irminmodels.Repository, *irminmodels.IrminAPIResponse, error)
@@ -1994,7 +1869,7 @@ func (c *Client) UpdateRepository(workspace, slug string, req UpdateRepositoryRe
 
 
 <a name="Client.UpdateStoredQuery"></a>
-### func \(\*Client\) UpdateStoredQuery
+### func \(\*Client\) [UpdateStoredQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L77-L80>)
 
 ```go
 func (c *Client) UpdateStoredQuery(workspace, queryID string, req UpdateQueryRequest) (*irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error)
@@ -2003,7 +1878,7 @@ func (c *Client) UpdateStoredQuery(workspace, queryID string, req UpdateQueryReq
 
 
 <a name="Client.UpdateUserRoles"></a>
-### func \(\*Client\) UpdateUserRoles
+### func \(\*Client\) [UpdateUserRoles](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/users.go#L39-L42>)
 
 ```go
 func (c *Client) UpdateUserRoles(workspace, userID string, req UpdateUserRolesRequest) (*irminmodels.User, *irminmodels.IrminAPIResponse, error)
@@ -2012,7 +1887,7 @@ func (c *Client) UpdateUserRoles(workspace, userID string, req UpdateUserRolesRe
 
 
 <a name="Client.UpdateWorkflow"></a>
-### func \(\*Client\) UpdateWorkflow
+### func \(\*Client\) [UpdateWorkflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L93-L96>)
 
 ```go
 func (c *Client) UpdateWorkflow(workspace, workflowID string, req UpdateWorkflowRequest) (*irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -2021,7 +1896,7 @@ func (c *Client) UpdateWorkflow(workspace, workflowID string, req UpdateWorkflow
 
 
 <a name="Client.UpdateWorkflowSchedule"></a>
-### func \(\*Client\) UpdateWorkflowSchedule
+### func \(\*Client\) [UpdateWorkflowSchedule](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L127-L130>)
 
 ```go
 func (c *Client) UpdateWorkflowSchedule(workspace, workflowID string, schedule irminmodels.Schedule) (*irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -2030,7 +1905,7 @@ func (c *Client) UpdateWorkflowSchedule(workspace, workflowID string, schedule i
 
 
 <a name="Client.UpdateWorkflowWorkflowable"></a>
-### func \(\*Client\) UpdateWorkflowWorkflowable
+### func \(\*Client\) [UpdateWorkflowWorkflowable](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L110-L113>)
 
 ```go
 func (c *Client) UpdateWorkflowWorkflowable(workspace, workflowID string, workflowable irminmodels.Workflowable) (*irminmodels.Workflow, *irminmodels.IrminAPIResponse, error)
@@ -2039,7 +1914,7 @@ func (c *Client) UpdateWorkflowWorkflowable(workspace, workflowID string, workfl
 
 
 <a name="Client.UpdateWorkspace"></a>
-### func \(\*Client\) UpdateWorkspace
+### func \(\*Client\) [UpdateWorkspace](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L67-L70>)
 
 ```go
 func (c *Client) UpdateWorkspace(workspaceSlug string, req UpdateWorkspaceRequest) (*irminmodels.Workspace, *irminmodels.IrminAPIResponse, error)
@@ -2048,7 +1923,7 @@ func (c *Client) UpdateWorkspace(workspaceSlug string, req UpdateWorkspaceReques
 
 
 <a name="Client.UpdateWorkspaceTag"></a>
-### func \(\*Client\) UpdateWorkspaceTag
+### func \(\*Client\) [UpdateWorkspaceTag](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L71-L74>)
 
 ```go
 func (c *Client) UpdateWorkspaceTag(workspace, tagID string, req UpdateTagRequest) (*irminmodels.Tag, *irminmodels.IrminAPIResponse, error)
@@ -2057,7 +1932,7 @@ func (c *Client) UpdateWorkspaceTag(workspace, tagID string, req UpdateTagReques
 UpdateWorkspaceTag updates an existing workspace tag.
 
 <a name="Client.UploadObject"></a>
-### func \(\*Client\) UploadObject
+### func \(\*Client\) [UploadObject](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L86-L89>)
 
 ```go
 func (c *Client) UploadObject(workspace, repository, ref, path string, files map[string][]byte) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error)
@@ -2066,7 +1941,7 @@ func (c *Client) UploadObject(workspace, repository, ref, path string, files map
 UploadObject uploads a file to the given path and ref.
 
 <a name="Client.UploadObjectFromURL"></a>
-### func \(\*Client\) UploadObjectFromURL
+### func \(\*Client\) [UploadObjectFromURL](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L122-L125>)
 
 ```go
 func (c *Client) UploadObjectFromURL(workspace, repository, ref, path string, req UploadObjectFromURLRequest) (*irminmodels.Object, *irminmodels.IrminAPIResponse, error)
@@ -2075,7 +1950,7 @@ func (c *Client) UploadObjectFromURL(workspace, repository, ref, path string, re
 UploadObjectFromURL uploads an object from a URL to the given path and ref.
 
 <a name="Client.ValidateConnectorConfiguration"></a>
-### func \(\*Client\) ValidateConnectorConfiguration
+### func \(\*Client\) [ValidateConnectorConfiguration](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L72-L75>)
 
 ```go
 func (c *Client) ValidateConnectorConfiguration(connectorID string, req ConnectorConfigurationRequest) (*irminmodels.ConnectorConfigurationValidationResult, *irminmodels.IrminAPIResponse, error)
@@ -2084,7 +1959,7 @@ func (c *Client) ValidateConnectorConfiguration(connectorID string, req Connecto
 
 
 <a name="Client.ValidateRequest"></a>
-### func \(\*Client\) ValidateRequest
+### func \(\*Client\) [ValidateRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L317>)
 
 ```go
 func (c *Client) ValidateRequest(req any) error
@@ -2093,7 +1968,7 @@ func (c *Client) ValidateRequest(req any) error
 ValidateRequest validates a request struct without sending it to the API. This is useful for testing or pre\-validation of request data.
 
 <a name="Client.ValidateRequestEnhanced"></a>
-### func \(\*Client\) ValidateRequestEnhanced
+### func \(\*Client\) [ValidateRequestEnhanced](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L338>)
 
 ```go
 func (c *Client) ValidateRequestEnhanced(req any) *irminvalidator.ValidationResultError
@@ -2102,7 +1977,7 @@ func (c *Client) ValidateRequestEnhanced(req any) *irminvalidator.ValidationResu
 ValidateRequestEnhanced validates a request struct and returns detailed validation results. This provides multiple error formats for different use cases: \- A single user\-friendly message \- A map of field\-specific error messages \- The original validation errors.
 
 <a name="Client.ValidateVar"></a>
-### func \(\*Client\) ValidateVar
+### func \(\*Client\) [ValidateVar](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L326>)
 
 ```go
 func (c *Client) ValidateVar(field any, tag string) error
@@ -2111,7 +1986,7 @@ func (c *Client) ValidateVar(field any, tag string) error
 ValidateVar validates a single variable against validation tags. Example: client.ValidateVar\("test@example.com", "email"\).
 
 <a name="Client.ValidateVarEnhanced"></a>
-### func \(\*Client\) ValidateVarEnhanced
+### func \(\*Client\) [ValidateVarEnhanced](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L352>)
 
 ```go
 func (c *Client) ValidateVarEnhanced(field any, tag string) *irminvalidator.ValidationResultError
@@ -2120,7 +1995,7 @@ func (c *Client) ValidateVarEnhanced(field any, tag string) *irminvalidator.Vali
 ValidateVarEnhanced validates a single variable and returns detailed validation results. Example: client.ValidateVarEnhanced\("test@example.com", "email"\).
 
 <a name="ConnectorConfigurationRequest"></a>
-## type ConnectorConfigurationRequest
+## type [ConnectorConfigurationRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L17-L20>)
 
 ConnectorConfigurationRequest represents the JSON request body for connector configuration operations.
 
@@ -2132,7 +2007,7 @@ type ConnectorConfigurationRequest struct {
 ```
 
 <a name="ConnectorRequest"></a>
-## type ConnectorRequest
+## type [ConnectorRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connectors.go#L11-L14>)
 
 ConnectorRequest represents the JSON request body for creating/updating connectors.
 
@@ -2143,31 +2018,8 @@ type ConnectorRequest struct {
 }
 ```
 
-<a name="CreateAssistantConversationRequest"></a>
-## type CreateAssistantConversationRequest
-
-CreateAssistantConversationRequest represents the JSON request body for creating assistant conversations.
-
-```go
-type CreateAssistantConversationRequest struct {
-    Title    string         `json:"title"    example:"My conversation"`
-    Metadata map[string]any `json:"metadata"`
-}
-```
-
-<a name="CreateAssistantMessageRequest"></a>
-## type CreateAssistantMessageRequest
-
-CreateAssistantMessageRequest represents the JSON request body for creating assistant messages.
-
-```go
-type CreateAssistantMessageRequest struct {
-    Message string `json:"message" validate:"required,max=100" example:"What is the capital of France?"`
-}
-```
-
 <a name="CreateBranchRequest"></a>
-## type CreateBranchRequest
+## type [CreateBranchRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-branches.go#L11-L15>)
 
 CreateBranchRequest represents the JSON request body for creating a branch.
 
@@ -2180,7 +2032,7 @@ type CreateBranchRequest struct {
 ```
 
 <a name="CreateCommitRequest"></a>
-## type CreateCommitRequest
+## type [CreateCommitRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-commits.go#L11-L14>)
 
 CreateCommitRequest represents the JSON request body for creating a commit.
 
@@ -2192,7 +2044,7 @@ type CreateCommitRequest struct {
 ```
 
 <a name="CreateConnectionRequest"></a>
-## type CreateConnectionRequest
+## type [CreateConnectionRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L11-L18>)
 
 CreateConnectionRequest represents the JSON request body for creating connections.
 
@@ -2208,7 +2060,7 @@ type CreateConnectionRequest struct {
 ```
 
 <a name="CreateCredentialRequest"></a>
-## type CreateCredentialRequest
+## type [CreateCredentialRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/credentials.go#L11-L14>)
 
 CreateCredentialRequest represents the JSON request body for creating API credentials.
 
@@ -2220,7 +2072,7 @@ type CreateCredentialRequest struct {
 ```
 
 <a name="CreateEditorItemRequest"></a>
-## type CreateEditorItemRequest
+## type [CreateEditorItemRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L18-L21>)
 
 CreateEditorItemRequest represents the JSON request body for creating an editor file.
 
@@ -2232,7 +2084,7 @@ type CreateEditorItemRequest struct {
 ```
 
 <a name="CreatePolicyRequest"></a>
-## type CreatePolicyRequest
+## type [CreatePolicyRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L23-L31>)
 
 CreatePolicyRequest represents the JSON request body for creating a policy.
 
@@ -2249,7 +2101,7 @@ type CreatePolicyRequest struct {
 ```
 
 <a name="CreateQueryRequest"></a>
-## type CreateQueryRequest
+## type [CreateQueryRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L11-L15>)
 
 CreateQueryRequest represents the JSON request body for creating a query.
 
@@ -2262,7 +2114,7 @@ type CreateQueryRequest struct {
 ```
 
 <a name="CreateRepositoryRequest"></a>
-## type CreateRepositoryRequest
+## type [CreateRepositoryRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L11-L19>)
 
 CreateRepositoryRequest represents the JSON request body for creating a repository.
 
@@ -2279,7 +2131,7 @@ type CreateRepositoryRequest struct {
 ```
 
 <a name="CreateRepositoryTagRequest"></a>
-## type CreateRepositoryTagRequest
+## type [CreateRepositoryTagRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-tags.go#L11-L14>)
 
 CreateRepositoryTagRequest represents the JSON request body for creating a repository tag.
 
@@ -2291,7 +2143,7 @@ type CreateRepositoryTagRequest struct {
 ```
 
 <a name="CreateTagRequest"></a>
-## type CreateTagRequest
+## type [CreateTagRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L11-L15>)
 
 CreateTagRequest represents the JSON request body for creating a tag.
 
@@ -2304,7 +2156,7 @@ type CreateTagRequest struct {
 ```
 
 <a name="CreateWorkspaceRequest"></a>
-## type CreateWorkspaceRequest
+## type [CreateWorkspaceRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L11-L14>)
 
 CreateWorkspaceRequest represents the JSON request body for creating a workspace.
 
@@ -2316,7 +2168,7 @@ type CreateWorkspaceRequest struct {
 ```
 
 <a name="EditorItemType"></a>
-## type EditorItemType
+## type [EditorItemType](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L10>)
 
 
 
@@ -2334,7 +2186,7 @@ const (
 ```
 
 <a name="ExecuteEditorItemRequest"></a>
-## type ExecuteEditorItemRequest
+## type [ExecuteEditorItemRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L29-L31>)
 
 ExecuteEditorItemRequest represents the JSON request body for executing editor items.
 
@@ -2345,7 +2197,7 @@ type ExecuteEditorItemRequest struct {
 ```
 
 <a name="ExecuteSQLRequest"></a>
-## type ExecuteSQLRequest
+## type [ExecuteSQLRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L30-L32>)
 
 ExecuteSQLRequest represents the JSON request body for executing SQL.
 
@@ -2356,7 +2208,7 @@ type ExecuteSQLRequest struct {
 ```
 
 <a name="FormFile"></a>
-## type FormFile
+## type [FormFile](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L83-L88>)
 
 FormFile holds information about a file you want to upload with multipart/form\-data.
 
@@ -2370,7 +2222,7 @@ type FormFile struct {
 ```
 
 <a name="ListPoliciesParams"></a>
-## type ListPoliciesParams
+## type [ListPoliciesParams](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L12-L20>)
 
 ListPoliciesParams represents the parameters for listing policies.
 
@@ -2387,7 +2239,7 @@ type ListPoliciesParams struct {
 ```
 
 <a name="MergeRefsRequest"></a>
-## type MergeRefsRequest
+## type [MergeRefsRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/compare.go#L11-L18>)
 
 MergeRefsRequest represents the JSON request body for merging refs.
 
@@ -2403,7 +2255,7 @@ type MergeRefsRequest struct {
 ```
 
 <a name="MoveEditorItemRequest"></a>
-## type MoveEditorItemRequest
+## type [MoveEditorItemRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/editor.go#L24-L26>)
 
 MoveEditorItemRequest represents the JSON request body for moving editor items.
 
@@ -2414,7 +2266,7 @@ type MoveEditorItemRequest struct {
 ```
 
 <a name="MoveObjectRequest"></a>
-## type MoveObjectRequest
+## type [MoveObjectRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L12-L14>)
 
 MoveObjectRequest represents the JSON request body for moving/copying repository objects.
 
@@ -2424,32 +2276,8 @@ type MoveObjectRequest struct {
 }
 ```
 
-<a name="QueryGenerationRequest"></a>
-## type QueryGenerationRequest
-
-QueryGenerationRequest represents a request to generate a query from natural language
-
-```go
-type QueryGenerationRequest struct {
-    // Natural language prompt describing the desired query
-    Prompt string `json:"prompt" validate:"required,min=1,max=1000"`
-
-    // Optional repository slug for repository-specific queries
-    RepositorySlug *string `json:"repository_slug,omitempty"`
-
-    // Optional repository reference (branch, tag, commit)
-    RepositoryRef *string `json:"repository_ref,omitempty"`
-
-    // Optional conversation ID to continue an existing conversation
-    ConversationID *string `json:"conversation_id,omitempty" validate:"validsqid=assistant_conversations"`
-
-    // Optional metadata for the request
-    Metadata map[string]any `json:"metadata,omitempty"`
-}
-```
-
 <a name="RequestOptions"></a>
-## type RequestOptions
+## type [RequestOptions](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/client.go#L71-L80>)
 
 RequestOptions allows you to specify how you'd like to send data in the request.
 
@@ -2467,7 +2295,7 @@ type RequestOptions struct {
 ```
 
 <a name="RevertUncommittedChangesRequest"></a>
-## type RevertUncommittedChangesRequest
+## type [RevertUncommittedChangesRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-commits.go#L17-L21>)
 
 RevertUncommittedChangesRequest represents the JSON request body for reverting uncommitted changes.
 
@@ -2479,26 +2307,8 @@ type RevertUncommittedChangesRequest struct {
 }
 ```
 
-<a name="ScriptGenerationRequest"></a>
-## type ScriptGenerationRequest
-
-ScriptGenerationRequest represents a request to generate a script from natural language
-
-```go
-type ScriptGenerationRequest struct {
-    // Natural language prompt describing the desired script
-    Prompt string `json:"prompt" validate:"required,min=1,max=1000"`
-
-    // Optional conversation ID to continue an existing conversation
-    ConversationID *string `json:"conversation_id,omitempty" validate:"validsqid=assistant_conversations"`
-
-    // Optional metadata for the request
-    Metadata map[string]any `json:"metadata,omitempty"`
-}
-```
-
 <a name="SendInviteRequest"></a>
-## type SendInviteRequest
+## type [SendInviteRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L11-L14>)
 
 SendInviteRequest represents the JSON request body for sending an invite.
 
@@ -2510,7 +2320,7 @@ type SendInviteRequest struct {
 ```
 
 <a name="TransferConnectionOwnershipRequest"></a>
-## type TransferConnectionOwnershipRequest
+## type [TransferConnectionOwnershipRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L31-L33>)
 
 TransferConnectionOwnershipRequest represents the JSON request body for transferring connection ownership.
 
@@ -2521,7 +2331,7 @@ type TransferConnectionOwnershipRequest struct {
 ```
 
 <a name="TransferOwnershipRequest"></a>
-## type TransferOwnershipRequest
+## type [TransferOwnershipRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L23-L25>)
 
 TransferOwnershipRequest represents the JSON request body for transferring workspace ownership.
 
@@ -2532,7 +2342,7 @@ type TransferOwnershipRequest struct {
 ```
 
 <a name="TransferQueryOwnershipRequest"></a>
-## type TransferQueryOwnershipRequest
+## type [TransferQueryOwnershipRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L25-L27>)
 
 TransferQueryOwnershipRequest represents the JSON request body for transferring query ownership.
 
@@ -2543,7 +2353,7 @@ type TransferQueryOwnershipRequest struct {
 ```
 
 <a name="TransferRepositoryOwnershipRequest"></a>
-## type TransferRepositoryOwnershipRequest
+## type [TransferRepositoryOwnershipRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L32-L34>)
 
 TransferRepositoryOwnershipRequest represents the JSON request body for transferring repository ownership.
 
@@ -2554,7 +2364,7 @@ type TransferRepositoryOwnershipRequest struct {
 ```
 
 <a name="TransferWorkflowOwnershipRequest"></a>
-## type TransferWorkflowOwnershipRequest
+## type [TransferWorkflowOwnershipRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L18-L20>)
 
 TransferWorkflowOwnershipRequest represents the JSON request body for transferring workflow ownership.
 
@@ -2564,20 +2374,8 @@ type TransferWorkflowOwnershipRequest struct {
 }
 ```
 
-<a name="UpdateAssistantConversationRequest"></a>
-## type UpdateAssistantConversationRequest
-
-UpdateAssistantConversationRequest represents the request to update an assistant conversation.
-
-```go
-type UpdateAssistantConversationRequest struct {
-    Title    string         `json:"title"    example:"My conversation"`
-    Metadata map[string]any `json:"metadata"`
-}
-```
-
 <a name="UpdateBranchRequest"></a>
-## type UpdateBranchRequest
+## type [UpdateBranchRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-branches.go#L18-L21>)
 
 UpdateBranchRequest represents the JSON request body for updating a branch.
 
@@ -2589,7 +2387,7 @@ type UpdateBranchRequest struct {
 ```
 
 <a name="UpdateConnectionRequest"></a>
-## type UpdateConnectionRequest
+## type [UpdateConnectionRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/connections.go#L21-L28>)
 
 UpdateConnectionRequest represents the JSON request body for updating connections.
 
@@ -2605,7 +2403,7 @@ type UpdateConnectionRequest struct {
 ```
 
 <a name="UpdateInviteRequest"></a>
-## type UpdateInviteRequest
+## type [UpdateInviteRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/invites.go#L17-L19>)
 
 UpdateInviteRequest represents the JSON request body for updating an invite.
 
@@ -2616,7 +2414,7 @@ type UpdateInviteRequest struct {
 ```
 
 <a name="UpdatePolicyRequest"></a>
-## type UpdatePolicyRequest
+## type [UpdatePolicyRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/policy.go#L34-L42>)
 
 UpdatePolicyRequest represents the JSON request body for updating a policy.
 
@@ -2633,7 +2431,7 @@ type UpdatePolicyRequest struct {
 ```
 
 <a name="UpdateProfileRequest"></a>
-## type UpdateProfileRequest
+## type [UpdateProfileRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/profile.go#L13-L19>)
 
 UpdateProfileRequest represents the JSON request body for updating profile.
 
@@ -2648,7 +2446,7 @@ type UpdateProfileRequest struct {
 ```
 
 <a name="UpdateQueryRequest"></a>
-## type UpdateQueryRequest
+## type [UpdateQueryRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/queries.go#L18-L22>)
 
 UpdateQueryRequest represents the JSON request body for updating a query.
 
@@ -2661,7 +2459,7 @@ type UpdateQueryRequest struct {
 ```
 
 <a name="UpdateRepositoryRequest"></a>
-## type UpdateRepositoryRequest
+## type [UpdateRepositoryRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repositories.go#L22-L29>)
 
 UpdateRepositoryRequest represents the JSON request body for updating a repository.
 
@@ -2677,7 +2475,7 @@ type UpdateRepositoryRequest struct {
 ```
 
 <a name="UpdateTagRequest"></a>
-## type UpdateTagRequest
+## type [UpdateTagRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/tags.go#L18-L22>)
 
 UpdateTagRequest represents the JSON request body for updating a tag.
 
@@ -2690,7 +2488,7 @@ type UpdateTagRequest struct {
 ```
 
 <a name="UpdateUserRolesRequest"></a>
-## type UpdateUserRolesRequest
+## type [UpdateUserRolesRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/users.go#L11-L13>)
 
 UpdateUserRolesRequest represents the JSON request body for updating user roles.
 
@@ -2701,7 +2499,7 @@ type UpdateUserRolesRequest struct {
 ```
 
 <a name="UpdateWorkflowRequest"></a>
-## type UpdateWorkflowRequest
+## type [UpdateWorkflowRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L11-L15>)
 
 UpdateWorkflowRequest represents the JSON request body for updating basic workflow info.
 
@@ -2714,7 +2512,7 @@ type UpdateWorkflowRequest struct {
 ```
 
 <a name="UpdateWorkspaceRequest"></a>
-## type UpdateWorkspaceRequest
+## type [UpdateWorkspaceRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workspaces.go#L17-L20>)
 
 UpdateWorkspaceRequest represents the JSON request body for updating a workspace.
 
@@ -2726,7 +2524,7 @@ type UpdateWorkspaceRequest struct {
 ```
 
 <a name="UploadObjectFromURLRequest"></a>
-## type UploadObjectFromURLRequest
+## type [UploadObjectFromURLRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/repository-objects.go#L17-L20>)
 
 UploadObjectFromURLRequest represents the JSON request body for uploading objects from URLs.
 
@@ -2738,7 +2536,7 @@ type UploadObjectFromURLRequest struct {
 ```
 
 <a name="WorkflowRequest"></a>
-## type WorkflowRequest
+## type [WorkflowRequest](<https://github.com/IrminData/irmin-sdk-go/blob/development/core-api/workflows.go#L23-L34>)
 
 WorkflowRequest represents the JSON request body for creating a workflow.
 
@@ -2790,7 +2588,7 @@ import "github.com/IrminData/irmin-sdk-go/duckdb"
 
 
 <a name="BuildReadQuery"></a>
-## func BuildReadQuery
+## func [BuildReadQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/read_options.go#L141>)
 
 ```go
 func BuildReadQuery(filePath string, options *ReadOptions) (string, error)
@@ -2799,7 +2597,7 @@ func BuildReadQuery(filePath string, options *ReadOptions) (string, error)
 BuildReadQuery constructs a DuckDB query string for reading data with the given options. This function now properly escapes all user input to prevent SQL injection.
 
 <a name="CleanTableName"></a>
-## func CleanTableName
+## func [CleanTableName](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/merge.go#L420>)
 
 ```go
 func CleanTableName(name string) string
@@ -2808,7 +2606,7 @@ func CleanTableName(name string) string
 CleanTableName removes special characters from table names to make them valid SQL identifiers. Ensures the resulting name starts with a letter or underscore and contains only valid characters.
 
 <a name="EscapeSQLIdentifier"></a>
-## func EscapeSQLIdentifier
+## func [EscapeSQLIdentifier](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L214>)
 
 ```go
 func EscapeSQLIdentifier(identifier string) string
@@ -2817,7 +2615,7 @@ func EscapeSQLIdentifier(identifier string) string
 EscapeSQLIdentifier properly escapes a SQL identifier by doubling any internal quotes and wrapping the result in double quotes.
 
 <a name="GetRequiredExtensions"></a>
-## func GetRequiredExtensions
+## func [GetRequiredExtensions](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/read_options.go#L165>)
 
 ```go
 func GetRequiredExtensions(options *ReadOptions) []string
@@ -2826,7 +2624,7 @@ func GetRequiredExtensions(options *ReadOptions) []string
 GetRequiredExtensions returns a list of required DuckDB extensions for the given read options.
 
 <a name="GetSupportedFormats"></a>
-## func GetSupportedFormats
+## func [GetSupportedFormats](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/read_options.go#L188>)
 
 ```go
 func GetSupportedFormats() []string
@@ -2835,7 +2633,7 @@ func GetSupportedFormats() []string
 GetSupportedFormats returns a list of all supported file extensions.
 
 <a name="IsFormatSupported"></a>
-## func IsFormatSupported
+## func [IsFormatSupported](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/read_options.go#L182>)
 
 ```go
 func IsFormatSupported(filename string) bool
@@ -2844,7 +2642,7 @@ func IsFormatSupported(filename string) bool
 IsFormatSupported checks if a file format is supported.
 
 <a name="ValidateSQLIdentifier"></a>
-## func ValidateSQLIdentifier
+## func [ValidateSQLIdentifier](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L222>)
 
 ```go
 func ValidateSQLIdentifier(identifier string) (string, error)
@@ -2853,7 +2651,7 @@ func ValidateSQLIdentifier(identifier string) (string, error)
 ValidateSQLIdentifier helps prevent SQL injection by ensuring only valid identifiers are used.
 
 <a name="InMemoryClient"></a>
-## type InMemoryClient
+## type [InMemoryClient](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L19-L22>)
 
 InMemoryClient is a client for interacting with DuckDB for in\-memory data processing.
 
@@ -2864,7 +2662,7 @@ type InMemoryClient struct {
 ```
 
 <a name="NewInMemoryClient"></a>
-### func NewInMemoryClient
+### func [NewInMemoryClient](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L27>)
 
 ```go
 func NewInMemoryClient(ctx context.Context, logger *slog.Logger) (*InMemoryClient, error)
@@ -2873,7 +2671,7 @@ func NewInMemoryClient(ctx context.Context, logger *slog.Logger) (*InMemoryClien
 NewInMemoryClient creates a new client for in\-memory data processing with DuckDB. It configures the DuckDB connection without external storage dependencies. Returns the client and an error if encountered.
 
 <a name="InMemoryClient.Close"></a>
-### func \(\*InMemoryClient\) Close
+### func \(\*InMemoryClient\) [Close](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L204>)
 
 ```go
 func (c *InMemoryClient) Close() error
@@ -2882,7 +2680,7 @@ func (c *InMemoryClient) Close() error
 Close closes the DuckDB connection held by the client.
 
 <a name="InMemoryClient.CreateTableFromData"></a>
-### func \(\*InMemoryClient\) CreateTableFromData
+### func \(\*InMemoryClient\) [CreateTableFromData](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L101>)
 
 ```go
 func (c *InMemoryClient) CreateTableFromData(ctx context.Context, tableName string, data []map[string]any) error
@@ -2891,7 +2689,7 @@ func (c *InMemoryClient) CreateTableFromData(ctx context.Context, tableName stri
 CreateTableFromData creates a table in DuckDB from in\-memory data. This is useful for loading data directly into DuckDB for processing.
 
 <a name="InMemoryClient.ExecuteNonQuery"></a>
-### func \(\*InMemoryClient\) ExecuteNonQuery
+### func \(\*InMemoryClient\) [ExecuteNonQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L90>)
 
 ```go
 func (c *InMemoryClient) ExecuteNonQuery(ctx context.Context, query string, args ...any) (sql.Result, error)
@@ -2902,7 +2700,7 @@ ExecuteNonQuery executes a SQL statement that does not return rows \(such as INS
 query: the SQL statement to execute. args: optional arguments for the statement.
 
 <a name="InMemoryClient.ExecuteQuery"></a>
-### func \(\*InMemoryClient\) ExecuteQuery
+### func \(\*InMemoryClient\) [ExecuteQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L77>)
 
 ```go
 func (c *InMemoryClient) ExecuteQuery(ctx context.Context, query string, args ...any) (*sql.Rows, error)
@@ -2913,7 +2711,7 @@ ExecuteQuery executes a SQL query using the client's DuckDB connection and retur
 query: the SQL query to execute. args: optional arguments for the query.
 
 <a name="InMemoryClient.LoadFileFromBytes"></a>
-### func \(\*InMemoryClient\) LoadFileFromBytes
+### func \(\*InMemoryClient\) [LoadFileFromBytes](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/read_options.go#L210>)
 
 ```go
 func (c *InMemoryClient) LoadFileFromBytes(ctx context.Context, data []byte, filename string, tableName string) error
@@ -2935,7 +2733,7 @@ err := client.LoadFileFromBytes(csvData, "users.csv", "users")
 ```
 
 <a name="InMemoryClient.MergeDataSources"></a>
-### func \(\*InMemoryClient\) MergeDataSources
+### func \(\*InMemoryClient\) [MergeDataSources](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/merge.go#L47-L52>)
 
 ```go
 func (c *InMemoryClient) MergeDataSources(ctx context.Context, dataSources map[string][]map[string]any, targetTableName string, strategy MergeStrategy) (*MergeResult, error)
@@ -2952,7 +2750,7 @@ Parameters:
 Returns the merge result or an error.
 
 <a name="InMemoryClient.MergeFiles"></a>
-### func \(\*InMemoryClient\) MergeFiles
+### func \(\*InMemoryClient\) [MergeFiles](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/merge.go#L129-L134>)
 
 ```go
 func (c *InMemoryClient) MergeFiles(ctx context.Context, sourceFiles map[string][]byte, targetTableName string, strategy MergeStrategy) (*MergeResult, error)
@@ -2961,7 +2759,7 @@ func (c *InMemoryClient) MergeFiles(ctx context.Context, sourceFiles map[string]
 MergeFiles merges multiple files from byte content into a single table. This is useful for processing files loaded into memory.
 
 <a name="InMemoryClient.QueryToMap"></a>
-### func \(\*InMemoryClient\) QueryToMap
+### func \(\*InMemoryClient\) [QueryToMap](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/client.go#L169>)
 
 ```go
 func (c *InMemoryClient) QueryToMap(ctx context.Context, query string, args ...any) ([]map[string]any, error)
@@ -2970,7 +2768,7 @@ func (c *InMemoryClient) QueryToMap(ctx context.Context, query string, args ...a
 QueryToMap executes a query and returns the results as a slice of maps. This is convenient for working with query results in Go.
 
 <a name="MergeResult"></a>
-## type MergeResult
+## type [MergeResult](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/merge.go#L32-L36>)
 
 MergeResult represents the result of merging multiple data sources.
 
@@ -2983,7 +2781,7 @@ type MergeResult struct {
 ```
 
 <a name="MergeStrategy"></a>
-## type MergeStrategy
+## type [MergeStrategy](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/merge.go#L12>)
 
 MergeStrategy defines how to handle conflicts when merging data.
 
@@ -3010,7 +2808,7 @@ const (
 ```
 
 <a name="ReadOptions"></a>
-## type ReadOptions
+## type [ReadOptions](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/read_options.go#L12-L18>)
 
 ReadOptions represents the configuration for reading a file with DuckDB.
 
@@ -3025,7 +2823,7 @@ type ReadOptions struct {
 ```
 
 <a name="GetDuckDBReadOptions"></a>
-### func GetDuckDBReadOptions
+### func [GetDuckDBReadOptions](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/read_options.go#L114>)
 
 ```go
 func GetDuckDBReadOptions(filename string) (*ReadOptions, error)
@@ -3034,7 +2832,7 @@ func GetDuckDBReadOptions(filename string) (*ReadOptions, error)
 GetDuckDBReadOptions automatically detects the format from filename and returns read options.
 
 <a name="GetDuckDBReadOptionsByExtension"></a>
-### func GetDuckDBReadOptionsByExtension
+### func [GetDuckDBReadOptionsByExtension](<https://github.com/IrminData/irmin-sdk-go/blob/development/duckdb/read_options.go#L21>)
 
 ```go
 func GetDuckDBReadOptionsByExtension(extension string) (*ReadOptions, error)
@@ -3052,12 +2850,6 @@ import "github.com/IrminData/irmin-sdk-go/models"
 
 - [type APIToken](<#APIToken>)
 - [type ActionInputData](<#ActionInputData>)
-- [type AssistantConversation](<#AssistantConversation>)
-- [type AssistantConversationStats](<#AssistantConversationStats>)
-- [type AssistantMessage](<#AssistantMessage>)
-- [type AssistantMessageContentType](<#AssistantMessageContentType>)
-- [type AssistantMessageRole](<#AssistantMessageRole>)
-- [type AssistantMessageStatus](<#AssistantMessageStatus>)
 - [type Branch](<#Branch>)
 - [type BranchGarbageCollectionRules](<#BranchGarbageCollectionRules>)
 - [type ChangeItem](<#ChangeItem>)
@@ -3133,7 +2925,7 @@ import "github.com/IrminData/irmin-sdk-go/models"
 
 
 <a name="APIToken"></a>
-## type APIToken
+## type [APIToken](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/apiToken.go#L5-L12>)
 
 
 
@@ -3149,7 +2941,7 @@ type APIToken struct {
 ```
 
 <a name="ActionInputData"></a>
-## type ActionInputData
+## type [ActionInputData](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflow.go#L62-L66>)
 
 
 
@@ -3161,137 +2953,8 @@ type ActionInputData struct {
 }
 ```
 
-<a name="AssistantConversation"></a>
-## type AssistantConversation
-
-AssistantConversation represents a conversation with the AI assistant
-
-```go
-type AssistantConversation struct {
-    ID                string             `json:"id"                 validate:"required,validsqid=assistant_conversations" example:"assistant_conversation_1a2b3c"`
-    Title             string             `json:"title"              validate:"required"                                   example:"My conversation"`
-    WorkspaceID       string             `json:"workspace_id"       validate:"required,validsqid=workspaces"              example:"workspace_1a2b3c"`
-    UserID            string             `json:"user_id"            validate:"required,validsqid=users"                   example:"user_1a2b3c"`
-    Metadata          map[string]any     `json:"metadata"`
-    Messages          []AssistantMessage `json:"messages,omitempty"`
-    TotalMessages     int                `json:"total_messages"`
-    UserMessages      int                `json:"user_messages"`
-    AssistantMessages int                `json:"assistant_messages"`
-    EstimatedTokens   int                `json:"estimated_tokens"`
-    LastMessageAt     *time.Time         `json:"last_message_at"`
-    CreatedAt         time.Time          `json:"created_at"         validate:"required"                                   example:"2025-01-15T10:30:00Z"`
-    UpdatedAt         time.Time          `json:"updated_at"         validate:"required"                                   example:"2025-12-01T14:22:30Z"`
-}
-```
-
-<a name="AssistantConversationStats"></a>
-## type AssistantConversationStats
-
-
-
-```go
-type AssistantConversationStats struct {
-    TotalMessages     int       `json:"total_messages"`
-    UserMessages      int       `json:"user_messages"`
-    AssistantMessages int       `json:"assistant_messages"`
-    EstimatedTokens   int       `json:"estimated_tokens"`
-    CreatedAt         time.Time `json:"created_at"`
-    LastUpdated       time.Time `json:"last_updated"`
-    DurationMinutes   int       `json:"duration_minutes"`
-}
-```
-
-<a name="AssistantMessage"></a>
-## type AssistantMessage
-
-
-
-```go
-type AssistantMessage struct {
-    ID             string                      `json:"id"                      validate:"required,validsqid=assistant_messages"      example:"assistant_message_1a2b3c"`
-    ConversationID string                      `json:"conversation_id"         validate:"required,validsqid=assistant_conversations" example:"assistant_conversation_1a2b3c"`
-    Role           AssistantMessageRole        `json:"role"`
-    Content        string                      `json:"content"`
-    ContentType    AssistantMessageContentType `json:"content_type"                                                                  example:"text"`
-    BlockIndex     *int                        `json:"block_index,omitempty"`
-    Metadata       map[string]any              `json:"metadata"`
-    InputTokens    *int                        `json:"input_tokens"`
-    OutputTokens   *int                        `json:"output_tokens"`
-    AIModel        string                      `json:"ai_model"`
-    Status         AssistantMessageStatus      `json:"status"                  validate:"required,oneof=pending sent error failed"`
-    ErrorMessage   *string                     `json:"error_message,omitempty"`
-    SentAt         time.Time                   `json:"sent_at"`
-    CreatedAt      time.Time                   `json:"created_at"              validate:"required"                                   example:"2025-01-15T10:30:00Z"`
-    UpdatedAt      time.Time                   `json:"updated_at"              validate:"required"                                   example:"2025-01-15T10:30:00Z"`
-}
-```
-
-<a name="AssistantMessageContentType"></a>
-## type AssistantMessageContentType
-
-
-
-```go
-type AssistantMessageContentType string
-```
-
-<a name="AssistantMessageContentTypeText"></a>
-
-```go
-const (
-    AssistantMessageContentTypeText                    AssistantMessageContentType = "text"
-    AssistantMessageContentTypeThinking                AssistantMessageContentType = "thinking"
-    AssistantMessageContentTypeRedactedThinking        AssistantMessageContentType = "redacted_thinking"
-    AssistantMessageContentTypeToolUse                 AssistantMessageContentType = "tool_use"
-    AssistantMessageContentTypeServerToolUse           AssistantMessageContentType = "server_tool_use"
-    AssistantMessageContentTypeWebSearchToolResult     AssistantMessageContentType = "web_search_tool_result"
-    AssistantMessageContentTypeCodeExecutionToolResult AssistantMessageContentType = "code_execution_tool_result"
-    AssistantMessageContentTypeMCPToolUse              AssistantMessageContentType = "mcp_tool_use"
-    AssistantMessageContentTypeMCPToolResult           AssistantMessageContentType = "mcp_tool_result"
-    AssistantMessageContentTypeContainerUpload         AssistantMessageContentType = "container_upload"
-)
-```
-
-<a name="AssistantMessageRole"></a>
-## type AssistantMessageRole
-
-
-
-```go
-type AssistantMessageRole string
-```
-
-<a name="AssistantMessageRoleUser"></a>
-
-```go
-const (
-    AssistantMessageRoleUser      AssistantMessageRole = "user"
-    AssistantMessageRoleAssistant AssistantMessageRole = "assistant"
-)
-```
-
-<a name="AssistantMessageStatus"></a>
-## type AssistantMessageStatus
-
-
-
-```go
-type AssistantMessageStatus string
-```
-
-<a name="AssistantMessageStatusPending"></a>
-
-```go
-const (
-    AssistantMessageStatusPending AssistantMessageStatus = "pending"
-    AssistantMessageStatusSent    AssistantMessageStatus = "sent"
-    AssistantMessageStatusError   AssistantMessageStatus = "error"
-    AssistantMessageStatusFailed  AssistantMessageStatus = "failed"
-)
-```
-
 <a name="Branch"></a>
-## type Branch
+## type [Branch](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/branch.go#L4-L11>)
 
 Branch represents a repository branch.
 
@@ -3307,7 +2970,7 @@ type Branch struct {
 ```
 
 <a name="BranchGarbageCollectionRules"></a>
-## type BranchGarbageCollectionRules
+## type [BranchGarbageCollectionRules](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/repository.go#L6-L9>)
 
 BranchGarbageCollectionRules represents the garbage collection rules for a branch.
 
@@ -3319,7 +2982,7 @@ type BranchGarbageCollectionRules struct {
 ```
 
 <a name="ChangeItem"></a>
-## type ChangeItem
+## type [ChangeItem](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/diff.go#L24-L31>)
 
 ChangeItem represents a single change in a diff.
 
@@ -3335,7 +2998,7 @@ type ChangeItem struct {
 ```
 
 <a name="ChangeType"></a>
-## type ChangeType
+## type [ChangeType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/diff.go#L4>)
 
 ChangeType represents the type of change in a diff.
 
@@ -3356,7 +3019,7 @@ const (
 ```
 
 <a name="Commit"></a>
-## type Commit
+## type [Commit](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/commit.go#L4-L15>)
 
 Commit represents a repository commit.
 
@@ -3376,7 +3039,7 @@ type Commit struct {
 ```
 
 <a name="Connection"></a>
-## type Connection
+## type [Connection](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/connection.go#L5-L15>)
 
 
 
@@ -3395,7 +3058,7 @@ type Connection struct {
 ```
 
 <a name="Connector"></a>
-## type Connector
+## type [Connector](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/connector.go#L4-L31>)
 
 Connector represents general information about a connector.
 
@@ -3431,7 +3094,7 @@ type Connector struct {
 ```
 
 <a name="ConnectorCapability"></a>
-## type ConnectorCapability
+## type [ConnectorCapability](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/connector.go#L34>)
 
 ConnectorCapability represents the capabilities of a connector.
 
@@ -3455,7 +3118,7 @@ const (
 ```
 
 <a name="ConnectorCategory"></a>
-## type ConnectorCategory
+## type [ConnectorCategory](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/connector.go#L48>)
 
 ConnectorCategory represents the category of a connector.
 
@@ -3487,7 +3150,7 @@ const (
 ```
 
 <a name="ConnectorConfigurationValidationResult"></a>
-## type ConnectorConfigurationValidationResult
+## type [ConnectorConfigurationValidationResult](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/connector.go#L70-L76>)
 
 ConnectorConfigurationValidationResult represents the validation result of a connector configuration.
 
@@ -3502,7 +3165,7 @@ type ConnectorConfigurationValidationResult struct {
 ```
 
 <a name="ConnectorEvent"></a>
-## type ConnectorEvent
+## type [ConnectorEvent](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/connectorEvent.go#L13-L20>)
 
 ConnectorEvent represents a webhook event sent by a connector when a change in the data occurs.
 
@@ -3518,7 +3181,7 @@ type ConnectorEvent struct {
 ```
 
 <a name="ConnectorEventType"></a>
-## type ConnectorEventType
+## type [ConnectorEventType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/connectorEvent.go#L4>)
 
 ConnectorEventType represents the type of webhook event sent by a connector.
 
@@ -3537,7 +3200,7 @@ const (
 ```
 
 <a name="CustomFieldValues"></a>
-## type CustomFieldValues
+## type [CustomFieldValues](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/connection.go#L3>)
 
 
 
@@ -3546,7 +3209,7 @@ type CustomFieldValues map[string]string
 ```
 
 <a name="Diff"></a>
-## type Diff
+## type [Diff](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/diff.go#L34-L45>)
 
 Diff represents the difference between two refs.
 
@@ -3566,7 +3229,7 @@ type Diff struct {
 ```
 
 <a name="DynamicField"></a>
-## type DynamicField
+## type [DynamicField](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/dynamicField.go#L23-L35>)
 
 DynamicField represents a field for user to fill in.
 
@@ -3587,7 +3250,7 @@ type DynamicField struct {
 ```
 
 <a name="DynamicFields"></a>
-## type DynamicFields
+## type [DynamicFields](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/dynamicField.go#L44>)
 
 DynamicFields represents a list of dynamic fields for a form.
 
@@ -3596,7 +3259,7 @@ type DynamicFields map[string]DynamicField
 ```
 
 <a name="EditorItem"></a>
-## type EditorItem
+## type [EditorItem](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/editor.go#L12-L20>)
 
 
 
@@ -3613,7 +3276,7 @@ type EditorItem struct {
 ```
 
 <a name="EditorItemType"></a>
-## type EditorItemType
+## type [EditorItemType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/editor.go#L5>)
 
 
 
@@ -3631,7 +3294,7 @@ const (
 ```
 
 <a name="FieldMapping"></a>
-## type FieldMapping
+## type [FieldMapping](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflow.go#L3-L8>)
 
 
 
@@ -3645,7 +3308,7 @@ type FieldMapping struct {
 ```
 
 <a name="FieldType"></a>
-## type FieldType
+## type [FieldType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/dynamicField.go#L4>)
 
 FieldType represents the type of a dynamic field.
 
@@ -3674,7 +3337,7 @@ const (
 ```
 
 <a name="GarbageCollectionRules"></a>
-## type GarbageCollectionRules
+## type [GarbageCollectionRules](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/repository.go#L12-L15>)
 
 GarbageCollectionRules represents the garbage collection rules for a repository.
 
@@ -3686,7 +3349,7 @@ type GarbageCollectionRules struct {
 ```
 
 <a name="GitTag"></a>
-## type GitTag
+## type [GitTag](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/gitTag.go#L4-L7>)
 
 GitTag represents a repository tag object \(Git\-style tag with ref\).
 
@@ -3698,7 +3361,7 @@ type GitTag struct {
 ```
 
 <a name="GroupSchemaRestrictions"></a>
-## type GroupSchemaRestrictions
+## type [GroupSchemaRestrictions](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/objectSchema.go#L20-L34>)
 
 GroupSchemaRestrictions defines restrictions on group schemas.
 
@@ -3721,7 +3384,7 @@ type GroupSchemaRestrictions struct {
 ```
 
 <a name="Invite"></a>
-## type Invite
+## type [Invite](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/invite.go#L5-L14>)
 
 
 
@@ -3739,7 +3402,7 @@ type Invite struct {
 ```
 
 <a name="IrminAPIPaginationMetadata"></a>
-## type IrminAPIPaginationMetadata
+## type [IrminAPIPaginationMetadata](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/coreResponse.go#L4-L17>)
 
 IrminAPIPaginationMetadata represents the pagination metadata from the Irmin Core API.
 
@@ -3761,7 +3424,7 @@ type IrminAPIPaginationMetadata struct {
 ```
 
 <a name="IrminAPIResponse"></a>
-## type IrminAPIResponse
+## type [IrminAPIResponse](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/coreResponse.go#L21-L27>)
 
 IrminAPIResponse is a "raw" response type where the \`Data\` is \`json.RawMessage\`. This lets us unmarshal it a second time into the type we actually want.
 
@@ -3776,7 +3439,7 @@ type IrminAPIResponse struct {
 ```
 
 <a name="JSONSchema"></a>
-## type JSONSchema
+## type [JSONSchema](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/objectSchema.go#L37-L52>)
 
 JSONSchema represents a JSON Schema for structured data.
 
@@ -3800,7 +3463,7 @@ type JSONSchema struct {
 ```
 
 <a name="LogEvent"></a>
-## type LogEvent
+## type [LogEvent](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/log.go#L18-L32>)
 
 
 
@@ -3823,7 +3486,7 @@ type LogEvent struct {
 ```
 
 <a name="LogEventType"></a>
-## type LogEventType
+## type [LogEventType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/log.go#L5>)
 
 
 
@@ -3847,7 +3510,7 @@ const (
 ```
 
 <a name="MergeStrategy"></a>
-## type MergeStrategy
+## type [MergeStrategy](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/diff.go#L15>)
 
 MergeStrategy represents possible merge strategies.
 
@@ -3866,7 +3529,7 @@ const (
 ```
 
 <a name="Object"></a>
-## type Object
+## type [Object](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/object.go#L15-L30>)
 
 
 
@@ -3890,7 +3553,7 @@ type Object struct {
 ```
 
 <a name="ObjectSchema"></a>
-## type ObjectSchema
+## type [ObjectSchema](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/objectSchema.go#L3-L17>)
 
 
 
@@ -3913,7 +3576,7 @@ type ObjectSchema struct {
 ```
 
 <a name="ObjectType"></a>
-## type ObjectType
+## type [ObjectType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/object.go#L4>)
 
 ObjectType represents the type of the object \("group", "structured", or "binary"\).
 
@@ -3935,7 +3598,7 @@ const (
 ```
 
 <a name="Patch"></a>
-## type Patch
+## type [Patch](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/jsonPatch.go#L16>)
 
 Patch is a series of patch operations.
 
@@ -3944,7 +3607,7 @@ type Patch []PatchOperation
 ```
 
 <a name="PatchOperation"></a>
-## type PatchOperation
+## type [PatchOperation](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/jsonPatch.go#L4-L13>)
 
 PatchOperation represents a single operation in a JSON Patch array.
 
@@ -3962,7 +3625,7 @@ type PatchOperation struct {
 ```
 
 <a name="PipelineStage"></a>
-## type PipelineStage
+## type [PipelineStage](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflow.go#L40-L60>)
 
 
 
@@ -3991,7 +3654,7 @@ type PipelineStage struct {
 ```
 
 <a name="PipelineStageType"></a>
-## type PipelineStageType
+## type [PipelineStageType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflow.go#L32>)
 
 
 
@@ -4010,20 +3673,20 @@ const (
 ```
 
 <a name="Policy"></a>
-## type Policy
+## type [Policy](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L82-L121>)
 
 Policy represents a policy in the API response.
 
 ```go
 type Policy struct {
     // ID is the unique identifier for the policy
-    ID  string `json:"id"                    validate:"required,validsqid=policies"                                                                                                                                                                                                              example:"pol_8x2m9k4n7p5q"`
+    ID  string `json:"id"                    validate:"required,validsqid=policies"                                                                                                                                                                                                    example:"pol_8x2m9k4n7p5q"`
     // Effect specifies whether the policy is an allow or deny policy
-    Effect PolicyEffect `json:"effect"                validate:"required,oneof=allow deny"                                                                                                                                                                                                                example:"allow"`
+    Effect PolicyEffect `json:"effect"                validate:"required,oneof=allow deny"                                                                                                                                                                                                      example:"allow"`
     // Action specifies the action that the policy is applied to
-    Action PolicyAction `json:"action"                validate:"required,oneof=create read update delete"                                                                                                                                                                                                 example:"read"`
+    Action PolicyAction `json:"action"                validate:"required,oneof=create read update delete"                                                                                                                                                                                       example:"read"`
     // Resource specifies the resource type that the policy is applied to
-    Resource PolicyResource `json:"resource"              validate:"required,oneof=workspace editor_script query workflow workflow_run connection repository repository_branch repository_tag repository_commit repository_object user policy invite audit_log documentation billing workspace_tag assistant" example:"repository"`
+    Resource PolicyResource `json:"resource"              validate:"required,oneof=workspace editor_script query workflow workflow_run connection repository repository_branch repository_tag repository_commit repository_object user policy invite audit_log documentation billing workspace_tag" example:"repository"`
     // ResourceID is used to specify which resource the policy is applied to.
     // When undefined, the policy is applied to all resources of the given type.
     //
@@ -4032,6 +3695,7 @@ type Policy struct {
     // - workflows
     // - connections
     // - repositories
+    // - workspace tags
     // - users
     //
     // It is not applicable for:
@@ -4046,9 +3710,9 @@ type Policy struct {
     // Note that some resources point to their parent resource's ID:
     // - repository objects, branches, tags, and commits point to their repository's ID
     // - workflow runs point to their workflow's ID
-    ResourceID *string `json:"resource_id,omitempty"                                                                                                                                                                                                                                                     example:"repo_8x2m9k4n7p5q"`
+    ResourceID *string `json:"resource_id,omitempty"                                                                                                                                                                                                                                           example:"repo_8x2m9k4n7p5q"`
     // Principal specifies which group of users the policy is applied to
-    Principal PolicyPrincipal `json:"principal"             validate:"required,oneof=workspace_user role everyone"                                                                                                                                                                                              example:"role"`
+    Principal PolicyPrincipal `json:"principal"             validate:"required,oneof=workspace_user role everyone"                                                                                                                                                                                    example:"role"`
     // Role is used to give a policy to a specific role
     Role *Role `json:"role,omitempty"`
     // User is used to give a policy to a specific workspace user
@@ -4057,7 +3721,7 @@ type Policy struct {
 ```
 
 <a name="PolicyAction"></a>
-## type PolicyAction
+## type [PolicyAction](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L14>)
 
 PolicyAction specifies the action that the policy is applied to.
 
@@ -4081,7 +3745,7 @@ const (
 ```
 
 <a name="PolicyEffect"></a>
-## type PolicyEffect
+## type [PolicyEffect](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L4>)
 
 PolicyEffect specifies whether the policy is an allow or deny policy.
 
@@ -4101,7 +3765,7 @@ const (
 ```
 
 <a name="PolicyPrincipal"></a>
-## type PolicyPrincipal
+## type [PolicyPrincipal](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L70>)
 
 PolicyPrincipal specifies which group of users the policy is applied to.
 
@@ -4123,7 +3787,7 @@ const (
 ```
 
 <a name="PolicyResource"></a>
-## type PolicyResource
+## type [PolicyResource](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L28>)
 
 PolicyResource specifies the resource type that the policy is applied to.
 
@@ -4171,13 +3835,11 @@ const (
     PolicyResourceBilling PolicyResource = "billing"
     // PolicyResourceWorkspaceTag represents a workspace tag resource.
     PolicyResourceWorkspaceTag PolicyResource = "workspace_tag"
-    // PolicyResourceAssistant represents an assistant resource.
-    PolicyResourceAssistant PolicyResource = "assistant"
 )
 ```
 
 <a name="PolicyResourceOption"></a>
-## type PolicyResourceOption
+## type [PolicyResourceOption](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L140-L143>)
 
 PolicyResourceOption represents a policy resource option.
 
@@ -4189,7 +3851,7 @@ type PolicyResourceOption struct {
 ```
 
 <a name="PolicyResourceOptions"></a>
-## type PolicyResourceOptions
+## type [PolicyResourceOptions](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L146-L153>)
 
 PolicyResourceOptions represents all possible policy resource options for a given workspace.
 
@@ -4205,7 +3867,7 @@ type PolicyResourceOptions struct {
 ```
 
 <a name="QueryResult"></a>
-## type QueryResult
+## type [QueryResult](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/query.go#L16-L24>)
 
 
 
@@ -4222,7 +3884,7 @@ type QueryResult struct {
 ```
 
 <a name="Repository"></a>
-## type Repository
+## type [Repository](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/repository.go#L17-L30>)
 
 
 
@@ -4244,7 +3906,7 @@ type Repository struct {
 ```
 
 <a name="RepositoryEvent"></a>
-## type RepositoryEvent
+## type [RepositoryEvent](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/schedule.go#L3>)
 
 
 
@@ -4272,7 +3934,7 @@ const (
 ```
 
 <a name="Role"></a>
-## type Role
+## type [Role](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/role.go#L3-L9>)
 
 
 
@@ -4287,7 +3949,7 @@ type Role struct {
 ```
 
 <a name="RolePolicySummary"></a>
-## type RolePolicySummary
+## type [RolePolicySummary](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L124-L128>)
 
 RolePolicySummary represents a summary of a role's policies.
 
@@ -4300,7 +3962,7 @@ type RolePolicySummary struct {
 ```
 
 <a name="Schedule"></a>
-## type Schedule
+## type [Schedule](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/schedule.go#L52-L57>)
 
 
 
@@ -4314,7 +3976,7 @@ type Schedule struct {
 ```
 
 <a name="ScheduleTrigger"></a>
-## type ScheduleTrigger
+## type [ScheduleTrigger](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/schedule.go#L35-L50>)
 
 
 
@@ -4338,7 +4000,7 @@ type ScheduleTrigger struct {
 ```
 
 <a name="ScriptResult"></a>
-## type ScriptResult
+## type [ScriptResult](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/editor.go#L22-L29>)
 
 
 
@@ -4354,7 +4016,7 @@ type ScriptResult struct {
 ```
 
 <a name="SearchFilters"></a>
-## type SearchFilters
+## type [SearchFilters](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/search.go#L32-L41>)
 
 SearchFilters represents the search filter options \(importing from controllers\).
 
@@ -4372,7 +4034,7 @@ type SearchFilters struct {
 ```
 
 <a name="SearchResponse"></a>
-## type SearchResponse
+## type [SearchResponse](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/search.go#L44-L49>)
 
 SearchResponse represents the search API response.
 
@@ -4386,7 +4048,7 @@ type SearchResponse struct {
 ```
 
 <a name="SearchResult"></a>
-## type SearchResult
+## type [SearchResult](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/search.go#L16-L29>)
 
 SearchResult represents a unified search result with typed entity data.
 
@@ -4406,7 +4068,7 @@ type SearchResult struct {
 ```
 
 <a name="SelectOption"></a>
-## type SelectOption
+## type [SelectOption](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/dynamicField.go#L38-L41>)
 
 SelectOption represents an option for select/radio fields.
 
@@ -4418,7 +4080,7 @@ type SelectOption struct {
 ```
 
 <a name="StoredQuery"></a>
-## type StoredQuery
+## type [StoredQuery](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/query.go#L5-L14>)
 
 
 
@@ -4436,7 +4098,7 @@ type StoredQuery struct {
 ```
 
 <a name="Tag"></a>
-## type Tag
+## type [Tag](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/tag.go#L4-L13>)
 
 Tag represents a workspace tag object for labeling entities.
 
@@ -4454,7 +4116,7 @@ type Tag struct {
 ```
 
 <a name="TagEntityType"></a>
-## type TagEntityType
+## type [TagEntityType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/tag.go#L31>)
 
 
 
@@ -4475,7 +4137,7 @@ const (
 ```
 
 <a name="TagWithAssets"></a>
-## type TagWithAssets
+## type [TagWithAssets](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/tag.go#L16-L20>)
 
 TagWithAssets represents a tag along with all its associated assets and counts.
 
@@ -4488,7 +4150,7 @@ type TagWithAssets struct {
 ```
 
 <a name="TaggedAssets"></a>
-## type TaggedAssets
+## type [TaggedAssets](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/tag.go#L23-L29>)
 
 TaggedAssets represents all assets associated with a specific tag.
 
@@ -4503,7 +4165,7 @@ type TaggedAssets struct {
 ```
 
 <a name="User"></a>
-## type User
+## type [User](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/user.go#L3-L12>)
 
 
 
@@ -4521,7 +4183,7 @@ type User struct {
 ```
 
 <a name="UserPolicySummary"></a>
-## type UserPolicySummary
+## type [UserPolicySummary](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/policy.go#L131-L137>)
 
 UserPolicySummary represents a summary of a user's policies.
 
@@ -4536,7 +4198,7 @@ type UserPolicySummary struct {
 ```
 
 <a name="Workflow"></a>
-## type Workflow
+## type [Workflow](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflow.go#L101-L112>)
 
 
 
@@ -4556,7 +4218,7 @@ type Workflow struct {
 ```
 
 <a name="WorkflowRun"></a>
-## type WorkflowRun
+## type [WorkflowRun](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflowRun.go#L5-L16>)
 
 
 
@@ -4576,7 +4238,7 @@ type WorkflowRun struct {
 ```
 
 <a name="WorkflowRunEvent"></a>
-## type WorkflowRunEvent
+## type [WorkflowRunEvent](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/schedule.go#L20>)
 
 
 
@@ -4594,7 +4256,7 @@ const (
 ```
 
 <a name="WorkflowStatus"></a>
-## type WorkflowStatus
+## type [WorkflowStatus](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflow.go#L19>)
 
 
 
@@ -4618,7 +4280,7 @@ const (
 ```
 
 <a name="WorkflowTriggerType"></a>
-## type WorkflowTriggerType
+## type [WorkflowTriggerType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/schedule.go#L27>)
 
 
 
@@ -4637,7 +4299,7 @@ const (
 ```
 
 <a name="Workflowable"></a>
-## type Workflowable
+## type [Workflowable](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflow.go#L68-L99>)
 
 
 
@@ -4669,7 +4331,7 @@ type Workflowable struct {
 ```
 
 <a name="WorkflowableType"></a>
-## type WorkflowableType
+## type [WorkflowableType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workflow.go#L10>)
 
 
 
@@ -4689,7 +4351,7 @@ const (
 ```
 
 <a name="Workspace"></a>
-## type Workspace
+## type [Workspace](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/workspace.go#L3-L10>)
 
 
 
@@ -4705,7 +4367,7 @@ type Workspace struct {
 ```
 
 <a name="WorkspaceSearchResultType"></a>
-## type WorkspaceSearchResultType
+## type [WorkspaceSearchResultType](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/search.go#L3>)
 
 
 
@@ -4757,7 +4419,7 @@ const (
 ```
 
 <a name="SQIDManager"></a>
-## type SQIDManager
+## type [SQIDManager](<https://github.com/IrminData/irmin-sdk-go/blob/development/sqids/sqid.go#L20-L25>)
 
 SQIDManager handles the creation and management of SQID generators.
 
@@ -4768,7 +4430,7 @@ type SQIDManager struct {
 ```
 
 <a name="NewSQIDManager"></a>
-### func NewSQIDManager
+### func [NewSQIDManager](<https://github.com/IrminData/irmin-sdk-go/blob/development/sqids/sqid.go#L28>)
 
 ```go
 func NewSQIDManager(alphabet string) *SQIDManager
@@ -4777,7 +4439,7 @@ func NewSQIDManager(alphabet string) *SQIDManager
 NewSQIDManager creates a new SQID manager instance.
 
 <a name="SQIDManager.Decode"></a>
-### func \(\*SQIDManager\) Decode
+### func \(\*SQIDManager\) [Decode](<https://github.com/IrminData/irmin-sdk-go/blob/development/sqids/sqid.go#L104>)
 
 ```go
 func (m *SQIDManager) Decode(contentType string, sqid string) (uint64, error)
@@ -4786,7 +4448,7 @@ func (m *SQIDManager) Decode(contentType string, sqid string) (uint64, error)
 Decode decodes the given SQID and verifies it matches the expected content type. \- contentType: a string representing the expected content type \(e.g. "workspace"\) \- sqid: the encoded SQID string Returns the original ID if the type code matches, or an error.
 
 <a name="SQIDManager.Encode"></a>
-### func \(\*SQIDManager\) Encode
+### func \(\*SQIDManager\) [Encode](<https://github.com/IrminData/irmin-sdk-go/blob/development/sqids/sqid.go#L89>)
 
 ```go
 func (m *SQIDManager) Encode(contentType string, id uint64) (string, error)
@@ -4822,7 +4484,7 @@ import "github.com/IrminData/irmin-sdk-go/utils"
 
 
 <a name="AutoDetectMimeType"></a>
-## func AutoDetectMimeType
+## func [AutoDetectMimeType](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L57>)
 
 ```go
 func AutoDetectMimeType(filename string) string
@@ -4831,7 +4493,7 @@ func AutoDetectMimeType(filename string) string
 AutoDetectMimeType detects MIME type from filename extension.
 
 <a name="CreateMultipartForm"></a>
-## func CreateMultipartForm
+## func [CreateMultipartForm](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L108>)
 
 ```go
 func CreateMultipartForm(file *File, fieldName string) (*bytes.Buffer, string, error)
@@ -4840,7 +4502,7 @@ func CreateMultipartForm(file *File, fieldName string) (*bytes.Buffer, string, e
 CreateMultipartForm creates a complete multipart/form\-data form.
 
 <a name="CreateMultipartFormWithFields"></a>
-## func CreateMultipartFormWithFields
+## func [CreateMultipartFormWithFields](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L132-L136>)
 
 ```go
 func CreateMultipartFormWithFields(file *File, fieldName string, textFields map[string]string) (*bytes.Buffer, string, error)
@@ -4849,7 +4511,7 @@ func CreateMultipartFormWithFields(file *File, fieldName string, textFields map[
 CreateMultipartFormWithFields creates multipart form with additional text fields.
 
 <a name="GetAPIFromFlags"></a>
-## func GetAPIFromFlags
+## func [GetAPIFromFlags](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/getAPIFromFlags.go#L9>)
 
 ```go
 func GetAPIFromFlags() (string, string, error)
@@ -4858,7 +4520,7 @@ func GetAPIFromFlags() (string, string, error)
 GetAPIFromFlags retrieves the API key and the base URL from command line flags.
 
 <a name="GetInputFile"></a>
-## func GetInputFile
+## func [GetInputFile](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/getInputFiles.go#L11>)
 
 ```go
 func GetInputFile(filePath string) ([]byte, error)
@@ -4867,7 +4529,7 @@ func GetInputFile(filePath string) ([]byte, error)
 GetInputFile reads a file from the \_input directory. Returns the file content as bytes and any error encountered.
 
 <a name="ListInputFiles"></a>
-## func ListInputFiles
+## func [ListInputFiles](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/getInputFiles.go#L26>)
 
 ```go
 func ListInputFiles() ([]string, error)
@@ -4876,7 +4538,7 @@ func ListInputFiles() ([]string, error)
 ListInputFiles returns a list of all files in the \_input directory. Returns a slice of file paths relative to the \_input directory and any error encountered.
 
 <a name="SendComputeResult"></a>
-## func SendComputeResult
+## func [SendComputeResult](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/sendComputeResult.go#L11>)
 
 ```go
 func SendComputeResult(data []byte, fileName string) error
@@ -4885,7 +4547,7 @@ func SendComputeResult(data []byte, fileName string) error
 SendComputeResult writes the provided data to a file with the given name in the current working directory. This file will be used to pass computation results back to the host system from within the container.
 
 <a name="UnzipFiles"></a>
-## func UnzipFiles
+## func [UnzipFiles](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/zip.go#L65>)
 
 ```go
 func UnzipFiles(zipData []byte) (map[string][]byte, error)
@@ -4902,7 +4564,7 @@ Example paths in the returned map:
 - "docs/README.md"
 
 <a name="ZipFiles"></a>
-## func ZipFiles
+## func [ZipFiles](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/zip.go#L17>)
 
 ```go
 func ZipFiles(files map[string][]byte) ([]byte, error)
@@ -4915,7 +4577,7 @@ files map keys are the full paths within the archive \(e.g. "path/to/file.json"\
 It returns a byte slice containing the complete ZIP archive, or an error if any step fails.
 
 <a name="File"></a>
-## type File
+## type [File](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L17-L20>)
 
 File represents file content with a filename.
 
@@ -4927,7 +4589,7 @@ type File struct {
 ```
 
 <a name="NewFile"></a>
-### func NewFile
+### func [NewFile](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L23>)
 
 ```go
 func NewFile(content, filename string) *File
@@ -4936,7 +4598,7 @@ func NewFile(content, filename string) *File
 NewFile creates a File from string content and filename.
 
 <a name="NewFileFromBytes"></a>
-### func NewFileFromBytes
+### func [NewFileFromBytes](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L31>)
 
 ```go
 func NewFileFromBytes(content []byte, filename string) *File
@@ -4945,7 +4607,7 @@ func NewFileFromBytes(content []byte, filename string) *File
 NewFileFromBytes creates a File from byte content and filename.
 
 <a name="File.MimeType"></a>
-### func \(\*File\) MimeType
+### func \(\*File\) [MimeType](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L52>)
 
 ```go
 func (f *File) MimeType() string
@@ -4954,7 +4616,7 @@ func (f *File) MimeType() string
 MimeType returns the MIME type based on the filename extension.
 
 <a name="File.MultipartFile"></a>
-### func \(\*File\) MultipartFile
+### func \(\*File\) [MultipartFile](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L44>)
 
 ```go
 func (f *File) MultipartFile() multipart.File
@@ -4963,7 +4625,7 @@ func (f *File) MultipartFile() multipart.File
 MultipartFile returns a multipart.File for the file content.
 
 <a name="File.Reader"></a>
-### func \(\*File\) Reader
+### func \(\*File\) [Reader](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/createFile.go#L39>)
 
 ```go
 func (f *File) Reader() io.Reader
@@ -4972,7 +4634,7 @@ func (f *File) Reader() io.Reader
 Reader returns an io.Reader for the file content.
 
 <a name="ObjectDetails"></a>
-## type ObjectDetails
+## type [ObjectDetails](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/parseObjectDetailsFromPath.go#L11-L17>)
 
 ObjectDetails holds details about an object parsed from its path.
 
@@ -4987,7 +4649,7 @@ type ObjectDetails struct {
 ```
 
 <a name="ParseObjectDetailsFromPath"></a>
-### func ParseObjectDetailsFromPath
+### func [ParseObjectDetailsFromPath](<https://github.com/IrminData/irmin-sdk-go/blob/development/utils/parseObjectDetailsFromPath.go#L26>)
 
 ```go
 func ParseObjectDetailsFromPath(inputPath string) ObjectDetails
@@ -5063,7 +4725,7 @@ const (
 ```
 
 <a name="ValidationResultError"></a>
-## type ValidationResultError
+## type [ValidationResultError](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L14-L26>)
 
 ValidationResultError contains validation results in multiple formats for different use cases.
 
@@ -5084,7 +4746,7 @@ type ValidationResultError struct {
 ```
 
 <a name="ValidationResultError.Error"></a>
-### func \(\*ValidationResultError\) Error
+### func \(\*ValidationResultError\) [Error](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L29>)
 
 ```go
 func (vr *ValidationResultError) Error() string
@@ -5093,7 +4755,7 @@ func (vr *ValidationResultError) Error() string
 Error implements the error interface for backward compatibility.
 
 <a name="ValidationResultError.GetFieldErrors"></a>
-### func \(\*ValidationResultError\) GetFieldErrors
+### func \(\*ValidationResultError\) [GetFieldErrors](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L53>)
 
 ```go
 func (vr *ValidationResultError) GetFieldErrors() map[string]string
@@ -5102,7 +4764,7 @@ func (vr *ValidationResultError) GetFieldErrors() map[string]string
 GetFieldErrors returns a map of field\-specific error messages.
 
 <a name="ValidationResultError.GetRawErrors"></a>
-### func \(\*ValidationResultError\) GetRawErrors
+### func \(\*ValidationResultError\) [GetRawErrors](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L58>)
 
 ```go
 func (vr *ValidationResultError) GetRawErrors() error
@@ -5111,7 +4773,7 @@ func (vr *ValidationResultError) GetRawErrors() error
 GetRawErrors returns the original validation errors.
 
 <a name="ValidationResultError.GetUserMessage"></a>
-### func \(\*ValidationResultError\) GetUserMessage
+### func \(\*ValidationResultError\) [GetUserMessage](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L48>)
 
 ```go
 func (vr *ValidationResultError) GetUserMessage() string
@@ -5120,7 +4782,7 @@ func (vr *ValidationResultError) GetUserMessage() string
 GetUserMessage returns a single user\-friendly error message.
 
 <a name="ValidationResultError.HasErrors"></a>
-### func \(\*ValidationResultError\) HasErrors
+### func \(\*ValidationResultError\) [HasErrors](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L43>)
 
 ```go
 func (vr *ValidationResultError) HasErrors() bool
@@ -5129,7 +4791,7 @@ func (vr *ValidationResultError) HasErrors() bool
 HasErrors returns true if there are any validation errors.
 
 <a name="Validator"></a>
-## type Validator
+## type [Validator](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L63-L66>)
 
 Validator provides validation functionality for Irmin models.
 
@@ -5140,7 +4802,7 @@ type Validator struct {
 ```
 
 <a name="NewClientValidator"></a>
-### func NewClientValidator
+### func [NewClientValidator](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L83>)
 
 ```go
 func NewClientValidator() *Validator
@@ -5149,7 +4811,7 @@ func NewClientValidator() *Validator
 NewClientValidator creates a new validator instance for client\-side use. This validator skips SQID validation since clients don't have access to the SQID alphabet.
 
 <a name="NewValidator"></a>
-### func NewValidator
+### func [NewValidator](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L69>)
 
 ```go
 func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator
@@ -5158,7 +4820,7 @@ func NewValidator(sqidManager *irminsqids.SQIDManager) *Validator
 NewValidator creates a new validator instance.
 
 <a name="Validator.Validate"></a>
-### func \(\*Validator\) Validate
+### func \(\*Validator\) [Validate](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L146>)
 
 ```go
 func (v *Validator) Validate(s any) error
@@ -5167,7 +4829,7 @@ func (v *Validator) Validate(s any) error
 Validate validates a struct and returns validation errors.
 
 <a name="Validator.ValidateDynamic"></a>
-### func \(\*Validator\) ValidateDynamic
+### func \(\*Validator\) [ValidateDynamic](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L189>)
 
 ```go
 func (v *Validator) ValidateDynamic(data any) *ValidationResultError
@@ -5176,7 +4838,7 @@ func (v *Validator) ValidateDynamic(data any) *ValidationResultError
 ValidateDynamic validates data that could be either a single struct or an array of structs. It dynamically determines the type and applies appropriate validation. This is useful for API responses where the data field can contain either a single object or an array.
 
 <a name="Validator.ValidateEnhanced"></a>
-### func \(\*Validator\) ValidateEnhanced
+### func \(\*Validator\) [ValidateEnhanced](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L157>)
 
 ```go
 func (v *Validator) ValidateEnhanced(s any) *ValidationResultError
@@ -5185,7 +4847,7 @@ func (v *Validator) ValidateEnhanced(s any) *ValidationResultError
 ValidateEnhanced validates a struct and returns a detailed ValidationResultError. This provides multiple error formats for different use cases.
 
 <a name="Validator.ValidateVar"></a>
-### func \(\*Validator\) ValidateVar
+### func \(\*Validator\) [ValidateVar](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L151>)
 
 ```go
 func (v *Validator) ValidateVar(field any, tag string) error
@@ -5194,7 +4856,7 @@ func (v *Validator) ValidateVar(field any, tag string) error
 ValidateVar validates a single variable.
 
 <a name="Validator.ValidateVarEnhanced"></a>
-### func \(\*Validator\) ValidateVarEnhanced
+### func \(\*Validator\) [ValidateVarEnhanced](<https://github.com/IrminData/irmin-sdk-go/blob/development/validator/validator.go#L172>)
 
 ```go
 func (v *Validator) ValidateVarEnhanced(field any, tag string) *ValidationResultError
