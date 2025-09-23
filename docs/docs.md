@@ -508,7 +508,7 @@ type Subscription struct {
 # irmincore
 
 ```go
-import "github.com/IrminData/irmin-sdk-go/core-api"
+import "github.com/IrminData/irmin-sdk-go/api"
 ```
 
 ## Index
