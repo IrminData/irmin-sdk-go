@@ -72,7 +72,10 @@ func (c *Client) CreateBranch(
 }
 
 // DeleteBranch deletes a branch in the repository.
-func (c *Client) DeleteBranch(ctx context.Context, workspace, repository, branch string) (*irminmodels.IrminAPIResponse, error) {
+func (c *Client) DeleteBranch(
+	ctx context.Context,
+	workspace, repository, branch string,
+) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:      http.MethodDelete,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/repositories/%s/branches/%s", workspace, repository, branch),

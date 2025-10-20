@@ -33,7 +33,10 @@ type TransferConnectionOwnershipRequest struct {
 	NewOwnerID string `json:"new_owner_id" validate:"required,validsqid=users" example:"usr_2k8n9q1m7p3x4z"`
 }
 
-func (c *Client) ListConnections(ctx context.Context, workspace string) ([]irminmodels.Connection, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ListConnections(
+	ctx context.Context,
+	workspace string,
+) ([]irminmodels.Connection, *irminmodels.IrminAPIResponse, error) {
 	var connections []irminmodels.Connection
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -116,7 +119,10 @@ func (c *Client) TransferConnection(
 }
 
 // DeleteConnection deletes a connection by its ID.
-func (c *Client) DeleteConnection(ctx context.Context, workspace, connectionID string) (*irminmodels.IrminAPIResponse, error) {
+func (c *Client) DeleteConnection(
+	ctx context.Context,
+	workspace, connectionID string,
+) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:      http.MethodDelete,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/connections/%s", workspace, connectionID),

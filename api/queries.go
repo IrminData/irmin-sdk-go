@@ -32,7 +32,10 @@ type ExecuteSQLRequest struct {
 	SQL string `json:"sql,omitempty" validate:"validsql" example:"select * from $['demo-data;Meteo.json@main'] WHERE 'Granularity' = 'Hour' LIMIT 2;"`
 }
 
-func (c *Client) ListStoredQueries(ctx context.Context, workspace string) ([]irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ListStoredQueries(
+	ctx context.Context,
+	workspace string,
+) ([]irminmodels.StoredQuery, *irminmodels.IrminAPIResponse, error) {
 	var storedQueries []irminmodels.StoredQuery
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -95,7 +98,10 @@ func (c *Client) UpdateStoredQuery(
 	return &storedQuery, apiResp, nil
 }
 
-func (c *Client) DeleteStoredQuery(ctx context.Context, workspace, queryID string) (*irminmodels.IrminAPIResponse, error) {
+func (c *Client) DeleteStoredQuery(
+	ctx context.Context,
+	workspace, queryID string,
+) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodDelete,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/queries/%s", workspace, queryID),

@@ -46,7 +46,10 @@ func (c *Client) ListEditorItems(
 	return editorItems, apiResp, nil
 }
 
-func (c *Client) GetEditorItemContent(ctx context.Context, workspace, path string) (*string, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetEditorItemContent(
+	ctx context.Context,
+	workspace, path string,
+) (*string, *irminmodels.IrminAPIResponse, error) {
 	var editorItemContent string
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,

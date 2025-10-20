@@ -14,7 +14,10 @@ type CreateRepositoryTagRequest struct {
 	Ref  string `json:"ref"  validate:"required" example:"main"`
 }
 
-func (c *Client) ListTags(ctx context.Context, workspace, repository string) ([]irminmodels.GitTag, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ListTags(
+	ctx context.Context,
+	workspace, repository string,
+) ([]irminmodels.GitTag, *irminmodels.IrminAPIResponse, error) {
 	var tags []irminmodels.GitTag
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -26,7 +29,10 @@ func (c *Client) ListTags(ctx context.Context, workspace, repository string) ([]
 	return tags, apiResp, nil
 }
 
-func (c *Client) GetTag(ctx context.Context, workspace, repository, tag string) (*irminmodels.GitTag, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetTag(
+	ctx context.Context,
+	workspace, repository, tag string,
+) (*irminmodels.GitTag, *irminmodels.IrminAPIResponse, error) {
 	var tagObj irminmodels.GitTag
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -56,7 +62,10 @@ func (c *Client) CreateTag(
 	return &tagObj, apiResp, nil
 }
 
-func (c *Client) DeleteTag(ctx context.Context, workspace, repository, tag string) (*irminmodels.IrminAPIResponse, error) {
+func (c *Client) DeleteTag(
+	ctx context.Context,
+	workspace, repository, tag string,
+) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodDelete,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/repositories/%s/tags/%s", workspace, repository, tag),

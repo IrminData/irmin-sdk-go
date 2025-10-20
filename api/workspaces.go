@@ -37,7 +37,10 @@ func (c *Client) ListWorkspaces(ctx context.Context) ([]irminmodels.Workspace, *
 	return workspaces, apiResp, nil
 }
 
-func (c *Client) GetWorkspace(ctx context.Context, slug string) (*irminmodels.Workspace, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetWorkspace(
+	ctx context.Context,
+	slug string,
+) (*irminmodels.Workspace, *irminmodels.IrminAPIResponse, error) {
 	var workspace irminmodels.Workspace
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -121,7 +124,10 @@ func (c *Client) LeaveWorkspace(ctx context.Context, slug string) (*irminmodels.
 	return apiResp, nil
 }
 
-func (c *Client) GetWorkspaceSchema(ctx context.Context, slug string) (*irminmodels.ObjectSchema, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetWorkspaceSchema(
+	ctx context.Context,
+	slug string,
+) (*irminmodels.ObjectSchema, *irminmodels.IrminAPIResponse, error) {
 	var workspaceSchema irminmodels.ObjectSchema
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,

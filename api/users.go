@@ -13,7 +13,10 @@ type UpdateUserRolesRequest struct {
 	Roles []string `json:"roles" validate:"required,dive,validsqid=roles" example:"role_2a8m5x9n4p7s,role_1a2m3x4n5p6s"`
 }
 
-func (c *Client) ListUsers(ctx context.Context, workspace string) ([]irminmodels.User, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ListUsers(
+	ctx context.Context,
+	workspace string,
+) ([]irminmodels.User, *irminmodels.IrminAPIResponse, error) {
 	var users []irminmodels.User
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -25,7 +28,10 @@ func (c *Client) ListUsers(ctx context.Context, workspace string) ([]irminmodels
 	return users, apiResp, nil
 }
 
-func (c *Client) GetUser(ctx context.Context, workspace, userID string) (*irminmodels.User, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetUser(
+	ctx context.Context,
+	workspace, userID string,
+) (*irminmodels.User, *irminmodels.IrminAPIResponse, error) {
 	var user irminmodels.User
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,

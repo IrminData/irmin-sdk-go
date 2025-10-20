@@ -32,7 +32,10 @@ func (c *Client) ListConnectors(ctx context.Context) ([]irminmodels.Connector, *
 	return connectors, apiResp, nil
 }
 
-func (c *Client) GetConnector(ctx context.Context, connectorID string) (*irminmodels.Connector, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetConnector(
+	ctx context.Context,
+	connectorID string,
+) (*irminmodels.Connector, *irminmodels.IrminAPIResponse, error) {
 	var connector irminmodels.Connector
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,

@@ -34,7 +34,10 @@ type TransferRepositoryOwnershipRequest struct {
 	NewOwnerID string `json:"new_owner_id" validate:"required,validsqid=users" example:"usr_2k8n9q1m7p3x4z"`
 }
 
-func (c *Client) ListRepositories(ctx context.Context, workspace string) ([]irminmodels.Repository, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ListRepositories(
+	ctx context.Context,
+	workspace string,
+) ([]irminmodels.Repository, *irminmodels.IrminAPIResponse, error) {
 	var repositories []irminmodels.Repository
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -46,7 +49,10 @@ func (c *Client) ListRepositories(ctx context.Context, workspace string) ([]irmi
 	return repositories, apiResp, nil
 }
 
-func (c *Client) GetRepository(ctx context.Context, workspace, slug string) (*irminmodels.Repository, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetRepository(
+	ctx context.Context,
+	workspace, slug string,
+) (*irminmodels.Repository, *irminmodels.IrminAPIResponse, error) {
 	var repository irminmodels.Repository
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,

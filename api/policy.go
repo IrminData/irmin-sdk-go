@@ -85,7 +85,10 @@ func (c *Client) ListPolicies(
 }
 
 // GetPolicy returns a single policy.
-func (c *Client) GetPolicy(ctx context.Context, workspace, policyID string) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetPolicy(
+	ctx context.Context,
+	workspace, policyID string,
+) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error) {
 	var policy irminmodels.Policy
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,

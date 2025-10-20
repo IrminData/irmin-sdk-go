@@ -34,7 +34,10 @@ type WorkflowRequest struct {
 	Schedule irminmodels.Schedule `json:"schedule"`
 }
 
-func (c *Client) ListWorkflows(ctx context.Context, workspace string) ([]irminmodels.Workflow, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ListWorkflows(
+	ctx context.Context,
+	workspace string,
+) ([]irminmodels.Workflow, *irminmodels.IrminAPIResponse, error) {
 	var workflows []irminmodels.Workflow
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -178,7 +181,10 @@ func (c *Client) StartWorkflow(
 	return &workflow, apiResp, nil
 }
 
-func (c *Client) DeleteWorkflow(ctx context.Context, workspace, workflowID string) (*irminmodels.IrminAPIResponse, error) {
+func (c *Client) DeleteWorkflow(
+	ctx context.Context,
+	workspace, workflowID string,
+) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodDelete,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/workflows/%s", workspace, workflowID),

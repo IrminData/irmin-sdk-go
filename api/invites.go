@@ -31,7 +31,10 @@ func (c *Client) ListInviteInbox(ctx context.Context) ([]irminmodels.Invite, *ir
 	return invites, apiResp, nil
 }
 
-func (c *Client) GetInvite(ctx context.Context, inviteID string) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) GetInvite(
+	ctx context.Context,
+	inviteID string,
+) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
 	var invite irminmodels.Invite
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -43,7 +46,10 @@ func (c *Client) GetInvite(ctx context.Context, inviteID string) (*irminmodels.I
 	return &invite, apiResp, nil
 }
 
-func (c *Client) ListInvitesToWorkspace(ctx context.Context, workspace string) ([]irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ListInvitesToWorkspace(
+	ctx context.Context,
+	workspace string,
+) ([]irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
 	var invites []irminmodels.Invite
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -73,7 +79,10 @@ func (c *Client) SendInvite(
 	return &invite, apiResp, nil
 }
 
-func (c *Client) ResendInvite(ctx context.Context, inviteID string) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ResendInvite(
+	ctx context.Context,
+	inviteID string,
+) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
 	var invite irminmodels.Invite
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodPost,
@@ -114,7 +123,10 @@ func (c *Client) UpdateInvite(
 	return &invite, apiResp, nil
 }
 
-func (c *Client) AcceptInvite(ctx context.Context, inviteID string) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) AcceptInvite(
+	ctx context.Context,
+	inviteID string,
+) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
 	var invite irminmodels.Invite
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodPost,
@@ -126,7 +138,10 @@ func (c *Client) AcceptInvite(ctx context.Context, inviteID string) (*irminmodel
 	return &invite, apiResp, nil
 }
 
-func (c *Client) DeclineInvite(ctx context.Context, inviteID string) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) DeclineInvite(
+	ctx context.Context,
+	inviteID string,
+) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error) {
 	var invite irminmodels.Invite
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodPost,

@@ -254,7 +254,10 @@ func (c *Client) CopyObject(
 	return &object, apiResp, nil
 }
 
-func (c *Client) DeleteObject(ctx context.Context, workspace, repository, ref, path string) (*irminmodels.IrminAPIResponse, error) {
+func (c *Client) DeleteObject(
+	ctx context.Context,
+	workspace, repository, ref, path string,
+) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method: http.MethodDelete,
 		Endpoint: fmt.Sprintf(

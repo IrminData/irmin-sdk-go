@@ -23,7 +23,10 @@ type UpdateTagRequest struct {
 }
 
 // ListWorkspaceTags retrieves all workspace tags for a workspace.
-func (c *Client) ListWorkspaceTags(ctx context.Context, workspace string) ([]irminmodels.Tag, *irminmodels.IrminAPIResponse, error) {
+func (c *Client) ListWorkspaceTags(
+	ctx context.Context,
+	workspace string,
+) ([]irminmodels.Tag, *irminmodels.IrminAPIResponse, error) {
 	var tags []irminmodels.Tag
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -89,7 +92,10 @@ func (c *Client) UpdateWorkspaceTag(
 }
 
 // DeleteWorkspaceTag deletes a workspace tag.
-func (c *Client) DeleteWorkspaceTag(ctx context.Context, workspace, tagID string) (*irminmodels.IrminAPIResponse, error) {
+func (c *Client) DeleteWorkspaceTag(
+	ctx context.Context,
+	workspace, tagID string,
+) (*irminmodels.IrminAPIResponse, error) {
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodDelete,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/tags/%s", workspace, tagID),
