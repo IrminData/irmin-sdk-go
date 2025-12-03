@@ -30,9 +30,9 @@ type PolicyResource string
 const (
 	// PolicyResourceWorkspace represents a workspace resource.
 	PolicyResourceWorkspace PolicyResource = "workspace"
-	// PolicyResourceEditorScript represents script editor resource.
-	PolicyResourceEditorScript PolicyResource = "editor_script"
-	// PolicyResourceQuery represents a query resource.
+	// PolicyResourceScript represents stored script resource.
+	PolicyResourceScript PolicyResource = "script"
+	// PolicyResourceQuery represents a stored query resource.
 	PolicyResourceQuery PolicyResource = "query"
 	// PolicyResourceWorkflow represents a workflow resource.
 	PolicyResourceWorkflow PolicyResource = "workflow"
