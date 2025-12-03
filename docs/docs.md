@@ -1798,7 +1798,7 @@ type CreateScriptRequest struct {
     Name        string   `json:"name"                  validate:"required,max=255"    example:"data-processor.py"`
     Description *string  `json:"description,omitempty" validate:"max=500"             example:"Data processor for the project"`
     Content     *string  `json:"content,omitempty"                                    example:"print('Hello, World!')"`
-    Language    *string  `json:"language,omitempty"    validate:"required"            example:"py"`
+    Language    *string  `json:"language,omitempty"                                   example:"py"`
     Tags        []string `json:"tags,omitempty"        validate:"dive,validsqid=tags" example:"tag_7k3m9x2n5q8p"`
 }
 ```
