@@ -4058,6 +4058,7 @@ const (
     WorkspaceSearchResultTypeRepository       WorkspaceSearchResultType = "repository"
     WorkspaceSearchResultTypeConnection       WorkspaceSearchResultType = "connection"
     WorkspaceSearchResultTypeQuery            WorkspaceSearchResultType = "query"
+    WorkspaceSearchResultTypeScript           WorkspaceSearchResultType = "script"
     WorkspaceSearchResultTypeUser             WorkspaceSearchResultType = "user"
     WorkspaceSearchResultTypeRepositoryObject WorkspaceSearchResultType = "repository_object"
     WorkspaceSearchResultTypeInvite           WorkspaceSearchResultType = "invite"
