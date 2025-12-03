@@ -145,6 +145,7 @@ type PolicyResourceOption struct {
 // PolicyResourceOptions represents all possible policy resource options for a given workspace.
 type PolicyResourceOptions struct {
 	Queries      []PolicyResourceOption `json:"queries"      validate:"required,dive"`
+	Scripts      []PolicyResourceOption `json:"scripts"      validate:"required,dive"`
 	Workflows    []PolicyResourceOption `json:"workflows"    validate:"required,dive"`
 	Connections  []PolicyResourceOption `json:"connections"  validate:"required,dive"`
 	Repositories []PolicyResourceOption `json:"repositories" validate:"required,dive"`
