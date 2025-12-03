@@ -10,17 +10,19 @@ import (
 
 // CreateScriptRequest represents the JSON request body for creating a script.
 type CreateScriptRequest struct {
-	Name     string   `json:"name"                  validate:"required,max=255"       example:"data-processor.py"`
-	Content  *string  `json:"content,omitempty"                                       example:"print('Hello, World!')"`
-	Language *string  `json:"language,omitempty"    validate:"required"               example:"py"`
-	Tags     []string `json:"tags,omitempty"        validate:"dive,validsqid=tags"    example:"tag_7k3m9x2n5q8p"`
+	Name        string   `json:"name"                  validate:"required,max=255"    example:"data-processor.py"`
+	Description *string  `json:"description,omitempty" validate:"max=500"             example:"Data processor for the project"`
+	Content     *string  `json:"content,omitempty"                                    example:"print('Hello, World!')"`
+	Language    *string  `json:"language,omitempty"    validate:"required"            example:"py"`
+	Tags        []string `json:"tags,omitempty"        validate:"dive,validsqid=tags" example:"tag_7k3m9x2n5q8p"`
 }
 
 // UpdateScriptRequest represents the JSON request body for updating a script.
 type UpdateScriptRequest struct {
-	Name     *string `json:"name,omitempty"     validate:"max=255" example:"data-processor.py"`
-	Content  *string `json:"content,omitempty"                     example:"print('Hello, World!')"`
-	Language *string `json:"language,omitempty"                    example:"py"`
+	Name        *string `json:"name,omitempty"        validate:"max=255" example:"data-processor.py"`
+	Description *string `json:"description,omitempty" validate:"max=500" example:"Data processor for the project"`
+	Content     *string `json:"content,omitempty"                        example:"print('Hello, World!')"`
+	Language    *string `json:"language,omitempty"                       example:"py"`
 }
 
 // TransferScriptOwnershipRequest represents the JSON request body for transferring script ownership.

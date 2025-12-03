@@ -49,14 +49,14 @@ type PipelineStage struct {
 
 	// Connection stage specific
 	ConnectionID        *string   `json:"connection_id,omitempty"         validate:"validsqid=connections,required_if=Type connection" example:"conn_8x2m9k4n7p5q"`
-	ConnectionWritePath *string   `json:"connection_write_path,omitempty"                                                           example:"/exports/processed_data.csv"`
-	ConnectionReadPaths *[]string `json:"connection_read_paths,omitempty" validate:"dive"                                           example:"/imports/raw_data.csv,/imports/metadata.json"`
+	ConnectionWritePath *string   `json:"connection_write_path,omitempty"                                                              example:"/exports/processed_data.csv"`
+	ConnectionReadPaths *[]string `json:"connection_read_paths,omitempty" validate:"dive"                                              example:"/imports/raw_data.csv,/imports/metadata.json"`
 
 	// Repository stage specific
-	Repository          *string   `json:"repository,omitempty"            validate:"required_if=Type repository"                      example:"customer-analytics"`
-	RepositoryBranch    *string   `json:"repository_branch,omitempty"                                                                 example:"main"`
-	RepositoryWritePath *string   `json:"repository_write_path,omitempty"                                                             example:"/processed/customers.json"              validate:"omitempty"`
-	RepositoryReadPaths *[]string `json:"repository_read_paths,omitempty" validate:"dive"                                           example:"/raw/customers.csv,/config/schema.json"`
+	Repository          *string   `json:"repository,omitempty"            validate:"required_if=Type repository" example:"customer-analytics"`
+	RepositoryBranch    *string   `json:"repository_branch,omitempty"                                            example:"main"`
+	RepositoryWritePath *string   `json:"repository_write_path,omitempty" validate:"omitempty"                   example:"/processed/customers.json"`
+	RepositoryReadPaths *[]string `json:"repository_read_paths,omitempty" validate:"dive"                        example:"/raw/customers.csv,/config/schema.json"`
 }
 
 type ActionInputData struct {
@@ -93,9 +93,9 @@ type Workflowable struct {
 
 	ScriptID                string            `json:"script_id,omitempty"                 validate:"validsqid=scripts,required_if=Type action" example:"scr_8x2m9k4n7p5q"`
 	Input                   []ActionInputData `json:"input,omitempty"                     validate:"dive"`
-	ResultsRepository       *string           `json:"results_repository,omitempty"                                                          example:"analytics-results"`
-	ResultsRepositoryBranch *string           `json:"results_repository_branch,omitempty"                                                   example:"main"`
-	ResultsRepositoryPath   *string           `json:"results_repository_path,omitempty"   validate:"omitempty"                              example:"/results/analysis.json"`
+	ResultsRepository       *string           `json:"results_repository,omitempty"                                                             example:"analytics-results"`
+	ResultsRepositoryBranch *string           `json:"results_repository_branch,omitempty"                                                      example:"main"`
+	ResultsRepositoryPath   *string           `json:"results_repository_path,omitempty"   validate:"omitempty"                                 example:"/results/analysis.json"`
 }
 
 type Workflow struct {
