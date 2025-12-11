@@ -3307,7 +3307,7 @@ type PipelineStage struct {
     Type          PipelineStageType `json:"type"           validate:"required,oneof=action connection repository,validpipelinestage" example:"repository"`
 
     // Action stage specific
-    ExecutableType ActionExecutableType `json:"executable_type,omitempty" validate:"oneof=script query,required_if=Type action"                    example:"script"`
+    ExecutableType ActionExecutableType `json:"executable_type,omitempty" validate:"omitempty,oneof=script query,required_if=Type action"          example:"script"`
     ScriptID       *string              `json:"script_id,omitempty"       validate:"omitempty,validsqid=scripts,required_if=ExecutableType script" example:"scr_8x2m9k4n7p5q"`
     QueryID        *string              `json:"query_id,omitempty"        validate:"omitempty,validsqid=queries,required_if=ExecutableType query"  example:"qry_8x2m9k4n7p5q"`
 
@@ -4017,7 +4017,7 @@ type Workflowable struct {
 
     Stages []PipelineStage `json:"stages,omitempty" validate:"dive"`
 
-    ExecutableType          ActionExecutableType `json:"executable_type,omitempty"           validate:"oneof=script query,required_if=Type action"                    example:"script"`
+    ExecutableType          ActionExecutableType `json:"executable_type,omitempty"           validate:"omitempty,oneof=script query,required_if=Type action"          example:"script"`
     ScriptID                *string              `json:"script_id,omitempty"                 validate:"required_if=ExecutableType script,omitempty,validsqid=scripts" example:"scr_8x2m9k4n7p5q"`
     QueryID                 *string              `json:"query_id,omitempty"                  validate:"required_if=ExecutableType query,omitempty,validsqid=queries"  example:"qry_8x2m9k4n7p5q"`
     Input                   []ActionInputData    `json:"input,omitempty"                     validate:"dive"`
