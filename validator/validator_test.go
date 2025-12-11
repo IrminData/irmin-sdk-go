@@ -941,7 +941,6 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 
 		workflowable := models.Workflowable{
 			Type: models.WorkflowableTypePipeline,
-			Live: true,
 			Stages: []models.PipelineStage{
 				{
 					Description:         "Run script",
@@ -963,7 +962,7 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 			RepositoryBranch:        "main",
 			ImportToRepositoryPath:  "/import",
 			ExportToConnectionPath:  "/export",
-			ScriptID:                scriptID,
+			ScriptID:                &scriptID,
 			ResultsRepository:       &resultsRepository,
 			ResultsRepositoryBranch: &resultsRepositoryBranch,
 			ResultsRepositoryPath:   &resultsRepositoryPath,
@@ -985,14 +984,13 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 
 		workflowable := models.Workflowable{
 			Type: models.WorkflowableTypePipeline,
-			Live: true,
 			// Missing Stages
 			ConnectionID:            connectionID,
 			Repository:              "dummy-repo",
 			RepositoryBranch:        "main",
 			ImportToRepositoryPath:  "/import",
 			ExportToConnectionPath:  "/export",
-			ScriptID:                scriptID,
+			ScriptID:                &scriptID,
 			ResultsRepository:       &resultsRepository,
 			ResultsRepositoryBranch: &resultsRepositoryBranch,
 			ResultsRepositoryPath:   &resultsRepositoryPath,
@@ -1014,7 +1012,7 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 
 		workflowable := models.Workflowable{
 			Type:     models.WorkflowableTypeAction,
-			ScriptID: scriptID,
+			ScriptID: &scriptID,
 			Input: []models.ActionInputData{
 				{
 					Repository:     "my-repo",
@@ -1099,7 +1097,7 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 			ImportToRepositoryPath:    "/repo/path",
 			// Provide defaults for all other fields
 			ExportToConnectionPath:  "/export",
-			ScriptID:                scriptID,
+			ScriptID:                &scriptID,
 			ResultsRepository:       &resultsRepository,
 			ResultsRepositoryBranch: &resultsRepositoryBranch,
 			ResultsRepositoryPath:   &resultsRepositoryPath,
@@ -1136,7 +1134,7 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 			ImportFromConnectionPaths: []string{"/import/path"},
 			ImportToRepositoryPath:    "/repo/path",
 			ExportToConnectionPath:    "/export",
-			ScriptID:                  scriptID,
+			ScriptID:                  &scriptID,
 			ResultsRepository:         &resultsRepository,
 			ResultsRepositoryBranch:   &resultsRepositoryBranch,
 			ResultsRepositoryPath:     &resultsRepositoryPath,
@@ -1175,7 +1173,7 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 			ExportToConnectionPath:    "/export/path",
 			// Provide defaults for all other fields
 			ImportToRepositoryPath:  "/import",
-			ScriptID:                scriptID,
+			ScriptID:                &scriptID,
 			ResultsRepository:       &resultsRepository,
 			ResultsRepositoryBranch: &resultsRepositoryBranch,
 			ResultsRepositoryPath:   &resultsRepositoryPath,
@@ -1204,7 +1202,7 @@ func TestValidator_ValidateWorkflowable(t *testing.T) {
 			ExportFromRepositoryPaths: []string{"/repo/path"},
 			ExportToConnectionPath:    "/export/path",
 			ImportToRepositoryPath:    "/import",
-			ScriptID:                  scriptID,
+			ScriptID:                  &scriptID,
 			ResultsRepository:         &resultsRepository,
 			ResultsRepositoryBranch:   &resultsRepositoryBranch,
 			ResultsRepositoryPath:     &resultsRepositoryPath,
@@ -1640,7 +1638,6 @@ func TestValidateWorkflowableFixed(t *testing.T) {
 
 		workflowable := models.Workflowable{
 			Type: models.WorkflowableTypePipeline,
-			Live: true,
 			Stages: []models.PipelineStage{
 				{
 					Description:         "Run script",
@@ -1662,7 +1659,7 @@ func TestValidateWorkflowableFixed(t *testing.T) {
 			RepositoryBranch:        "main",
 			ImportToRepositoryPath:  "/import",
 			ExportToConnectionPath:  "/export",
-			ScriptID:                scriptID,
+			ScriptID:                &scriptID,
 			ResultsRepository:       &resultsRepository,
 			ResultsRepositoryBranch: &resultsRepositoryBranch,
 			ResultsRepositoryPath:   &resultsRepositoryPath,
@@ -1683,7 +1680,7 @@ func TestValidateWorkflowableFixed(t *testing.T) {
 
 		workflowable := models.Workflowable{
 			Type:     models.WorkflowableTypeAction,
-			ScriptID: scriptID,
+			ScriptID: &scriptID,
 			Input: []models.ActionInputData{
 				{
 					Repository:     "my-repo",
@@ -1734,7 +1731,7 @@ func TestValidateWorkflowableFixed(t *testing.T) {
 			ImportToRepositoryPath:    "/repo/path",
 			// Provide defaults for all other fields
 			ExportToConnectionPath:  "/export",
-			ScriptID:                scriptID,
+			ScriptID:                &scriptID,
 			ResultsRepository:       &resultsRepository,
 			ResultsRepositoryBranch: &resultsRepositoryBranch,
 			ResultsRepositoryPath:   &resultsRepositoryPath,
@@ -1772,7 +1769,7 @@ func TestValidateWorkflowableFixed(t *testing.T) {
 			ExportToConnectionPath:    "/export/path",
 			// Provide defaults for all other fields
 			ImportToRepositoryPath:  "/import",
-			ScriptID:                scriptID,
+			ScriptID:                &scriptID,
 			ResultsRepository:       &resultsRepository,
 			ResultsRepositoryBranch: &resultsRepositoryBranch,
 			ResultsRepositoryPath:   &resultsRepositoryPath,
