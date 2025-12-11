@@ -65,6 +65,13 @@ type ActionInputData struct {
 	RepositoryPath string `json:"repository_path" validate:"omitempty" example:"/data/customers.csv"`
 }
 
+type ActionExecutableType string
+
+const (
+	ActionExecutableTypeScript ActionExecutableType = "script"
+	ActionExecutableTypeQuery  ActionExecutableType = "query"
+)
+
 type Workflowable struct {
 	Type WorkflowableType `json:"type" validate:"required,oneof=import action export pipeline,validworkflowable" example:"import"`
 
@@ -86,16 +93,17 @@ type Workflowable struct {
 
 	// Pipeline workflowable
 
-	Live   bool            `json:"live,omitempty"   example:"true"`
 	Stages []PipelineStage `json:"stages,omitempty"                validate:"dive"`
 
 	// Action workflowable
 
-	ScriptID                string            `json:"script_id,omitempty"                 validate:"validsqid=scripts,required_if=Type action" example:"scr_8x2m9k4n7p5q"`
-	Input                   []ActionInputData `json:"input,omitempty"                     validate:"dive"`
-	ResultsRepository       *string           `json:"results_repository,omitempty"                                                             example:"analytics-results"`
-	ResultsRepositoryBranch *string           `json:"results_repository_branch,omitempty"                                                      example:"main"`
-	ResultsRepositoryPath   *string           `json:"results_repository_path,omitempty"   validate:"omitempty"                                 example:"/results/analysis.json"`
+	ExecutableType          ActionExecutableType `json:"executable_type,omitempty"         validate:"required,oneof=script query,required_if=Type action" example:"script"`
+	ScriptID                *string              `json:"script_id,omitempty"                 validate:"validsqid=scripts,required_if=Type action,required_if=ExecutableType script" example:"scr_8x2m9k4n7p5q"`
+	QueryID                 *string              `json:"query_id,omitempty"                 validate:"validsqid=queries,required_if=Type action,required_if=ExecutableType query" example:"qry_8x2m9k4n7p5q"`
+	Input                   []ActionInputData    `json:"input,omitempty"                     validate:"dive"`
+	ResultsRepository       *string              `json:"results_repository,omitempty"                                                             example:"analytics-results"`
+	ResultsRepositoryBranch *string              `json:"results_repository_branch,omitempty"                                                      example:"main"`
+	ResultsRepositoryPath   *string              `json:"results_repository_path,omitempty"   validate:"omitempty"                                 example:"/results/analysis.json"`
 }
 
 type Workflow struct {
