@@ -180,17 +180,23 @@ func (c *Client) GetObjectContent(
 func (c *Client) GetObjectStructuredContent(
 	ctx context.Context,
 	workspace, repository, path, ref string,
+	limitResponse bool,
 ) (map[string]any, *irminmodels.IrminAPIResponse, error) {
+	endpoint := fmt.Sprintf(
+		"/v1/workspaces/%s/repositories/%s/objects/content/structured?ref=%s&path=%s",
+		workspace,
+		repository,
+		ref,
+		path,
+	)
+	if limitResponse {
+		endpoint += "&limit-response=true"
+	}
+
 	var structuredContent map[string]any
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
-		Method: http.MethodGet,
-		Endpoint: fmt.Sprintf(
-			"/v1/workspaces/%s/repositories/%s/objects/content/structured?ref=%s&path=%s",
-			workspace,
-			repository,
-			ref,
-			path,
-		),
+		Method:   http.MethodGet,
+		Endpoint: endpoint,
 	}, &structuredContent)
 	if err != nil {
 		return nil, nil, fmt.Errorf("fetch structured content error: %w", err)
