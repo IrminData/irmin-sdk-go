@@ -208,7 +208,7 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) GetObjectContent\(ctx context.Context, workspace, repository, path, ref string, limitResponse bool\) \(\[\]byte, error\)](<#Client.GetObjectContent>)
   - [func \(c \*Client\) GetObjectHistory\(ctx context.Context, workspace, repository, path, ref string\) \(\[\]irminmodels.Commit, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetObjectHistory>)
   - [func \(c \*Client\) GetObjectSchema\(ctx context.Context, workspace, repository, path, ref string\) \(\*irminmodels.ObjectSchema, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetObjectSchema>)
-  - [func \(c \*Client\) GetObjectStructuredContent\(ctx context.Context, workspace, repository, path, ref string\) \(map\[string\]any, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetObjectStructuredContent>)
+  - [func \(c \*Client\) GetObjectStructuredContent\(ctx context.Context, workspace, repository, path, ref string, limitResponse bool\) \(map\[string\]any, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetObjectStructuredContent>)
   - [func \(c \*Client\) GetPolicy\(ctx context.Context, workspace, policyID string\) \(\*irminmodels.Policy, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicy>)
   - [func \(c \*Client\) GetPolicyResourceOptions\(ctx context.Context, workspace string\) \(\*irminmodels.PolicyResourceOptions, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyResourceOptions>)
   - [func \(c \*Client\) GetPolicyRoleSummary\(ctx context.Context, workspace string\) \(\[\]irminmodels.RolePolicySummary, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyRoleSummary>)
@@ -933,7 +933,7 @@ GetObjectSchema fetches the schema of an object at the given path and ref.
 ### func \(\*Client\) GetObjectStructuredContent
 
 ```go
-func (c *Client) GetObjectStructuredContent(ctx context.Context, workspace, repository, path, ref string) (map[string]any, *irminmodels.IrminAPIResponse, error)
+func (c *Client) GetObjectStructuredContent(ctx context.Context, workspace, repository, path, ref string, limitResponse bool) (map[string]any, *irminmodels.IrminAPIResponse, error)
 ```
 
 GetObjectStructuredContent fetches the parsed structured content of an object at the given path and ref.
