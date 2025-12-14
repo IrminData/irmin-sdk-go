@@ -127,15 +127,6 @@ const (
 )
 ```
 
-<a name="LimitResponseQueryParam"></a>API query parameter constants.
-
-```go
-const (
-    // LimitResponseQueryParam is the query parameter for limiting response sizes.
-    LimitResponseQueryParam = "?limit-response=true"
-)
-```
-
 # irmincore
 
 ```go
