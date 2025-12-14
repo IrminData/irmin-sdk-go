@@ -9,7 +9,6 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"slices"
@@ -432,27 +431,34 @@ func (c *Client) FetchBinary(ctx context.Context, opts RequestOptions) ([]byte, 
 }
 
 // AddLimitResponseParam appends the limit-response query parameter to an endpoint URL.
-// It uses Go's net/url package to properly handle URL parsing and query parameter manipulation.
+// It preserves the original query string format by using simple string concatenation
+// to avoid re-encoding or reordering existing parameters. Handles fragments correctly.
 func AddLimitResponseParam(endpoint string) string {
-	// For relative URLs (most common case), parse directly
-	u, err := url.Parse(endpoint)
-	if err != nil {
-		// If parsing fails, fall back to simple string append as a safety measure
-		// This should rarely happen with well-formed endpoints
-		separator := "?"
-		for i := range len(endpoint) {
-			if endpoint[i] == '?' {
-				separator = "&"
-				break
-			}
+	// Find the fragment position if it exists
+	fragmentPos := -1
+	queryPos := -1
+
+	for i := range len(endpoint) {
+		if endpoint[i] == '?' && queryPos == -1 {
+			queryPos = i
 		}
-		return endpoint + separator + "limit-response=true"
+		if endpoint[i] == '#' {
+			fragmentPos = i
+			break
+		}
 	}
 
-	// Get existing query parameters
-	query := u.Query()
-	query.Set("limit-response", "true")
-	u.RawQuery = query.Encode()
+	// Determine the correct separator based on whether query params already exist
+	separator := "?"
+	if queryPos != -1 {
+		separator = "&"
+	}
 
-	return u.String()
+	// If there's a fragment, insert the parameter before it
+	if fragmentPos != -1 {
+		return endpoint[:fragmentPos] + separator + "limit-response=true" + endpoint[fragmentPos:]
+	}
+
+	// No fragment, just append
+	return endpoint + separator + "limit-response=true"
 }
