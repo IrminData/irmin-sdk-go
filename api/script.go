@@ -143,7 +143,7 @@ func (c *Client) ExecuteStoredScript(
 
 	endpoint := fmt.Sprintf("/v1/workspaces/%s/scripts/%s/execute", workspace, scriptID)
 	if limitResponse {
-		endpoint = addLimitResponseParam(endpoint)
+		endpoint = AddLimitResponseParam(endpoint)
 	}
 
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{

@@ -140,7 +140,7 @@ func (c *Client) ExecuteStoredQuery(
 
 	endpoint := fmt.Sprintf("/v1/workspaces/%s/queries/%s/execute", workspace, queryID)
 	if limitResponse {
-		endpoint = addLimitResponseParam(endpoint)
+		endpoint = AddLimitResponseParam(endpoint)
 	}
 
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
@@ -164,7 +164,7 @@ func (c *Client) ExecuteSQL(
 
 	endpoint := fmt.Sprintf("/v1/workspaces/%s/sql", workspace)
 	if limitResponse {
-		endpoint = addLimitResponseParam(endpoint)
+		endpoint = AddLimitResponseParam(endpoint)
 	}
 
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{

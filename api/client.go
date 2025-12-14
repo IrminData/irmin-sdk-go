@@ -9,6 +9,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"slices"
@@ -430,15 +431,28 @@ func (c *Client) FetchBinary(ctx context.Context, opts RequestOptions) ([]byte, 
 	return c.Request(ctx, opts)
 }
 
-// addLimitResponseParam appends the limit-response query parameter to an endpoint URL.
-// It automatically uses "?" if no query params exist, or "&" if they do.
-func addLimitResponseParam(endpoint string) string {
-	separator := "?"
-	for i := range len(endpoint) {
-		if endpoint[i] == '?' {
-			separator = "&"
-			break
+// AddLimitResponseParam appends the limit-response query parameter to an endpoint URL.
+// It uses Go's net/url package to properly handle URL parsing and query parameter manipulation.
+func AddLimitResponseParam(endpoint string) string {
+	// For relative URLs (most common case), parse directly
+	u, err := url.Parse(endpoint)
+	if err != nil {
+		// If parsing fails, fall back to simple string append as a safety measure
+		// This should rarely happen with well-formed endpoints
+		separator := "?"
+		for i := range len(endpoint) {
+			if endpoint[i] == '?' {
+				separator = "&"
+				break
+			}
 		}
+		return endpoint + separator + "limit-response=true"
 	}
-	return endpoint + separator + "limit-response=true"
+
+	// Get existing query parameters
+	query := u.Query()
+	query.Set("limit-response", "true")
+	u.RawQuery = query.Encode()
+
+	return u.String()
 }
