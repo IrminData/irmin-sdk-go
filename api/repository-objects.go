@@ -150,16 +150,25 @@ func (c *Client) UploadObjectFromURL(
 }
 
 // GetObjectContent fetches the content of an object at the given path and ref.
-func (c *Client) GetObjectContent(ctx context.Context, workspace, repository, path, ref string) ([]byte, error) {
+func (c *Client) GetObjectContent(
+	ctx context.Context,
+	workspace, repository, path, ref string,
+	limitResponse bool,
+) ([]byte, error) {
+	endpoint := fmt.Sprintf(
+		"/v1/workspaces/%s/repositories/%s/objects/content?ref=%s&path=%s",
+		workspace,
+		repository,
+		ref,
+		path,
+	)
+	if limitResponse {
+		endpoint += "&limit-response=true"
+	}
+
 	apiResp, err := c.FetchBinary(ctx, RequestOptions{
-		Method: http.MethodGet,
-		Endpoint: fmt.Sprintf(
-			"/v1/workspaces/%s/repositories/%s/objects/content?ref=%s&path=%s",
-			workspace,
-			repository,
-			ref,
-			path,
-		),
+		Method:   http.MethodGet,
+		Endpoint: endpoint,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fetch content error: %w", err)
