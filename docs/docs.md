@@ -127,6 +127,15 @@ const (
 )
 ```
 
+<a name="LimitResponseQueryParam"></a>API query parameter constants.
+
+```go
+const (
+    // LimitResponseQueryParam is the query parameter for limiting response sizes.
+    LimitResponseQueryParam = "?limit-response=true"
+)
+```
+
 # irmincore
 
 ```go
@@ -173,9 +182,9 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) DeleteWorkspace\(ctx context.Context, slug string\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.DeleteWorkspace>)
   - [func \(c \*Client\) DeleteWorkspaceTag\(ctx context.Context, workspace, tagID string\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.DeleteWorkspaceTag>)
   - [func \(c \*Client\) DownloadObject\(ctx context.Context, workspace, repository, path, ref string\) \(\[\]byte, error\)](<#Client.DownloadObject>)
-  - [func \(c \*Client\) ExecuteSQL\(ctx context.Context, workspace string, req ExecuteSQLRequest\) \(\*irminmodels.QueryResult, \*irminmodels.IrminAPIResponse, error\)](<#Client.ExecuteSQL>)
-  - [func \(c \*Client\) ExecuteStoredQuery\(ctx context.Context, workspace, queryID string\) \(\*irminmodels.QueryResult, \*irminmodels.IrminAPIResponse, error\)](<#Client.ExecuteStoredQuery>)
-  - [func \(c \*Client\) ExecuteStoredScript\(ctx context.Context, workspace, scriptID string, req ExecuteScriptRequest\) \(\*irminmodels.ScriptResult, \*irminmodels.IrminAPIResponse, error\)](<#Client.ExecuteStoredScript>)
+  - [func \(c \*Client\) ExecuteSQL\(ctx context.Context, workspace string, limitResponse bool, req ExecuteSQLRequest\) \(\*irminmodels.QueryResult, \*irminmodels.IrminAPIResponse, error\)](<#Client.ExecuteSQL>)
+  - [func \(c \*Client\) ExecuteStoredQuery\(ctx context.Context, workspace, queryID string, limitResponse bool\) \(\*irminmodels.QueryResult, \*irminmodels.IrminAPIResponse, error\)](<#Client.ExecuteStoredQuery>)
+  - [func \(c \*Client\) ExecuteStoredScript\(ctx context.Context, workspace, scriptID string, limitResponse bool, req ExecuteScriptRequest\) \(\*irminmodels.ScriptResult, \*irminmodels.IrminAPIResponse, error\)](<#Client.ExecuteStoredScript>)
   - [func \(c \*Client\) FetchAPI\(ctx context.Context, opts RequestOptions, out any\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.FetchAPI>)
   - [func \(c \*Client\) FetchAPIEnhanced\(ctx context.Context, opts RequestOptions, out any\) \(\*irminmodels.IrminAPIResponse, \*irminvalidator.ValidationResultError, error\)](<#Client.FetchAPIEnhanced>)
   - [func \(c \*Client\) FetchBinary\(ctx context.Context, opts RequestOptions\) \(\[\]byte, error\)](<#Client.FetchBinary>)
@@ -196,7 +205,7 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) GetConnector\(ctx context.Context, connectorID string\) \(\*irminmodels.Connector, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetConnector>)
   - [func \(c \*Client\) GetInvite\(ctx context.Context, inviteID string\) \(\*irminmodels.Invite, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetInvite>)
   - [func \(c \*Client\) GetObjectAtPath\(ctx context.Context, workspace, repository, path, ref string\) \(\*irminmodels.Object, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetObjectAtPath>)
-  - [func \(c \*Client\) GetObjectContent\(ctx context.Context, workspace, repository, path, ref string\) \(\[\]byte, error\)](<#Client.GetObjectContent>)
+  - [func \(c \*Client\) GetObjectContent\(ctx context.Context, workspace, repository, path, ref string, limitResponse bool\) \(\[\]byte, error\)](<#Client.GetObjectContent>)
   - [func \(c \*Client\) GetObjectHistory\(ctx context.Context, workspace, repository, path, ref string\) \(\[\]irminmodels.Commit, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetObjectHistory>)
   - [func \(c \*Client\) GetObjectSchema\(ctx context.Context, workspace, repository, path, ref string\) \(\*irminmodels.ObjectSchema, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetObjectSchema>)
   - [func \(c \*Client\) GetObjectStructuredContent\(ctx context.Context, workspace, repository, path, ref string\) \(map\[string\]any, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetObjectStructuredContent>)
@@ -688,7 +697,7 @@ DownloadObject creates a zip file of the object at the given path and ref and re
 ### func \(\*Client\) ExecuteSQL
 
 ```go
-func (c *Client) ExecuteSQL(ctx context.Context, workspace string, req ExecuteSQLRequest) (*irminmodels.QueryResult, *irminmodels.IrminAPIResponse, error)
+func (c *Client) ExecuteSQL(ctx context.Context, workspace string, limitResponse bool, req ExecuteSQLRequest) (*irminmodels.QueryResult, *irminmodels.IrminAPIResponse, error)
 ```
 
 
@@ -697,7 +706,7 @@ func (c *Client) ExecuteSQL(ctx context.Context, workspace string, req ExecuteSQ
 ### func \(\*Client\) ExecuteStoredQuery
 
 ```go
-func (c *Client) ExecuteStoredQuery(ctx context.Context, workspace, queryID string) (*irminmodels.QueryResult, *irminmodels.IrminAPIResponse, error)
+func (c *Client) ExecuteStoredQuery(ctx context.Context, workspace, queryID string, limitResponse bool) (*irminmodels.QueryResult, *irminmodels.IrminAPIResponse, error)
 ```
 
 
@@ -706,7 +715,7 @@ func (c *Client) ExecuteStoredQuery(ctx context.Context, workspace, queryID stri
 ### func \(\*Client\) ExecuteStoredScript
 
 ```go
-func (c *Client) ExecuteStoredScript(ctx context.Context, workspace, scriptID string, req ExecuteScriptRequest) (*irminmodels.ScriptResult, *irminmodels.IrminAPIResponse, error)
+func (c *Client) ExecuteStoredScript(ctx context.Context, workspace, scriptID string, limitResponse bool, req ExecuteScriptRequest) (*irminmodels.ScriptResult, *irminmodels.IrminAPIResponse, error)
 ```
 
 
@@ -897,7 +906,7 @@ GetObjectAtPath fetches the object at the given path and ref.
 ### func \(\*Client\) GetObjectContent
 
 ```go
-func (c *Client) GetObjectContent(ctx context.Context, workspace, repository, path, ref string) ([]byte, error)
+func (c *Client) GetObjectContent(ctx context.Context, workspace, repository, path, ref string, limitResponse bool) ([]byte, error)
 ```
 
 GetObjectContent fetches the content of an object at the given path and ref.
