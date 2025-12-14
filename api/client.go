@@ -429,3 +429,16 @@ func (c *Client) FetchAPIEnhanced(
 func (c *Client) FetchBinary(ctx context.Context, opts RequestOptions) ([]byte, error) {
 	return c.Request(ctx, opts)
 }
+
+// addLimitResponseParam appends the limit-response query parameter to an endpoint URL.
+// It automatically uses "?" if no query params exist, or "&" if they do.
+func addLimitResponseParam(endpoint string) string {
+	separator := "?"
+	for i := range len(endpoint) {
+		if endpoint[i] == '?' {
+			separator = "&"
+			break
+		}
+	}
+	return endpoint + separator + "limit-response=true"
+}

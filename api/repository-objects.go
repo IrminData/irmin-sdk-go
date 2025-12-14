@@ -163,7 +163,7 @@ func (c *Client) GetObjectContent(
 		path,
 	)
 	if limitResponse {
-		endpoint += "&limit-response=true"
+		endpoint = addLimitResponseParam(endpoint)
 	}
 
 	apiResp, err := c.FetchBinary(ctx, RequestOptions{
@@ -190,7 +190,7 @@ func (c *Client) GetObjectStructuredContent(
 		path,
 	)
 	if limitResponse {
-		endpoint += "&limit-response=true"
+		endpoint = addLimitResponseParam(endpoint)
 	}
 
 	var structuredContent map[string]any

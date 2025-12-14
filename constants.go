@@ -75,12 +75,6 @@ const (
 	LocaleMaxLength = 5
 )
 
-// API query parameter constants.
-const (
-	// LimitResponseQueryParam is the query parameter for limiting response sizes.
-	LimitResponseQueryParam = "?limit-response=true"
-)
-
 // Field length validation constants for retention and limits.
 const (
 	// RetentionMinDays is the minimum retention period in days.
