@@ -5,6 +5,14 @@
 package irmincore // import "github.com/IrminData/irmin-sdk-go/api"
 
 
+FUNCTIONS
+
+func AddLimitResponseParam(endpoint string) string
+    AddLimitResponseParam appends the limit-response query parameter to an
+    endpoint URL. It uses Go's net/url package to properly handle URL parsing
+    and query parameter manipulation.
+
+
 TYPES
 
 type Client struct {
