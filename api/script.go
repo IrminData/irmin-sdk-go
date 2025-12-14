@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	irminsdkgo "github.com/IrminData/irmin-sdk-go"
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
@@ -143,7 +144,7 @@ func (c *Client) ExecuteStoredScript(
 
 	endpoint := fmt.Sprintf("/v1/workspaces/%s/scripts/%s/execute", workspace, scriptID)
 	if limitResponse {
-		endpoint += "?limit-response=true"
+		endpoint += irminsdkgo.LimitResponseQueryParam
 	}
 
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
