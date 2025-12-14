@@ -333,7 +333,7 @@ import "github.com/IrminData/irmin-sdk-go/api"
 func AddLimitResponseParam(endpoint string) string
 ```
 
-AddLimitResponseParam appends the limit\-response query parameter to an endpoint URL. It uses Go's net/url package to properly handle URL parsing and query parameter manipulation.
+AddLimitResponseParam appends the limit\-response query parameter to an endpoint URL. It preserves the original query string format by using simple string concatenation to avoid re\-encoding or reordering existing parameters. Handles fragments correctly.
 
 <a name="Client"></a>
 ## type Client
