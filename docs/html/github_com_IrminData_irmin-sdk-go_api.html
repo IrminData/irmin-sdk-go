@@ -395,6 +395,7 @@ func (c *Client) GetObjectSchema(
 func (c *Client) GetObjectStructuredContent(
 	ctx context.Context,
 	workspace, repository, path, ref string,
+	limitResponse bool,
 ) (map[string]any, *irminmodels.IrminAPIResponse, error)
     GetObjectStructuredContent fetches the parsed structured content of an
     object at the given path and ref.
