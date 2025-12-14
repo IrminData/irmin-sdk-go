@@ -135,6 +135,7 @@ import "github.com/IrminData/irmin-sdk-go/api"
 
 ## Index
 
+- [func AddLimitResponseParam\(endpoint string\) string](<#AddLimitResponseParam>)
 - [type Client](<#Client>)
   - [func NewClient\(baseURL, token, locale string\) \*Client](<#NewClient>)
   - [func NewClientWithSQIDManager\(baseURL, token, locale string, sqidManager \*irminsqids.SQIDManager\) \*Client](<#NewClientWithSQIDManager>)
@@ -324,6 +325,15 @@ import "github.com/IrminData/irmin-sdk-go/api"
 - [type UploadObjectFromURLRequest](<#UploadObjectFromURLRequest>)
 - [type WorkflowRequest](<#WorkflowRequest>)
 
+
+<a name="AddLimitResponseParam"></a>
+## func AddLimitResponseParam
+
+```go
+func AddLimitResponseParam(endpoint string) string
+```
+
+AddLimitResponseParam appends the limit\-response query parameter to an endpoint URL. It uses Go's net/url package to properly handle URL parsing and query parameter manipulation.
 
 <a name="Client"></a>
 ## type Client
