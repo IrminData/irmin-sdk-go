@@ -48,6 +48,7 @@ const (
 	TransformOpFieldRename   TransformOperationType = "field_rename"
 	TransformOpFieldRemove   TransformOperationType = "field_remove"
 	TransformOpFileRename    TransformOperationType = "file_rename"
+	TransformOpFileRemove    TransformOperationType = "file_remove"
 	TransformOpFormatConvert TransformOperationType = "format_convert"
 )
 
