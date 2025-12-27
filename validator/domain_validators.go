@@ -293,7 +293,7 @@ func (v *Validator) validateTransformPipelineStage(parentStruct reflect.Value) b
 
 	operation := transformOperationField.Elem().String()
 	if operation != "field_rename" && operation != "field_remove" && operation != "file_rename" &&
-		operation != "format_convert" {
+		operation != "file_remove" && operation != "format_convert" {
 		return false
 	}
 
@@ -335,6 +335,9 @@ func (v *Validator) validateTransformPipelineStage(parentStruct reflect.Value) b
 		if outputName == "" {
 			return false
 		}
+	case "file_remove":
+		// file_remove doesn't require any additional fields
+		// The mode and target_name are sufficient
 	}
 
 	return true
