@@ -277,7 +277,7 @@ func (v *Validator) validateValidationPipelineStage(parentStruct reflect.Value) 
 
 // validateTransformPipelineStage validates transform-type pipeline stages.
 //
-//nolint:gocognit // There is no need to refactor this code
+//nolint:gocognit,gocyclo,cyclop // There is no need to refactor this code
 func (v *Validator) validateTransformPipelineStage(parentStruct reflect.Value) bool {
 	transformOperationField := parentStruct.FieldByName("TransformOperation")
 	transformModeField := parentStruct.FieldByName("TransformMode")
