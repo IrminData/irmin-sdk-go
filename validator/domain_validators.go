@@ -285,6 +285,7 @@ func (v *Validator) validateTransformPipelineStage(parentStruct reflect.Value) b
 	transformFieldsToRemoveField := parentStruct.FieldByName("TransformFieldsToRemove")
 	transformOutputFormatField := parentStruct.FieldByName("TransformOutputFormat")
 	transformOutputNameField := parentStruct.FieldByName("TransformOutputName")
+	transformTargetNameField := parentStruct.FieldByName("TransformTargetName")
 
 	// TransformOperation is required
 	if !transformOperationField.IsValid() || transformOperationField.IsNil() {
@@ -336,8 +337,14 @@ func (v *Validator) validateTransformPipelineStage(parentStruct reflect.Value) b
 			return false
 		}
 	case "file_remove":
-		// file_remove doesn't require any additional fields
-		// The mode and target_name are sufficient
+		// file_remove requires TransformTargetName to specify which file to remove
+		if !transformTargetNameField.IsValid() || transformTargetNameField.IsNil() {
+			return false
+		}
+		targetName := transformTargetNameField.Elem().String()
+		if targetName == "" {
+			return false
+		}
 	}
 
 	return true
