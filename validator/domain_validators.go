@@ -284,6 +284,7 @@ func (v *Validator) validateTransformPipelineStage(parentStruct reflect.Value) b
 	transformFieldRenamesField := parentStruct.FieldByName("TransformFieldRenames")
 	transformFieldsToRemoveField := parentStruct.FieldByName("TransformFieldsToRemove")
 	transformOutputFormatField := parentStruct.FieldByName("TransformOutputFormat")
+	transformOutputNameField := parentStruct.FieldByName("TransformOutputName")
 
 	// TransformOperation is required
 	if !transformOperationField.IsValid() || transformOperationField.IsNil() {
@@ -326,9 +327,14 @@ func (v *Validator) validateTransformPipelineStage(parentStruct reflect.Value) b
 			return false
 		}
 	case "file_rename":
-		// file_rename requires TransformOutputName (validated by checking if it's set)
-		// This is implicitly validated by the user providing the output name
-		// No additional validation needed here beyond the operation type check
+		// file_rename requires TransformOutputName
+		if !transformOutputNameField.IsValid() || transformOutputNameField.IsNil() {
+			return false
+		}
+		outputName := transformOutputNameField.Elem().String()
+		if outputName == "" {
+			return false
+		}
 	}
 
 	return true
