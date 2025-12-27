@@ -459,10 +459,10 @@ type PatchOperation struct {
     PatchOperation represents a single operation in a JSON Patch array.
 
 type PipelineStage struct {
-	Description   string            `json:"description"    validate:"required,max=200"                                                                                             example:"Process customer data"`
-	Write         bool              `json:"write"                                                                                                                                  example:"true"`
-	Read          bool              `json:"read"                                                                                                                                   example:"true"`
-	OrderSequence int               `json:"order_sequence"                                                                                                                         example:"1"`
+	Description   string            `json:"description"    validate:"required,max=200"                                                                                                       example:"Process customer data"`
+	Write         bool              `json:"write"                                                                                                                                            example:"true"`
+	Read          bool              `json:"read"                                                                                                                                             example:"true"`
+	OrderSequence int               `json:"order_sequence"                                                                                                                                   example:"1"`
 	Type          PipelineStageType `json:"type"           validate:"required,oneof=action connection repository repository_action trigger_workflow validation transform,validpipelinestage" example:"repository"`
 
 	// Action stage specific
@@ -505,11 +505,11 @@ type PipelineStage struct {
 	// Transform stage specific
 	TransformOperation      *TransformOperationType `json:"transform_operation,omitempty"        validate:"omitempty,oneof=field_rename field_remove file_rename format_convert,required_if=Type transform" example:"field_rename"`
 	TransformMode           *string                 `json:"transform_mode,omitempty"` // "single" or "all"
-	TransformTargetName     *string                 `json:"transform_target_name,omitempty"      example:"customers.csv"`
+	TransformTargetName     *string                 `json:"transform_target_name,omitempty"                                                                                                                 example:"customers.csv"`
 	TransformFieldRenames   []FieldRename           `json:"transform_field_renames,omitempty"    validate:"dive"`
-	TransformFieldsToRemove []string                `json:"transform_fields_to_remove,omitempty" example:"internal_id,temp_flag"`
-	TransformOutputName     *string                 `json:"transform_output_name,omitempty"      example:"customers_renamed.csv"`
-	TransformOutputFormat   *OutputFormat           `json:"transform_output_format,omitempty"    validate:"omitempty,oneof=csv json parquet" example:"json"`
+	TransformFieldsToRemove []string                `json:"transform_fields_to_remove,omitempty"                                                                                                            example:"internal_id,temp_flag"`
+	TransformOutputName     *string                 `json:"transform_output_name,omitempty"                                                                                                                 example:"customers_renamed.csv"`
+	TransformOutputFormat   *OutputFormat           `json:"transform_output_format,omitempty"    validate:"omitempty,oneof=csv json parquet"                                                                example:"json"`
 }
 
 type PipelineStageType string
