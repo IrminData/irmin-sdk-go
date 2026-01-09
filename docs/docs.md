@@ -2242,7 +2242,7 @@ UpdateAIApplicationRequest represents the JSON request body for updating an AI a
 type UpdateAIApplicationRequest struct {
     Name           *string                               `json:"name,omitempty"            validate:"omitempty,max=100"             example:"Customer Analytics App"`
     Description    *string                               `json:"description,omitempty"     validate:"omitempty,max=500"             example:"AI application for customer data analysis"`
-    Documentation  *string                               `json:"documentation,omitempty"   validate:"validdocumentation"            example:"# Customer Analytics"`
+    Documentation  *string                               `json:"documentation,omitempty"   validate:"omitempty,validdocumentation"  example:"# Customer Analytics"`
     AllowedOrigins []string                              `json:"allowed_origins,omitempty" validate:"omitempty,dive,max=255"`
     DataSources    []irminmodels.AIApplicationDataSource `json:"data_sources,omitempty"    validate:"omitempty,dive"`
     Tags           []string                              `json:"tags,omitempty"            validate:"omitempty,dive,validsqid=tags"`
@@ -2893,6 +2893,7 @@ type AIApplication struct {
     Documentation  string                    `json:"documentation"   validate:"validdocumentation"                 example:"# Customer Analytics"`
     AllowedOrigins []string                  `json:"allowed_origins" validate:"dive,max=255"                       example:"https://app.example.com,http://localhost:3000"`
     DataSources    []AIApplicationDataSource `json:"data_sources"    validate:"dive"`
+    APIKey         string                    `json:"api_key"         validate:"required"                           example:"ai_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz567abcdefghijklmnopqrstuv"`
     Owner          User                      `json:"owner"           validate:"required"`
     Tags           []Tag                     `json:"tags,omitempty"  validate:"dive"`
     CreatedAt      time.Time                 `json:"created_at"      validate:"required"                           example:"2025-01-15T10:30:00Z"`
