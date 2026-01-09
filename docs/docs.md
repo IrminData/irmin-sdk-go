@@ -2887,12 +2887,10 @@ AIApplication represents an AI application in the system.
 
 ```go
 type AIApplication struct {
-    ID            string `json:"id"              validate:"required,validsqid=ai_applications" example:"ai_8x2m9k4n7p5q"`
-    Name          string `json:"name"            validate:"required,max=100"                   example:"Customer Analytics App"`
-    Description   string `json:"description"     validate:"max=500"                            example:"AI application for customer data analysis"`
-    Documentation string `json:"documentation"   validate:"validdocumentation"                 example:"# Customer Analytics
-
-This application provides AI-powered insights..."`
+    ID             string                    `json:"id"              validate:"required,validsqid=ai_applications" example:"ai_8x2m9k4n7p5q"`
+    Name           string                    `json:"name"            validate:"required,max=100"                   example:"Customer Analytics App"`
+    Description    string                    `json:"description"     validate:"max=500"                            example:"AI application for customer data analysis"`
+    Documentation  string                    `json:"documentation"   validate:"validdocumentation"                 example:"# Customer Analytics"`
     AllowedOrigins []string                  `json:"allowed_origins" validate:"dive,max=255"                       example:"https://app.example.com,http://localhost:3000"`
     DataSources    []AIApplicationDataSource `json:"data_sources"    validate:"dive"`
     Owner          User                      `json:"owner"           validate:"required"`
