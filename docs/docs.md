@@ -1829,10 +1829,10 @@ CreateAIApplicationRequest represents the JSON request body for creating an AI a
 
 ```go
 type CreateAIApplicationRequest struct {
-    Name           string                                `json:"name"            validate:"required,max=100"  example:"Customer Analytics App"`
-    Description    string                                `json:"description"     validate:"max=500"           example:"AI application for customer data analysis"`
-    Documentation  string                                `json:"documentation"   validate:"validdocumentation" example:"# Customer Analytics"`
-    AllowedOrigins []string                              `json:"allowed_origins" validate:"dive,max=255"      example:"https://app.example.com,http://localhost:3000"`
+    Name           string                                `json:"name"            validate:"required,max=100"              example:"Customer Analytics App"`
+    Description    string                                `json:"description"     validate:"max=500"                       example:"AI application for customer data analysis"`
+    Documentation  string                                `json:"documentation"   validate:"validdocumentation"            example:"# Customer Analytics"`
+    AllowedOrigins []string                              `json:"allowed_origins" validate:"dive,max=255"                  example:"https://app.example.com,http://localhost:3000"`
     DataSources    []irminmodels.AIApplicationDataSource `json:"data_sources"    validate:"dive"`
     Tags           []string                              `json:"tags,omitempty"  validate:"omitempty,dive,validsqid=tags" example:"tag_7k3m9x2n5q8p"`
 }
@@ -2240,9 +2240,9 @@ UpdateAIApplicationRequest represents the JSON request body for updating an AI a
 
 ```go
 type UpdateAIApplicationRequest struct {
-    Name           *string                               `json:"name,omitempty"            validate:"omitempty,max=100"  example:"Customer Analytics App"`
-    Description    *string                               `json:"description,omitempty"     validate:"omitempty,max=500"  example:"AI application for customer data analysis"`
-    Documentation  *string                               `json:"documentation,omitempty"   validate:"validdocumentation" example:"# Customer Analytics"`
+    Name           *string                               `json:"name,omitempty"            validate:"omitempty,max=100"             example:"Customer Analytics App"`
+    Description    *string                               `json:"description,omitempty"     validate:"omitempty,max=500"             example:"AI application for customer data analysis"`
+    Documentation  *string                               `json:"documentation,omitempty"   validate:"validdocumentation"            example:"# Customer Analytics"`
     AllowedOrigins []string                              `json:"allowed_origins,omitempty" validate:"omitempty,dive,max=255"`
     DataSources    []irminmodels.AIApplicationDataSource `json:"data_sources,omitempty"    validate:"omitempty,dive"`
     Tags           []string                              `json:"tags,omitempty"            validate:"omitempty,dive,validsqid=tags"`
@@ -2887,10 +2887,12 @@ AIApplication represents an AI application in the system.
 
 ```go
 type AIApplication struct {
-    ID             string                    `json:"id"              validate:"required,validsqid=ai_applications" example:"ai_8x2m9k4n7p5q"`
-    Name           string                    `json:"name"            validate:"required,max=100"                   example:"Customer Analytics App"`
-    Description    string                    `json:"description"     validate:"max=500"                            example:"AI application for customer data analysis"`
-    Documentation  string                    `json:"documentation"   validate:"validdocumentation"                 example:"# Customer Analytics\n\nThis application provides AI-powered insights..."`
+    ID            string `json:"id"              validate:"required,validsqid=ai_applications" example:"ai_8x2m9k4n7p5q"`
+    Name          string `json:"name"            validate:"required,max=100"                   example:"Customer Analytics App"`
+    Description   string `json:"description"     validate:"max=500"                            example:"AI application for customer data analysis"`
+    Documentation string `json:"documentation"   validate:"validdocumentation"                 example:"# Customer Analytics
+
+This application provides AI-powered insights..."`
     AllowedOrigins []string                  `json:"allowed_origins" validate:"dive,max=255"                       example:"https://app.example.com,http://localhost:3000"`
     DataSources    []AIApplicationDataSource `json:"data_sources"    validate:"dive"`
     Owner          User                      `json:"owner"           validate:"required"`
