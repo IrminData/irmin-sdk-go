@@ -17,6 +17,7 @@ type AIApplication struct {
 	Documentation  string                    `json:"documentation"   validate:"validdocumentation"                 example:"# Customer Analytics"`
 	AllowedOrigins []string                  `json:"allowed_origins" validate:"dive,max=255"                       example:"https://app.example.com,http://localhost:3000"`
 	DataSources    []AIApplicationDataSource `json:"data_sources"    validate:"dive"`
+	APIKey         string                    `json:"api_key"         validate:"required"                           example:"ai_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz567abcdefghijklmnopqrstuv"`
 	Owner          User                      `json:"owner"           validate:"required"`
 	Tags           []Tag                     `json:"tags,omitempty"  validate:"dive"`
 	CreatedAt      time.Time                 `json:"created_at"      validate:"required"                           example:"2025-01-15T10:30:00Z"`
