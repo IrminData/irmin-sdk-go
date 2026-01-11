@@ -19,19 +19,19 @@ type AIAppQueryRequest struct {
 // AIAppSearchEmbeddingsRequest represents the request body for searching embeddings.
 type AIAppSearchEmbeddingsRequest struct {
 	Query  string            `json:"query"  validate:"required" example:"What is machine learning?"`
-	Path   string            `json:"path"   example:"/data-source/embeddings/docs.parquet"` // Optional: filter to specific embedding file
-	TopK   int               `json:"top_k"  example:"10"`                                   // Optional: defaults to 10
-	Filter map[string]string `json:"filter"`                                               // Optional: metadata filter
+	Path   string            `json:"path"                       example:"/data-source/embeddings/docs.parquet"` // Optional: filter to specific embedding file
+	TopK   int               `json:"top_k"                      example:"10"`                                   // Optional: defaults to 10
+	Filter map[string]string `json:"filter"`                                                                    // Optional: metadata filter
 }
 
 // === Response Types ===
 
 // AIAppInfo represents information about an AI Application.
 type AIAppInfo struct {
-	Name        string                              `json:"name"`
-	Description string                              `json:"description"`
-	Workspace   string                              `json:"workspace"`
-	Tools       irminmodels.AIApplicationToolConfig `json:"tools"`
+	Name        string                               `json:"name"`
+	Description string                               `json:"description"`
+	Workspace   string                               `json:"workspace"`
+	Tools       irminmodels.AIApplicationToolConfig  `json:"tools"`
 	DataSources []irminmodels.AIAppDataSourceUnified `json:"data_sources"`
 }
 
