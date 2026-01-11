@@ -37,7 +37,13 @@ func NewAIAppClient(baseURL, apiKey string) *AIAppClient {
 }
 
 // NewAIAppClientWithHTTPClient creates a new AI Application API client with a custom HTTP client.
+// If httpClient is nil, a default client with DefaultAPITimeout is used.
 func NewAIAppClientWithHTTPClient(baseURL, apiKey string, httpClient *http.Client) *AIAppClient {
+	if httpClient == nil {
+		httpClient = &http.Client{
+			Timeout: irminsdkgo.DefaultAPITimeout,
+		}
+	}
 	return &AIAppClient{
 		BaseURL:    baseURL,
 		APIKey:     apiKey,

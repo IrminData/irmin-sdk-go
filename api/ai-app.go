@@ -57,7 +57,7 @@ func (c *AIAppClient) GetInfo(ctx context.Context) (*AIAppInfo, *irminmodels.Irm
 		Endpoint: "/v1/ai-app/info",
 	}, &info)
 	if err != nil {
-		return nil, nil, fmt.Errorf("get AI app info error: %w", err)
+		return nil, apiResp, fmt.Errorf("get AI app info error: %w", err)
 	}
 	return &info, apiResp, nil
 }
@@ -70,7 +70,7 @@ func (c *AIAppClient) GetSystemPrompt(ctx context.Context) (string, *irminmodels
 		Endpoint: "/v1/ai-app/system-prompt",
 	}, &result)
 	if err != nil {
-		return "", nil, fmt.Errorf("get system prompt error: %w", err)
+		return "", apiResp, fmt.Errorf("get system prompt error: %w", err)
 	}
 	return result.SystemPrompt, apiResp, nil
 }
@@ -88,7 +88,7 @@ func (c *AIAppClient) Query(
 		Body:        req,
 	}, &result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("query error: %w", err)
+		return nil, apiResp, fmt.Errorf("query error: %w", err)
 	}
 	return result, apiResp, nil
 }
@@ -111,7 +111,7 @@ func (c *AIAppClient) ListObjects(
 		Endpoint: endpoint,
 	}, &object)
 	if err != nil {
-		return nil, nil, fmt.Errorf("list objects error: %w", err)
+		return nil, apiResp, fmt.Errorf("list objects error: %w", err)
 	}
 	return &object, apiResp, nil
 }
@@ -130,7 +130,7 @@ func (c *AIAppClient) GetContent(
 		Endpoint: endpoint,
 	}, &content)
 	if err != nil {
-		return nil, nil, fmt.Errorf("get content error: %w", err)
+		return nil, apiResp, fmt.Errorf("get content error: %w", err)
 	}
 	return &content, apiResp, nil
 }
@@ -149,7 +149,7 @@ func (c *AIAppClient) GetSchema(
 		Endpoint: endpoint,
 	}, &schema)
 	if err != nil {
-		return nil, nil, fmt.Errorf("get schema error: %w", err)
+		return nil, apiResp, fmt.Errorf("get schema error: %w", err)
 	}
 	return &schema, apiResp, nil
 }
@@ -169,7 +169,7 @@ func (c *AIAppClient) SearchEmbeddings(
 		Body:        req,
 	}, &result)
 	if err != nil {
-		return nil, nil, fmt.Errorf("search embeddings error: %w", err)
+		return nil, apiResp, fmt.Errorf("search embeddings error: %w", err)
 	}
 	return &result, apiResp, nil
 }
