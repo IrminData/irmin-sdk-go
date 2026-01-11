@@ -114,7 +114,11 @@ func (c *AIAppClient) Request(ctx context.Context, opts AIAppRequestOptions) ([]
 }
 
 // FetchAPI sends a request and attempts to parse the response into IrminAPIResponse.
-func (c *AIAppClient) FetchAPI(ctx context.Context, opts AIAppRequestOptions, out any) (*irminmodels.IrminAPIResponse, error) {
+func (c *AIAppClient) FetchAPI(
+	ctx context.Context,
+	opts AIAppRequestOptions,
+	out any,
+) (*irminmodels.IrminAPIResponse, error) {
 	body, err := c.Request(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -130,12 +134,12 @@ func (c *AIAppClient) FetchAPI(ctx context.Context, opts AIAppRequestOptions, ou
 	}
 
 	if out != nil && apiResp.Data != nil {
-		dataBytes, err := json.Marshal(apiResp.Data)
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal Data field: %w", err)
+		dataBytes, marshalErr := json.Marshal(apiResp.Data)
+		if marshalErr != nil {
+			return nil, fmt.Errorf("failed to marshal Data field: %w", marshalErr)
 		}
-		if err = json.Unmarshal(dataBytes, out); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal Data field: %w", err)
+		if unmarshalErr := json.Unmarshal(dataBytes, out); unmarshalErr != nil {
+			return nil, fmt.Errorf("failed to unmarshal Data field: %w", unmarshalErr)
 		}
 	}
 
