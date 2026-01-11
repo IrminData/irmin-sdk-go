@@ -409,7 +409,7 @@ NewAIAppClient creates a new AI Application API client.
 func NewAIAppClientWithHTTPClient(baseURL, apiKey string, httpClient *http.Client) *AIAppClient
 ```
 
-NewAIAppClientWithHTTPClient creates a new AI Application API client with a custom HTTP client.
+NewAIAppClientWithHTTPClient creates a new AI Application API client with a custom HTTP client. If httpClient is nil, a default client with DefaultAPITimeout is used.
 
 <a name="AIAppClient.FetchAPI"></a>
 ### func \(\*AIAppClient\) FetchAPI
