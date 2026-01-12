@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
@@ -354,8 +355,8 @@ func (c *Client) CreatePointer(
 			"/v1/workspaces/%s/repositories/%s/objects/pointer?ref=%s&path=%s",
 			workspace,
 			repository,
-			ref,
-			path,
+			url.QueryEscape(ref),
+			url.QueryEscape(path),
 		),
 		ContentType: "application/json",
 		Body:        req,
