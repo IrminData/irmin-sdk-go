@@ -199,6 +199,12 @@ func TestGetDuckDBReadOptionsByMIMEType(t *testing.T) {
 		{"application/vnd.apache.parquet", false, "read_parquet"},
 		{"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", false, "st_read"},
 		{"application/unknown", true, ""},
+		// Test MIME types with charset parameters (common in real-world Content-Type headers)
+		{"text/csv; charset=utf-8", false, "read_csv_auto"},
+		{"application/json; charset=utf-8", false, "read_json_auto"},
+		{"text/csv;charset=utf-8", false, "read_csv_auto"}, // No space after semicolon
+		{"application/json;charset=utf-8", false, "read_json_auto"},
+		{"text/csv; charset=UTF-8; boundary=something", false, "read_csv_auto"}, // Multiple parameters
 	}
 
 	for _, test := range tests {
