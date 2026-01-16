@@ -285,15 +285,19 @@ func GetDuckDBReadOptionsByMIMEType(contentType string) (*ReadOptions, error) {
 
 // GetDuckDBReadOptions automatically detects the format from filename and returns read options.
 func GetDuckDBReadOptions(filePathOrMIMEType string) (*ReadOptions, error) {
-	// First, try to treat it as a file path and extract extension
-	if strings.Contains(filePathOrMIMEType, ".") || !strings.Contains(filePathOrMIMEType, "/") {
-		extension := filepath.Ext(filePathOrMIMEType)
-		if extension != "" {
-			return GetDuckDBReadOptionsByExtension(extension)
-		}
+	// Check if it looks like a MIME type (contains "/" which is typical of MIME types)
+	// MIME types have the format "type/subtype" (e.g., "application/json", "text/csv")
+	if strings.Contains(filePathOrMIMEType, "/") {
+		return GetDuckDBReadOptionsByMIMEType(filePathOrMIMEType)
 	}
 
-	// If no extension found or it looks like a MIME type, try MIME type mapping
+	// Otherwise, treat it as a file path and extract extension
+	extension := filepath.Ext(filePathOrMIMEType)
+	if extension != "" {
+		return GetDuckDBReadOptionsByExtension(extension)
+	}
+
+	// If no extension found, try MIME type mapping as a fallback
 	return GetDuckDBReadOptionsByMIMEType(filePathOrMIMEType)
 }
 
