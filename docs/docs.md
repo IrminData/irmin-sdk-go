@@ -3194,7 +3194,7 @@ GetDuckDBReadOptionsByExtension maps a file extension to the appropriate DuckDB 
 func GetDuckDBReadOptionsByMIMEType(contentType string) (*ReadOptions, error)
 ```
 
-GetDuckDBReadOptionsByMIMEType maps a MIME type to the appropriate DuckDB read options.
+GetDuckDBReadOptionsByMIMEType maps a MIME type to the appropriate DuckDB read options. It handles MIME types with parameters \(e.g., "text/csv; charset=utf\-8"\) by extracting the base type before matching.
 
 # irminmodels
 

@@ -169,7 +169,8 @@ func GetDuckDBReadOptionsByExtension(extension string) (*ReadOptions, error)
 
 func GetDuckDBReadOptionsByMIMEType(contentType string) (*ReadOptions, error)
     GetDuckDBReadOptionsByMIMEType maps a MIME type to the appropriate DuckDB
-    read options.
+    read options. It handles MIME types with parameters (e.g., "text/csv;
+    charset=utf-8") by extracting the base type before matching.
 
 </pre>
 </body></html>
