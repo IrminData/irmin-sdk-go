@@ -115,6 +115,21 @@ func TestGetDuckDBReadOptions_FilePathVsMIMEType(t *testing.T) {
 			input:            "application/vnd.apache.parquet",
 			expectedFunction: "read_parquet",
 		},
+		{
+			name:             "CSV file path with directory separator",
+			input:            "data/file.csv",
+			expectedFunction: "read_csv_auto",
+		},
+		{
+			name:             "JSON file path with absolute path",
+			input:            "/path/to/data.json",
+			expectedFunction: "read_json_auto",
+		},
+		{
+			name:             "Parquet file path with nested directories",
+			input:            "subdir/nested/data.parquet",
+			expectedFunction: "read_parquet",
+		},
 	}
 
 	for _, tt := range tests {

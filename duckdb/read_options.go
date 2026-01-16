@@ -170,9 +170,24 @@ func GetDuckDBReadOptionsByExtension(extension string) (*ReadOptions, error) {
 	}
 }
 
+// extractBaseMIMEType extracts the base MIME type by stripping parameters.
+// For example, "text/csv; charset=utf-8" becomes "text/csv".
+func extractBaseMIMEType(contentType string) string {
+	// Split on semicolon to remove parameters (e.g., charset=utf-8)
+	if idx := strings.Index(contentType, ";"); idx != -1 {
+		return strings.TrimSpace(contentType[:idx])
+	}
+	return strings.TrimSpace(contentType)
+}
+
 // GetDuckDBReadOptionsByMIMEType maps a MIME type to the appropriate DuckDB read options.
+// It handles MIME types with parameters (e.g., "text/csv; charset=utf-8") by extracting
+// the base type before matching.
 func GetDuckDBReadOptionsByMIMEType(contentType string) (*ReadOptions, error) {
-	switch contentType {
+	// Extract base MIME type, stripping any parameters like charset
+	baseType := extractBaseMIMEType(contentType)
+
+	switch baseType {
 	// JSON formats
 	case "application/json":
 		return &ReadOptions{
@@ -285,13 +300,18 @@ func GetDuckDBReadOptionsByMIMEType(contentType string) (*ReadOptions, error) {
 
 // GetDuckDBReadOptions automatically detects the format from filename and returns read options.
 func GetDuckDBReadOptions(filePathOrMIMEType string) (*ReadOptions, error) {
-	// Check if it looks like a MIME type (contains "/" which is typical of MIME types)
 	// MIME types have the format "type/subtype" (e.g., "application/json", "text/csv")
-	if strings.Contains(filePathOrMIMEType, "/") {
-		return GetDuckDBReadOptionsByMIMEType(filePathOrMIMEType)
+	// They start with known type prefixes like "text/", "application/", "image/", etc.
+	// Check if it starts with a MIME type prefix to distinguish from file paths with "/"
+	validMIMETypePrefixes := []string{"text/", "application/", "image/", "audio/", "video/", "multipart/"}
+	for _, prefix := range validMIMETypePrefixes {
+		if strings.HasPrefix(filePathOrMIMEType, prefix) {
+			return GetDuckDBReadOptionsByMIMEType(filePathOrMIMEType)
+		}
 	}
 
 	// Otherwise, treat it as a file path and extract extension
+	// This handles paths like "data/file.csv" or "/path/to/data.json" correctly
 	extension := filepath.Ext(filePathOrMIMEType)
 	if extension != "" {
 		return GetDuckDBReadOptionsByExtension(extension)
