@@ -3249,6 +3249,7 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type MergeStrategy](<#MergeStrategy>)
 - [type Object](<#Object>)
 - [type ObjectSchema](<#ObjectSchema>)
+- [type ObjectSchemaDiff](<#ObjectSchemaDiff>)
 - [type ObjectType](<#ObjectType>)
 - [type OutputFormat](<#OutputFormat>)
 - [type Patch](<#Patch>)
@@ -3743,15 +3744,17 @@ Diff represents the difference between two refs.
 ```go
 type Diff struct {
     // Slug of the repository
-    Repository string `json:"repository"        validate:"required,validslug" example:"customer-analytics"`
+    Repository string `json:"repository"             validate:"required,validslug" example:"customer-analytics"`
     // Base reference
-    BaseRef string `json:"base_ref"          validate:"required"           example:"main"`
+    BaseRef string `json:"base_ref"               validate:"required"           example:"main"`
     // Compare reference
-    CompareRef string `json:"compare_ref"       validate:"required"           example:"development"`
+    CompareRef string `json:"compare_ref"            validate:"required"           example:"development"`
     // List of changes in the diff
-    Items []ChangeItem `json:"items"             validate:"required,dive"`
+    Items []ChangeItem `json:"items"                  validate:"required,dive"`
     // List of commits between the refs
-    Commits []Commit `json:"commits,omitempty" validate:"dive"`
+    Commits []Commit `json:"commits,omitempty"      validate:"dive"`
+    // Schema diffs for objects that have schema changes
+    SchemaDiffs []ObjectSchemaDiff `json:"schema_diffs,omitempty" validate:"dive"`
 }
 ```
 
@@ -4179,6 +4182,20 @@ type ObjectSchema struct {
     // Group schema
     Children     []ObjectSchema           `json:"children,omitempty"         validate:"dive,required_if=Type group"`
     Restrictions *GroupSchemaRestrictions `json:"restrictions,omitempty"` // Restrictions are not required, but are available for group schemas
+}
+```
+
+<a name="ObjectSchemaDiff"></a>
+## type ObjectSchemaDiff
+
+ObjectSchemaDiff represents schema changes for a specific object path.
+
+```go
+type ObjectSchemaDiff struct {
+    // Path of the object whose schema changed
+    Path string `json:"path" validate:"required" example:"customers.json"`
+    // Schema diff details
+    Diff *SchemaDiff `json:"diff" validate:"required"`
 }
 ```
 
@@ -5536,36 +5553,6 @@ const (
     WorkspaceSearchResultTypeInvite           WorkspaceSearchResultType = "invite"
 )
 ```
-
-# schema
-
-```go
-import "github.com/IrminData/irmin-sdk-go/schema"
-```
-
-## Index
-
-- [func CompareSchemas\(source, target \*irminmodels.ObjectSchema\) \*irminmodels.SchemaDiff](<#CompareSchemas>)
-- [func IsBreakingChange\(fieldDiff irminmodels.SchemaFieldDiff\) bool](<#IsBreakingChange>)
-
-
-<a name="CompareSchemas"></a>
-## func CompareSchemas
-
-```go
-func CompareSchemas(source, target *irminmodels.ObjectSchema) *irminmodels.SchemaDiff
-```
-
-CompareSchemas compares two ObjectSchemas and returns a detailed diff. The source is typically the current/existing schema, target is the new/expected schema.
-
-<a name="IsBreakingChange"></a>
-## func IsBreakingChange
-
-```go
-func IsBreakingChange(fieldDiff irminmodels.SchemaFieldDiff) bool
-```
-
-IsBreakingChange determines if a single field diff represents a breaking change.
 
 # irminsqids
 
