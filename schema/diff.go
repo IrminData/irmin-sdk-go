@@ -119,11 +119,154 @@ func compareGroupSchemas(source, target *irminmodels.ObjectSchema, basePath stri
 	for name, sourceChild := range sourceChildren {
 		if targetChild, exists := targetChildren[name]; exists {
 			childPath := joinPath(basePath, name)
-			if sourceChild.Type == irminmodels.ObjectTypeStructured &&
-				targetChild.Type == irminmodels.ObjectTypeStructured &&
-				sourceChild.Schema != nil && targetChild.Schema != nil {
-				compareJSONSchemas(sourceChild.Schema, targetChild.Schema, childPath, diff)
+
+			// Check for type changes between children
+			if sourceChild.Type != targetChild.Type {
+				typeChange := irminmodels.SchemaFieldDiff{
+					FieldPath:  childPath,
+					ChangeType: irminmodels.SchemaChangeTypeChanged,
+					SourceType: ptr(string(sourceChild.Type)),
+					TargetType: ptr(string(targetChild.Type)),
+				}
+				desc := fmt.Sprintf("Schema type changed from %s to %s", sourceChild.Type, targetChild.Type)
+				typeChange.Description = &desc
+				// Type changes between object schema types are always breaking
+				diff.BreakingChanges = append(diff.BreakingChanges, typeChange)
+				continue
 			}
+
+			// Compare based on matching types
+			switch sourceChild.Type {
+			case irminmodels.ObjectTypeStructured:
+				compareStructuredSchemas(sourceChild, targetChild, childPath, diff)
+
+			case irminmodels.ObjectTypeGroup:
+				// Recursively compare nested groups
+				compareGroupSchemas(sourceChild, targetChild, childPath, diff)
+
+			case irminmodels.ObjectTypeBinary:
+				// Compare binary schema restrictions (content type, size, etc.)
+				compareBinarySchemas(sourceChild, targetChild, childPath, diff)
+			}
+		}
+	}
+}
+
+// compareStructuredSchemas compares two structured ObjectSchemas.
+func compareStructuredSchemas(
+	source, target *irminmodels.ObjectSchema,
+	basePath string,
+	diff *irminmodels.SchemaDiff,
+) {
+	switch {
+	case source.Schema != nil && target.Schema != nil:
+		compareJSONSchemas(source.Schema, target.Schema, basePath, diff)
+	case source.Schema == nil && target.Schema != nil:
+		// Schema was added (more strict validation)
+		change := irminmodels.SchemaFieldDiff{
+			FieldPath:  basePath,
+			ChangeType: irminmodels.SchemaChangeModified,
+		}
+		desc := "JSON schema validation was added"
+		change.Description = &desc
+		diff.BreakingChanges = append(diff.BreakingChanges, change)
+	case source.Schema != nil && target.Schema == nil:
+		// Schema was removed (less strict validation)
+		change := irminmodels.SchemaFieldDiff{
+			FieldPath:  basePath,
+			ChangeType: irminmodels.SchemaChangeModified,
+		}
+		desc := "JSON schema validation was removed"
+		change.Description = &desc
+		diff.NonBreakingChanges = append(diff.NonBreakingChanges, change)
+	}
+}
+
+// compareBinarySchemas compares restrictions on binary object schemas.
+func compareBinarySchemas(
+	source, target *irminmodels.ObjectSchema,
+	basePath string,
+	diff *irminmodels.SchemaDiff,
+) {
+	// Compare content type restrictions
+	sourceContentType := ""
+	targetContentType := ""
+	if source.ContentType != nil {
+		sourceContentType = *source.ContentType
+	}
+	if target.ContentType != nil {
+		targetContentType = *target.ContentType
+	}
+
+	if sourceContentType != targetContentType {
+		change := irminmodels.SchemaFieldDiff{
+			FieldPath:  basePath,
+			ChangeType: irminmodels.SchemaChangeModified,
+			SourceType: ptr(sourceContentType),
+			TargetType: ptr(targetContentType),
+		}
+		desc := fmt.Sprintf("Content type changed from '%s' to '%s'", sourceContentType, targetContentType)
+		change.Description = &desc
+		// Changing expected content type is breaking
+		diff.BreakingChanges = append(diff.BreakingChanges, change)
+	}
+
+	// Compare restrictions if present
+	if source.Restrictions != nil || target.Restrictions != nil {
+		compareRestrictions(source.Restrictions, target.Restrictions, basePath, diff)
+	}
+}
+
+// compareRestrictions compares GroupSchemaRestrictions between schemas.
+func compareRestrictions(
+	source, target *irminmodels.GroupSchemaRestrictions,
+	basePath string,
+	diff *irminmodels.SchemaDiff,
+) {
+	// Handle nil cases
+	if source == nil && target == nil {
+		return
+	}
+
+	if source == nil {
+		// Restrictions were added (more strict)
+		change := irminmodels.SchemaFieldDiff{
+			FieldPath:  basePath,
+			ChangeType: irminmodels.SchemaChangeModified,
+		}
+		desc := "Schema restrictions were added"
+		change.Description = &desc
+		diff.BreakingChanges = append(diff.BreakingChanges, change)
+		return
+	}
+
+	if target == nil {
+		// Restrictions were removed (less strict)
+		change := irminmodels.SchemaFieldDiff{
+			FieldPath:  basePath,
+			ChangeType: irminmodels.SchemaChangeModified,
+		}
+		desc := "Schema restrictions were removed"
+		change.Description = &desc
+		diff.NonBreakingChanges = append(diff.NonBreakingChanges, change)
+		return
+	}
+
+	// Compare size restrictions
+	if (source.MaxSize != nil || target.MaxSize != nil) &&
+		(source.MaxSize == nil || target.MaxSize == nil || *source.MaxSize != *target.MaxSize) {
+		change := irminmodels.SchemaFieldDiff{
+			FieldPath:  basePath + ".maxSize",
+			ChangeType: irminmodels.SchemaChangeModified,
+		}
+		if target.MaxSize != nil && (source.MaxSize == nil || *target.MaxSize < *source.MaxSize) {
+			desc := "Maximum size restriction became more strict"
+			change.Description = &desc
+			diff.BreakingChanges = append(diff.BreakingChanges, change)
+		} else {
+			desc := "Maximum size restriction changed"
+			change.Description = &desc
+			diff.NonBreakingChanges = append(diff.NonBreakingChanges, change)
 		}
 	}
 }
@@ -158,44 +301,75 @@ func compareJSONSchemas(source, target *irminmodels.JSONSchema, basePath string,
 
 	// Compare items for array types
 	if source.Type == "array" && target.Type == "array" {
-		if source.Items != nil && target.Items != nil {
-			itemPath := basePath + "[]"
+		itemPath := basePath + "[]"
+		switch {
+		case source.Items != nil && target.Items != nil:
 			compareJSONSchemas(source.Items, target.Items, itemPath, diff)
+		case source.Items == nil && target.Items != nil:
+			// Items schema was added (more strict - now validates array items)
+			change := irminmodels.SchemaFieldDiff{
+				FieldPath:  itemPath,
+				ChangeType: irminmodels.SchemaChangeAdded,
+				TargetType: &target.Items.Type,
+			}
+			desc := "Array items schema was added (items now validated)"
+			change.Description = &desc
+			// Adding item validation is breaking - previously any items were allowed
+			diff.BreakingChanges = append(diff.BreakingChanges, change)
+		case source.Items != nil && target.Items == nil:
+			// Items schema was removed (less strict - no longer validates array items)
+			change := irminmodels.SchemaFieldDiff{
+				FieldPath:  itemPath,
+				ChangeType: irminmodels.SchemaChangeRemoved,
+				SourceType: &source.Items.Type,
+			}
+			desc := "Array items schema was removed (items no longer validated)"
+			change.Description = &desc
+			// Removing item validation is non-breaking - allows more flexibility
+			diff.NonBreakingChanges = append(diff.NonBreakingChanges, change)
 		}
 	}
 }
 
 // compareRequiredFields compares the required field lists between schemas.
+// Only reports changes for fields that exist in BOTH source and target properties
+// to avoid duplicates with compareProperties() which handles added/removed fields.
 func compareRequiredFields(source, target *irminmodels.JSONSchema, basePath string, diff *irminmodels.SchemaDiff) {
-	// Fields that became required (breaking)
+	// Fields that became required (breaking) - only if field exists in both
 	for _, field := range target.Required {
 		if !slices.Contains(source.Required, field) {
-			fieldPath := joinPath(basePath, field)
-			change := irminmodels.SchemaFieldDiff{
-				FieldPath:   fieldPath,
-				ChangeType:  irminmodels.SchemaChangeRequiredChanged,
-				WasRequired: ptr(false),
-				IsRequired:  ptr(true),
+			// Only report if field existed in source (otherwise compareProperties handles it as "added required")
+			if _, existsInSource := source.Properties[field]; existsInSource {
+				fieldPath := joinPath(basePath, field)
+				change := irminmodels.SchemaFieldDiff{
+					FieldPath:   fieldPath,
+					ChangeType:  irminmodels.SchemaChangeRequiredChanged,
+					WasRequired: ptr(false),
+					IsRequired:  ptr(true),
+				}
+				desc := fmt.Sprintf("Field '%s' is now required", field)
+				change.Description = &desc
+				diff.BreakingChanges = append(diff.BreakingChanges, change)
 			}
-			desc := fmt.Sprintf("Field '%s' is now required", field)
-			change.Description = &desc
-			diff.BreakingChanges = append(diff.BreakingChanges, change)
 		}
 	}
 
-	// Fields that became optional (non-breaking)
+	// Fields that became optional (non-breaking) - only if field still exists in target
 	for _, field := range source.Required {
 		if !slices.Contains(target.Required, field) {
-			fieldPath := joinPath(basePath, field)
-			change := irminmodels.SchemaFieldDiff{
-				FieldPath:   fieldPath,
-				ChangeType:  irminmodels.SchemaChangeRequiredChanged,
-				WasRequired: ptr(true),
-				IsRequired:  ptr(false),
+			// Only report if field still exists in target (otherwise compareProperties handles it as "removed")
+			if _, existsInTarget := target.Properties[field]; existsInTarget {
+				fieldPath := joinPath(basePath, field)
+				change := irminmodels.SchemaFieldDiff{
+					FieldPath:   fieldPath,
+					ChangeType:  irminmodels.SchemaChangeRequiredChanged,
+					WasRequired: ptr(true),
+					IsRequired:  ptr(false),
+				}
+				desc := fmt.Sprintf("Field '%s' is no longer required", field)
+				change.Description = &desc
+				diff.NonBreakingChanges = append(diff.NonBreakingChanges, change)
 			}
-			desc := fmt.Sprintf("Field '%s' is no longer required", field)
-			change.Description = &desc
-			diff.NonBreakingChanges = append(diff.NonBreakingChanges, change)
 		}
 	}
 }
