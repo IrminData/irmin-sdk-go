@@ -1,0 +1,20 @@
+<!doctype html>
+<html><head><meta charset="utf-8"/><title>github.com/IrminData/irmin-sdk-go/schema</title></head><body>
+<h1>Package github.com/IrminData/irmin-sdk-go/schema</h1>
+<pre>
+package schema // import "github.com/IrminData/irmin-sdk-go/schema"
+
+
+FUNCTIONS
+
+func CompareSchemas(source, target *irminmodels.ObjectSchema) *irminmodels.SchemaDiff
+    CompareSchemas compares two ObjectSchemas and returns a detailed diff. The
+    source is typically the current/existing schema, target is the new/expected
+    schema.
+
+func IsBreakingChange(fieldDiff irminmodels.SchemaFieldDiff) bool
+    IsBreakingChange determines if a single field diff represents a breaking
+    change.
+
+</pre>
+</body></html>
