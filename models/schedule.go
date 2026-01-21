@@ -31,6 +31,7 @@ const (
 	ConnectionEventInsert ConnectionEventType = "insert"
 	ConnectionEventUpdate ConnectionEventType = "update"
 	ConnectionEventDelete ConnectionEventType = "delete"
+	ConnectionEventUpsert ConnectionEventType = "upsert"
 	ConnectionEventBatch  ConnectionEventType = "batch"
 )
 
