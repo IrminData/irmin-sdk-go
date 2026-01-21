@@ -855,6 +855,15 @@ func (c *Client) ResendInvite(
 	inviteID string,
 ) (*irminmodels.Invite, *irminmodels.IrminAPIResponse, error)
 
+func (c *Client) ResetBranch(
+	ctx context.Context,
+	workspace, repository, branch string,
+	req ResetBranchRequest,
+) (*irminmodels.IrminAPIResponse, error)
+    ResetBranch resets a branch to a specific commit reference. This performs a
+    hard reset, moving the branch pointer to the specified commit. If force is
+    true, uncommitted changes will be discarded.
+
 func (c *Client) RevertChanges(
 	ctx context.Context,
 	workspace, repository string,
@@ -1387,6 +1396,13 @@ type RequestOptions struct {
 }
     RequestOptions allows you to specify how you'd like to send data in the
     request.
+
+type ResetBranchRequest struct {
+	CommitRef string `json:"commit_ref"      validate:"required" example:"abc123def456"`
+	Force     bool   `json:"force,omitempty"                     example:"false"`
+}
+    ResetBranchRequest represents the JSON request body for resetting a branch
+    to a specific commit.
 
 type RevertUncommittedChangesRequest struct {
 	Branch   string `json:"branch"              validate:"required" example:"main"`
