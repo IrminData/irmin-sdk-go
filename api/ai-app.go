@@ -248,7 +248,7 @@ func (c *AIAppClient) ExecuteCustomTool(
 // AIAppWriteFileRequest represents the request body for writing a file.
 type AIAppWriteFileRequest struct {
 	Path          string `json:"path"                     validate:"required" example:"/repo-slug/main/data/file.json"`
-	Content       string `json:"content,omitempty"                            example:"{\"name\": \"John\"}"`
+	Content       string `json:"content,omitempty"                            example:"{"name": "John"}"`
 	ContentBase64 string `json:"content_base64,omitempty"`
 	CommitMessage string `json:"commit_message,omitempty"                     example:"Updated customer data"`
 	AutoCommit    bool   `json:"auto_commit"                                  example:"true"`
@@ -256,26 +256,26 @@ type AIAppWriteFileRequest struct {
 
 // AIAppPatchFileRequest represents the request body for patching a file with JSON Patch operations.
 type AIAppPatchFileRequest struct {
-	Path          string                       `json:"path"           validate:"required" example:"/repo-slug/main/data/file.json"`
-	Operations    []irminmodels.PatchOperation `json:"operations"     validate:"required"`
-	CommitMessage string                       `json:"commit_message,omitempty"           example:"Patched customer records"`
-	AutoCommit    bool                         `json:"auto_commit"                        example:"true"`
+	Path          string                       `json:"path"                     validate:"required" example:"/repo-slug/main/data/file.json"`
+	Operations    []irminmodels.PatchOperation `json:"operations"               validate:"required"`
+	CommitMessage string                       `json:"commit_message,omitempty"                     example:"Patched customer records"`
+	AutoCommit    bool                         `json:"auto_commit"                                  example:"true"`
 }
 
 // AIAppCommitRequest represents the request body for committing staged changes.
 type AIAppCommitRequest struct {
-	Path    string `json:"path,omitempty"              example:"/repo-slug/main"`
-	Message string `json:"message" validate:"required" example:"AI agent updates"`
+	Path    string `json:"path,omitempty" example:"/repo-slug/main"`
+	Message string `json:"message"        example:"AI agent updates" validate:"required"`
 }
 
 // AIAppWriteResult represents the result of a write operation.
 type AIAppWriteResult struct {
-	Path             string  `json:"path"                        example:"/repo-slug/main/data/file.json"`
-	Operation        string  `json:"operation"                   example:"upload"`
-	Committed        bool    `json:"committed"                   example:"true"`
-	CommitID         *string `json:"commit_id,omitempty"         example:"abc123def456"`
-	PendingID        *string `json:"pending_id,omitempty"        example:"pw_1a2b3c4d"`
-	RequiresApproval bool    `json:"requires_approval"           example:"false"`
+	Path             string  `json:"path"                 example:"/repo-slug/main/data/file.json"`
+	Operation        string  `json:"operation"            example:"upload"`
+	Committed        bool    `json:"committed"            example:"true"`
+	CommitID         *string `json:"commit_id,omitempty"  example:"abc123def456"`
+	PendingID        *string `json:"pending_id,omitempty" example:"pw_1a2b3c4d"`
+	RequiresApproval bool    `json:"requires_approval"    example:"false"`
 }
 
 // === Write Operation API Methods ===

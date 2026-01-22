@@ -17,13 +17,13 @@ type AIAppDataSourceUnified struct {
 
 // AIApplicationWriteConfig defines write operation settings for an AI Application.
 type AIApplicationWriteConfig struct {
-	FileUploadEnabled    bool   `json:"file_upload_enabled"              example:"true"`
-	FileUpdateEnabled    bool   `json:"file_update_enabled"              example:"true"`
-	PatchEnabled         bool   `json:"patch_enabled"                    example:"true"`
-	AutoCommit           bool   `json:"auto_commit"                      example:"true"`
-	RequireCommitMessage bool   `json:"require_commit_message"           example:"false"`
-	CommitMessagePrefix  string `json:"commit_message_prefix,omitempty"  example:"[AI Agent] "`
-	RequireApproval      bool   `json:"require_approval"                 example:"false"`
+	FileUploadEnabled    bool   `json:"file_upload_enabled"             example:"true"`
+	FileUpdateEnabled    bool   `json:"file_update_enabled"             example:"true"`
+	PatchEnabled         bool   `json:"patch_enabled"                   example:"true"`
+	AutoCommit           bool   `json:"auto_commit"                     example:"true"`
+	RequireCommitMessage bool   `json:"require_commit_message"          example:"false"`
+	CommitMessagePrefix  string `json:"commit_message_prefix,omitempty" example:"[AI Agent] "`
+	RequireApproval      bool   `json:"require_approval"                example:"false"`
 }
 
 // AIApplicationToolConfig defines which tools are enabled for an AI Application.
@@ -36,7 +36,7 @@ type AIApplicationToolConfig struct {
 	DocsEnabled         bool `json:"docs_enabled"          example:"true"`
 
 	// Write tools configuration
-	WriteEnabled bool                      `json:"write_enabled" example:"false"`
+	WriteEnabled bool                      `json:"write_enabled"          example:"false"`
 	WriteConfig  *AIApplicationWriteConfig `json:"write_config,omitempty"`
 }
 
@@ -128,28 +128,28 @@ const (
 
 // AIApplicationPendingWrite represents a write operation awaiting approval.
 type AIApplicationPendingWrite struct {
-	ID              string             `json:"id"                validate:"required,validsqid=ai_application_pending_writes" example:"pw_1a2b3c4d"`
-	AIApplicationID string             `json:"ai_application_id" validate:"required,validsqid=ai_applications"               example:"ai_8x2m9k4n7p5q"`
-	Repository      string             `json:"repository"                                                                    example:"customer-analytics"`
-	Path            string             `json:"path"                                                                          example:"/data/customers.json"`
-	Ref             string             `json:"ref"                                                                           example:"main"`
-	Operation       string             `json:"operation"                                                                     example:"upload"`
-	ContentPreview  string             `json:"content_preview,omitempty"                                                     example:"{\"name\": \"John\"}"`
+	ID              string             `json:"id"                        validate:"required,validsqid=ai_application_pending_writes" example:"pw_1a2b3c4d"`
+	AIApplicationID string             `json:"ai_application_id"         validate:"required,validsqid=ai_applications"               example:"ai_8x2m9k4n7p5q"`
+	Repository      string             `json:"repository"                                                                            example:"customer-analytics"`
+	Path            string             `json:"path"                                                                                  example:"/data/customers.json"`
+	Ref             string             `json:"ref"                                                                                   example:"main"`
+	Operation       string             `json:"operation"                                                                             example:"upload"`
+	ContentPreview  string             `json:"content_preview,omitempty"                                                             example:"{"name": "John"}"`
 	PatchJSON       string             `json:"patch_json,omitempty"`
-	CommitMessage   string             `json:"commit_message"                                                                example:"Updated customer data"`
-	Status          PendingWriteStatus `json:"status"                                                                        example:"pending"`
+	CommitMessage   string             `json:"commit_message"                                                                        example:"Updated customer data"`
+	Status          PendingWriteStatus `json:"status"                                                                                example:"pending"`
 	ReviewedBy      *User              `json:"reviewed_by,omitempty"`
 	ReviewedAt      *time.Time         `json:"reviewed_at,omitempty"`
-	CreatedAt       time.Time          `json:"created_at"         validate:"required"                                        example:"2025-01-15T10:30:00Z"`
-	UpdatedAt       time.Time          `json:"updated_at"         validate:"required"                                        example:"2025-12-01T14:22:30Z"`
+	CreatedAt       time.Time          `json:"created_at"                validate:"required"                                         example:"2025-01-15T10:30:00Z"`
+	UpdatedAt       time.Time          `json:"updated_at"                validate:"required"                                         example:"2025-12-01T14:22:30Z"`
 }
 
 // AIApplicationPendingWritesResponse represents a paginated list of pending writes.
 type AIApplicationPendingWritesResponse struct {
 	PendingWrites []AIApplicationPendingWrite `json:"pending_writes"`
-	Total         int64                       `json:"total"  example:"10"`
-	Limit         int                         `json:"limit"  example:"50"`
-	Offset        int                         `json:"offset" example:"0"`
+	Total         int64                       `json:"total"          example:"10"`
+	Limit         int                         `json:"limit"          example:"50"`
+	Offset        int                         `json:"offset"         example:"0"`
 }
 
 // AIApplicationToolLogsResponse represents a paginated list of tool logs.
