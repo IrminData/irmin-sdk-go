@@ -717,7 +717,7 @@ AIAppWriteFileRequest represents the request body for writing a file.
 ```go
 type AIAppWriteFileRequest struct {
     Path          string `json:"path"                     validate:"required" example:"/repo-slug/main/data/file.json"`
-    Content       string `json:"content,omitempty"                            example:"{"name": "John"}"`
+    Content       string `json:"content,omitempty"`
     ContentBase64 string `json:"content_base64,omitempty"`
     CommitMessage string `json:"commit_message,omitempty"                     example:"Updated customer data"`
     AutoCommit    bool   `json:"auto_commit"                                  example:"true"`
@@ -3712,7 +3712,7 @@ type AIApplicationPendingWrite struct {
     Path            string             `json:"path"                                                                                  example:"/data/customers.json"`
     Ref             string             `json:"ref"                                                                                   example:"main"`
     Operation       string             `json:"operation"                                                                             example:"upload"`
-    ContentPreview  string             `json:"content_preview,omitempty"                                                             example:"{"name": "John"}"`
+    ContentPreview  string             `json:"content_preview,omitempty"`
     PatchJSON       string             `json:"patch_json,omitempty"`
     CommitMessage   string             `json:"commit_message"                                                                        example:"Updated customer data"`
     Status          PendingWriteStatus `json:"status"                                                                                example:"pending"`
