@@ -248,7 +248,7 @@ func (c *AIAppClient) ExecuteCustomTool(
 // AIAppWriteFileRequest represents the request body for writing a file.
 type AIAppWriteFileRequest struct {
 	Path          string `json:"path"                     validate:"required" example:"/repo-slug/main/data/file.json"`
-	Content       string `json:"content,omitempty"                            example:"{"name": "John"}"`
+	Content       string `json:"content,omitempty"`
 	ContentBase64 string `json:"content_base64,omitempty"`
 	CommitMessage string `json:"commit_message,omitempty"                     example:"Updated customer data"`
 	AutoCommit    bool   `json:"auto_commit"                                  example:"true"`

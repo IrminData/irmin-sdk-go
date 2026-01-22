@@ -134,7 +134,7 @@ type AIApplicationPendingWrite struct {
 	Path            string             `json:"path"                                                                                  example:"/data/customers.json"`
 	Ref             string             `json:"ref"                                                                                   example:"main"`
 	Operation       string             `json:"operation"                                                                             example:"upload"`
-	ContentPreview  string             `json:"content_preview,omitempty"                                                             example:"{"name": "John"}"`
+	ContentPreview  string             `json:"content_preview,omitempty"`
 	PatchJSON       string             `json:"patch_json,omitempty"`
 	CommitMessage   string             `json:"commit_message"                                                                        example:"Updated customer data"`
 	Status          PendingWriteStatus `json:"status"                                                                                example:"pending"`
