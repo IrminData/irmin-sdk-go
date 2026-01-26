@@ -2742,8 +2742,8 @@ RevertCommitRequest represents the JSON request body for reverting a commit. Thi
 
 ```go
 type RevertCommitRequest struct {
-    CommitRef    string `json:"commit_ref"               validate:"required" example:"abc123def456"`
-    ParentNumber int    `json:"parent_number,omitempty"                      example:"0"`
+    CommitRef    string `json:"commit_ref"              validate:"required" example:"abc123def456"`
+    ParentNumber *int   `json:"parent_number,omitempty"                     example:"0"`
 }
 ```
 
