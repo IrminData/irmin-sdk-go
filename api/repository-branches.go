@@ -31,7 +31,7 @@ type ResetBranchRequest struct {
 // This creates a new commit that undoes the changes from the specified commit.
 type RevertCommitRequest struct {
 	CommitRef    string `json:"commit_ref"              validate:"required" example:"abc123def456"`
-	ParentNumber int    `json:"parent_number,omitempty"                     example:"0"`
+	ParentNumber *int   `json:"parent_number,omitempty"                     example:"0"`
 }
 
 func (c *Client) ListBranches(
