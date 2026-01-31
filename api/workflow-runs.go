@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
@@ -114,7 +115,7 @@ func (c *Client) ListWorkflowRunsWithCursor(
 		limit,
 	)
 	if cursor != "" {
-		endpoint += fmt.Sprintf("&cursor=%s", cursor)
+		endpoint += fmt.Sprintf("&cursor=%s", url.QueryEscape(cursor))
 	}
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
@@ -141,7 +142,7 @@ func (c *Client) ListAllWorkflowRunsWithCursor(
 		limit,
 	)
 	if cursor != "" {
-		endpoint += fmt.Sprintf("&cursor=%s", cursor)
+		endpoint += fmt.Sprintf("&cursor=%s", url.QueryEscape(cursor))
 	}
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
