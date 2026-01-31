@@ -95,3 +95,60 @@ func (c *Client) ListAllWorkflowRuns(
 	}
 	return runs, apiResp, nil
 }
+
+// ListWorkflowRunsWithCursor retrieves workflow runs using cursor-based pagination.
+// Cursor pagination is more efficient than page-based pagination for deep pages (O(1) vs O(n)).
+// Pass an empty string for cursor to get the first page.
+// The next cursor is returned in the response pagination metadata (Next field).
+func (c *Client) ListWorkflowRunsWithCursor(
+	ctx context.Context,
+	workspace, workflowID string,
+	cursor string,
+	limit int,
+) ([]irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error) {
+	var runs []irminmodels.WorkflowRun
+	endpoint := fmt.Sprintf(
+		"/v1/workspaces/%s/workflows/%s/runs?per_page=%d",
+		workspace,
+		workflowID,
+		limit,
+	)
+	if cursor != "" {
+		endpoint += fmt.Sprintf("&cursor=%s", cursor)
+	}
+	apiResp, err := c.FetchAPI(ctx, RequestOptions{
+		Method:   http.MethodGet,
+		Endpoint: endpoint,
+	}, &runs)
+	if err != nil {
+		return nil, nil, fmt.Errorf("list workflow runs with cursor error: %w", err)
+	}
+	return runs, apiResp, nil
+}
+
+// ListAllWorkflowRunsWithCursor retrieves all workflow runs using cursor-based pagination.
+// Pass an empty string for cursor to get the first page.
+func (c *Client) ListAllWorkflowRunsWithCursor(
+	ctx context.Context,
+	workspace string,
+	cursor string,
+	limit int,
+) ([]irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error) {
+	var runs []irminmodels.WorkflowRun
+	endpoint := fmt.Sprintf(
+		"/v1/workspaces/%s/workflows/runs?per_page=%d",
+		workspace,
+		limit,
+	)
+	if cursor != "" {
+		endpoint += fmt.Sprintf("&cursor=%s", cursor)
+	}
+	apiResp, err := c.FetchAPI(ctx, RequestOptions{
+		Method:   http.MethodGet,
+		Endpoint: endpoint,
+	}, &runs)
+	if err != nil {
+		return nil, nil, fmt.Errorf("list all workflow runs with cursor error: %w", err)
+	}
+	return runs, apiResp, nil
+}
