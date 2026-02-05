@@ -43,11 +43,11 @@ type EmbeddingSearchResponse struct {
 
 // UpsertEmbeddingItem represents a single embedding to upsert.
 type UpsertEmbeddingItem struct {
-	Text        string            `json:"text"                   validate:"required"`    // Text content to embed
-	SourceFile  string            `json:"source_file,omitempty"  validate:"omitempty"`   // Original source file path
-	SourceChunk int               `json:"source_chunk,omitempty"`                        // Chunk index within source file
-	Metadata    map[string]string `json:"metadata,omitempty"     validate:"omitempty"`   // Custom metadata key-value pairs
-	Priority    float64           `json:"priority,omitempty"     validate:"min=0,max=1"` // RAG weight (0.0-1.0, default 1.0)
+	Text        string            `json:"text"                   validate:"required"`              // Text content to embed
+	SourceFile  string            `json:"source_file,omitempty"  validate:"omitempty"`             // Original source file path
+	SourceChunk *int              `json:"source_chunk,omitempty"`                                  // Chunk index within source file (pointer to allow 0)
+	Metadata    map[string]string `json:"metadata,omitempty"     validate:"omitempty"`             // Custom metadata key-value pairs
+	Priority    *float64          `json:"priority,omitempty"     validate:"omitempty,min=0,max=1"` // RAG weight (0.0-1.0, default 1.0, pointer to allow 0)
 }
 
 // UpsertEmbeddingsResponse represents the result of an upsert operation.
