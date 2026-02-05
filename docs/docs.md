@@ -3062,9 +3062,9 @@ UpdateEmbeddingPriorityRequest represents the request to update embedding priori
 
 ```go
 type UpdateEmbeddingPriorityRequest struct {
-    EmbeddingPath string             `json:"embedding_path" validate:"required"` // Path to embedding file
-    Ref           string             `json:"ref,omitempty"`                      // Repository reference
-    Updates       map[string]float64 `json:"updates"        validate:"required"` // ID -> priority map
+    EmbeddingPath string             `json:"embedding_path" validate:"required"`                  // Path to embedding file
+    Ref           string             `json:"ref,omitempty"`                                       // Repository reference
+    Updates       map[string]float64 `json:"updates"        validate:"required,dive,min=0,max=1"` // ID -> priority map (values must be 0.0-1.0)
 }
 ```
 
@@ -3223,13 +3223,13 @@ UpsertEmbeddingsRequest represents the request to upsert embeddings with dedupli
 
 ```go
 type UpsertEmbeddingsRequest struct {
-    SourcePaths []string                          `json:"source_paths,omitempty"` // Source file paths to vectorize
-    Embeddings  []irminmodels.UpsertEmbeddingItem `json:"embeddings,omitempty"`   // Pre-defined embeddings to upsert
+    SourcePaths []string                          `json:"source_paths,omitempty"`                           // Source file paths to vectorize
+    Embeddings  []irminmodels.UpsertEmbeddingItem `json:"embeddings,omitempty"   validate:"omitempty,dive"` // Pre-defined embeddings to upsert
     OutputPath  string                            `json:"output_path"            validate:"required"`
     Ref         string                            `json:"ref,omitempty"`
     Config      *irminmodels.EmbeddingConfig      `json:"config,omitempty"`
-    Metadata    map[string]string                 `json:"metadata,omitempty"`                            // Default metadata for all chunks
-    Priority    *float64                          `json:"priority,omitempty"     validate:"min=0,max=1"` // Default priority (pointer to allow 0)
+    Metadata    map[string]string                 `json:"metadata,omitempty"`                                      // Default metadata for all chunks
+    Priority    *float64                          `json:"priority,omitempty"     validate:"omitempty,min=0,max=1"` // Default priority (pointer to allow 0)
 }
 ```
 
