@@ -42,25 +42,25 @@ type GetEmbeddingInfoRequest struct {
 type UpsertEmbeddingsRequest struct {
 	SourcePaths []string                          `json:"source_paths,omitempty"` // Source file paths to vectorize
 	Embeddings  []irminmodels.UpsertEmbeddingItem `json:"embeddings,omitempty"`   // Pre-defined embeddings to upsert
-	OutputPath  string                            `json:"output_path" validate:"required"`
+	OutputPath  string                            `json:"output_path"            validate:"required"`
 	Ref         string                            `json:"ref,omitempty"`
 	Config      *irminmodels.EmbeddingConfig      `json:"config,omitempty"`
-	Metadata    map[string]string                 `json:"metadata,omitempty"`  // Default metadata for all chunks
-	Priority    float64                           `json:"priority,omitempty"`  // Default priority for all chunks
+	Metadata    map[string]string                 `json:"metadata,omitempty"` // Default metadata for all chunks
+	Priority    float64                           `json:"priority,omitempty"` // Default priority for all chunks
 }
 
 // UpdateEmbeddingMetadataRequest represents the request to update embedding metadata.
 type UpdateEmbeddingMetadataRequest struct {
 	EmbeddingPath string                       `json:"embedding_path" validate:"required"` // Path to embedding file
 	Ref           string                       `json:"ref,omitempty"`                      // Repository reference
-	Updates       map[string]map[string]string `json:"updates" validate:"required"`        // ID -> metadata map
+	Updates       map[string]map[string]string `json:"updates"        validate:"required"` // ID -> metadata map
 }
 
 // UpdateEmbeddingPriorityRequest represents the request to update embedding priority.
 type UpdateEmbeddingPriorityRequest struct {
 	EmbeddingPath string             `json:"embedding_path" validate:"required"` // Path to embedding file
 	Ref           string             `json:"ref,omitempty"`                      // Repository reference
-	Updates       map[string]float64 `json:"updates" validate:"required"`        // ID -> priority map
+	Updates       map[string]float64 `json:"updates"        validate:"required"` // ID -> priority map
 }
 
 // VectorizeObjects creates embeddings from one or more repository objects.
