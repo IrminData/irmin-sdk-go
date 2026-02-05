@@ -45,8 +45,8 @@ type UpsertEmbeddingsRequest struct {
 	OutputPath  string                            `json:"output_path"            validate:"required"`
 	Ref         string                            `json:"ref,omitempty"`
 	Config      *irminmodels.EmbeddingConfig      `json:"config,omitempty"`
-	Metadata    map[string]string                 `json:"metadata,omitempty"` // Default metadata for all chunks
-	Priority    float64                           `json:"priority,omitempty"` // Default priority for all chunks
+	Metadata    map[string]string                 `json:"metadata,omitempty"`                            // Default metadata for all chunks
+	Priority    *float64                          `json:"priority,omitempty"     validate:"min=0,max=1"` // Default priority (pointer to allow 0)
 }
 
 // UpdateEmbeddingMetadataRequest represents the request to update embedding metadata.
