@@ -3228,8 +3228,8 @@ type UpsertEmbeddingsRequest struct {
     OutputPath  string                            `json:"output_path"            validate:"required"`
     Ref         string                            `json:"ref,omitempty"`
     Config      *irminmodels.EmbeddingConfig      `json:"config,omitempty"`
-    Metadata    map[string]string                 `json:"metadata,omitempty"` // Default metadata for all chunks
-    Priority    float64                           `json:"priority,omitempty"` // Default priority for all chunks
+    Metadata    map[string]string                 `json:"metadata,omitempty"`                            // Default metadata for all chunks
+    Priority    *float64                          `json:"priority,omitempty"     validate:"min=0,max=1"` // Default priority (pointer to allow 0)
 }
 ```
 
@@ -6054,11 +6054,11 @@ UpsertEmbeddingItem represents a single embedding to upsert.
 
 ```go
 type UpsertEmbeddingItem struct {
-    Text        string            `json:"text"                   validate:"required"`    // Text content to embed
-    SourceFile  string            `json:"source_file,omitempty"  validate:"omitempty"`   // Original source file path
-    SourceChunk int               `json:"source_chunk,omitempty"`                        // Chunk index within source file
-    Metadata    map[string]string `json:"metadata,omitempty"     validate:"omitempty"`   // Custom metadata key-value pairs
-    Priority    float64           `json:"priority,omitempty"     validate:"min=0,max=1"` // RAG weight (0.0-1.0, default 1.0)
+    Text        string            `json:"text"                   validate:"required"`              // Text content to embed
+    SourceFile  string            `json:"source_file,omitempty"  validate:"omitempty"`             // Original source file path
+    SourceChunk *int              `json:"source_chunk,omitempty"`                                  // Chunk index within source file (pointer to allow 0)
+    Metadata    map[string]string `json:"metadata,omitempty"     validate:"omitempty"`             // Custom metadata key-value pairs
+    Priority    *float64          `json:"priority,omitempty"     validate:"omitempty,min=0,max=1"` // RAG weight (0.0-1.0, default 1.0, pointer to allow 0)
 }
 ```
 
