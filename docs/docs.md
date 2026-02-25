@@ -806,10 +806,10 @@ AssociatePresignedUploadRequest represents the JSON request body for associating
 
 ```go
 type AssociatePresignedUploadRequest struct {
-    PhysicalAddress string `json:"physical_address" validate:"required" example:"s3://bucket/key"`
-    Checksum        string `json:"checksum"          validate:"omitempty" example:"d41d8cd98f00b204e9800998ecf8427e"`
-    SizeBytes       int64  `json:"size_bytes"       validate:"required" example:"1048576"`
-    ContentType     string `json:"content_type"     validate:"required" example:"application/octet-stream"`
+    PhysicalAddress string `json:"physical_address" validate:"required"  example:"s3://bucket/key"`
+    Checksum        string `json:"checksum"         validate:"omitempty" example:"d41d8cd98f00b204e9800998ecf8427e"`
+    SizeBytes       int64  `json:"size_bytes"       validate:"required"  example:"1048576"`
+    ContentType     string `json:"content_type"     validate:"required"  example:"application/octet-stream"`
 }
 ```
 
@@ -3042,9 +3042,9 @@ PresignedUploadResult represents the response from generating a presigned upload
 
 ```go
 type PresignedUploadResult struct {
-    UploadURL       string `json:"upload_url"        example:"https://s3.example.com/bucket/key?X-Amz-Signature=..."`
-    PhysicalAddress string `json:"physical_address"  example:"s3://bucket/key"`
-    Expiry          int64  `json:"expiry"            example:"1706270400"`
+    UploadURL       string `json:"upload_url"       example:"https://s3.example.com/upload"`
+    PhysicalAddress string `json:"physical_address" example:"s3://bucket/key"`
+    Expiry          int64  `json:"expiry"           example:"1706270400"`
 }
 ```
 
@@ -4329,13 +4329,13 @@ AsyncJob represents an asynchronous background job response.
 
 ```go
 type AsyncJob struct {
-    ID           string         `json:"id"             validate:"required,validsqid=async-jobs"  example:"aj_2k8n9q1m7p3x4z"`
-    CreatedAt    time.Time      `json:"created_at"     validate:"required"                       example:"2025-01-15T10:30:00Z"`
-    UpdatedAt    time.Time      `json:"updated_at"     validate:"required"                       example:"2025-01-15T10:35:00Z"`
-    Type         AsyncJobType   `json:"type"           validate:"required"                       example:"zip_download"`
-    Status       AsyncJobStatus `json:"status"         validate:"required"                       example:"pending"`
-    Progress     int            `json:"progress"                                                 example:"50"`
-    ErrorMessage string         `json:"error_message,omitempty"                                  example:""`
+    ID           string         `json:"id"                      validate:"required,validsqid=async-jobs"`
+    CreatedAt    time.Time      `json:"created_at"              validate:"required"`
+    UpdatedAt    time.Time      `json:"updated_at"              validate:"required"`
+    Type         AsyncJobType   `json:"type"                    validate:"required"`
+    Status       AsyncJobStatus `json:"status"                  validate:"required"`
+    Progress     int            `json:"progress"`
+    ErrorMessage string         `json:"error_message,omitempty"`
     ResultExpiry *time.Time     `json:"result_expiry,omitempty"`
 }
 ```
