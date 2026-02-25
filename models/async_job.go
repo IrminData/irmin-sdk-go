@@ -21,11 +21,11 @@ const (
 
 // AsyncJob represents an asynchronous background job response.
 type AsyncJob struct {
-	ID           string         `json:"id"             validate:"required,validsqid=async-jobs"`
-	CreatedAt    time.Time      `json:"created_at"     validate:"required"`
-	UpdatedAt    time.Time      `json:"updated_at"     validate:"required"`
-	Type         AsyncJobType   `json:"type"           validate:"required"`
-	Status       AsyncJobStatus `json:"status"         validate:"required"`
+	ID           string         `json:"id"                      validate:"required,validsqid=async-jobs"`
+	CreatedAt    time.Time      `json:"created_at"              validate:"required"`
+	UpdatedAt    time.Time      `json:"updated_at"              validate:"required"`
+	Type         AsyncJobType   `json:"type"                    validate:"required"`
+	Status       AsyncJobStatus `json:"status"                  validate:"required"`
 	Progress     int            `json:"progress"`
 	ErrorMessage string         `json:"error_message,omitempty"`
 	ResultExpiry *time.Time     `json:"result_expiry,omitempty"`

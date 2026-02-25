@@ -57,10 +57,10 @@ type PresignedUploadResult struct {
 
 // AssociatePresignedUploadRequest represents the JSON request body for associating a staged upload.
 type AssociatePresignedUploadRequest struct {
-	PhysicalAddress string `json:"physical_address" validate:"required" example:"s3://bucket/key"`
-	Checksum        string `json:"checksum"          validate:"omitempty" example:"d41d8cd98f00b204e9800998ecf8427e"`
-	SizeBytes       int64  `json:"size_bytes"       validate:"required" example:"1048576"`
-	ContentType     string `json:"content_type"     validate:"required" example:"application/octet-stream"`
+	PhysicalAddress string `json:"physical_address" validate:"required"  example:"s3://bucket/key"`
+	Checksum        string `json:"checksum"         validate:"omitempty" example:"d41d8cd98f00b204e9800998ecf8427e"`
+	SizeBytes       int64  `json:"size_bytes"       validate:"required"  example:"1048576"`
+	ContentType     string `json:"content_type"     validate:"required"  example:"application/octet-stream"`
 }
 
 // CreateSignedURLRequest represents the JSON request body for creating a signed download URL.
