@@ -50,9 +50,9 @@ type CreatePointerRequest struct {
 
 // PresignedUploadResult represents the response from generating a presigned upload URL.
 type PresignedUploadResult struct {
-	UploadURL       string `json:"upload_url"        example:"https://s3.example.com/bucket/key?X-Amz-Signature=..."`
-	PhysicalAddress string `json:"physical_address"  example:"s3://bucket/key"`
-	Expiry          int64  `json:"expiry"            example:"1706270400"`
+	UploadURL       string `json:"upload_url"       example:"https://s3.example.com/upload"`
+	PhysicalAddress string `json:"physical_address" example:"s3://bucket/key"`
+	Expiry          int64  `json:"expiry"           example:"1706270400"`
 }
 
 // AssociatePresignedUploadRequest represents the JSON request body for associating a staged upload.
