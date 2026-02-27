@@ -87,6 +87,8 @@ func (v *Validator) validatePipelineStage(fl validator.FieldLevel) bool {
 		return v.validateTransformPipelineStage(parentStruct)
 	case "embeddings":
 		return v.validateEmbeddingsPipelineStage(parentStruct)
+	case "field_mapping":
+		return v.validateFieldMappingPipelineStage(parentStruct)
 	default:
 		return true // Let oneof validation handle invalid types
 	}
@@ -519,6 +521,27 @@ func (v *Validator) validateResourceID(resourceIDField reflect.Value, resourceTy
 	// Check if the decoded value is a valid uint64
 	if decoded == 0 {
 		return false
+	}
+
+	return true
+}
+
+// validateFieldMappingPipelineStage validates field_mapping-type pipeline stages.
+func (v *Validator) validateFieldMappingPipelineStage(parentStruct reflect.Value) bool {
+	fieldMappingMappingsField := parentStruct.FieldByName("FieldMappingMappings")
+	fieldMappingModeField := parentStruct.FieldByName("FieldMappingMode")
+
+	// FieldMappingMappings is required and must be non-empty
+	if !fieldMappingMappingsField.IsValid() || fieldMappingMappingsField.Len() == 0 {
+		return false
+	}
+
+	// FieldMappingMode must be "single" or "all" if provided
+	if fieldMappingModeField.IsValid() && !fieldMappingModeField.IsNil() {
+		mode := fieldMappingModeField.Elem().String()
+		if mode != "single" && mode != "all" {
+			return false
+		}
 	}
 
 	return true
