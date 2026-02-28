@@ -200,7 +200,7 @@ func TestIsBinaryMimeType(t *testing.T) {
 		{"image/jpeg", true},
 		{"image/gif", true},
 		{"image/webp", true},
-		{"image/svg+xml", true},
+		{"image/svg+xml", false},       // SVG is text-based XML
 		{"image/custom-unknown", true}, // prefix match
 
 		// Audio/Video
@@ -275,6 +275,8 @@ func TestIsTextMimeType(t *testing.T) {
 		{"application/x-sh", true},
 		{"application/x-toml", true},
 		{"application/x-ini", true},
+		{"application/jsonl", true},
+		{"application/x-ndjson", true},
 
 		// Non-text
 		{"image/png", false},
