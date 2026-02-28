@@ -99,6 +99,8 @@ var textApplicationTypes = map[string]bool{
 	"application/x-sh":       true,
 	"application/x-toml":     true,
 	"application/x-ini":      true,
+	"application/jsonl":      true,
+	"application/x-ndjson":   true,
 }
 
 // DetectMimeType detects MIME type using both content (magic bytes) and filename extension.
@@ -179,8 +181,14 @@ func DetectMimeTypeFromReader(r io.Reader, filename string) (string, error) {
 }
 
 // IsBinaryMimeType checks if the given MIME type represents binary data.
+// SVG (image/svg+xml) is excluded since it is a text-based XML format.
 func IsBinaryMimeType(contentType string) bool {
 	ct := StripMimeTypeParameters(strings.ToLower(contentType))
+
+	// SVG is XML-based text, not binary
+	if ct == "image/svg+xml" {
+		return false
+	}
 
 	if strings.HasPrefix(ct, "image/") ||
 		strings.HasPrefix(ct, "audio/") ||
