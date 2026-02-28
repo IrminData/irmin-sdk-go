@@ -44,6 +44,7 @@ func GetInputFile(filePath string) ([]byte, error)
 
 func IsBinaryMimeType(contentType string) bool
     IsBinaryMimeType checks if the given MIME type represents binary data.
+    SVG (image/svg+xml) is excluded since it is a text-based XML format.
 
 func IsStructuredDataFormat(ext, contentType string) bool
     IsStructuredDataFormat determines if a file extension and MIME type
