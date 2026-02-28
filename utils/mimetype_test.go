@@ -209,6 +209,12 @@ func TestIsBinaryMimeType(t *testing.T) {
 		{"video/mp4", true},
 		{"video/webm", true},
 
+		// Fonts
+		{"font/woff", true},
+		{"font/woff2", true},
+		{"font/otf", true},
+		{"font/ttf", true},
+
 		// Binary application types
 		{"application/pdf", true},
 		{"application/zip", true},
