@@ -184,7 +184,8 @@ func IsBinaryMimeType(contentType string) bool {
 
 	if strings.HasPrefix(ct, "image/") ||
 		strings.HasPrefix(ct, "audio/") ||
-		strings.HasPrefix(ct, "video/") {
+		strings.HasPrefix(ct, "video/") ||
+		strings.HasPrefix(ct, "font/") {
 		return true
 	}
 
