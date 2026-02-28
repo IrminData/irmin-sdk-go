@@ -219,6 +219,9 @@ func TestIsBinaryMimeType(t *testing.T) {
 		{"application/pdf", true},
 		{"application/zip", true},
 		{"application/gzip", true},
+		{"application/x-rar-compressed", true},
+		{"application/vnd.rar", true},
+		{"application/x-7z-compressed", true},
 		{"application/octet-stream", true},
 		{"application/x-binary", true},
 		{"application/msword", true},
@@ -277,6 +280,9 @@ func TestIsTextMimeType(t *testing.T) {
 		{"application/x-ini", true},
 		{"application/jsonl", true},
 		{"application/x-ndjson", true},
+
+		// Text-based image types
+		{"image/svg+xml", true},
 
 		// Non-text
 		{"image/png", false},
