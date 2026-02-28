@@ -67,13 +67,14 @@ var binaryApplicationTypes = map[string]bool{
 	"application/vnd.openxmlformats-officedocument.presentationml.presentation": true,
 
 	// Archives
-	"application/zip":     true,
-	"application/gzip":    true,
-	"application/x-tar":   true,
-	"application/x-rar":   true,
-	"application/x-7z":    true,
-	"application/x-bzip":  true,
-	"application/x-bzip2": true,
+	"application/zip":              true,
+	"application/gzip":             true,
+	"application/x-tar":            true,
+	"application/x-rar-compressed": true,
+	"application/vnd.rar":          true,
+	"application/x-7z-compressed":  true,
+	"application/x-bzip":           true,
+	"application/x-bzip2":          true,
 
 	// Generic binary
 	defaultMimeType:        true,
@@ -200,6 +201,13 @@ func IsBinaryMimeType(contentType string) bool {
 	return binaryApplicationTypes[ct]
 }
 
+// textImageTypes are image/* MIME types that are actually text-based.
+//
+//nolint:gochecknoglobals // Package-level lookup table for efficiency
+var textImageTypes = map[string]bool{
+	"image/svg+xml": true,
+}
+
 // IsTextMimeType checks if the given MIME type represents text-based content
 // suitable for display or processing as text.
 func IsTextMimeType(mimeType string) bool {
@@ -209,7 +217,7 @@ func IsTextMimeType(mimeType string) bool {
 		return true
 	}
 
-	return textApplicationTypes[ct]
+	return textApplicationTypes[ct] || textImageTypes[ct]
 }
 
 // defaultMimeType is the fallback MIME type for unrecognized content.
