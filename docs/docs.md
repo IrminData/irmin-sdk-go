@@ -6747,7 +6747,7 @@ GetInputFile reads a file from the \_input directory. Returns the file content a
 func IsBinaryMimeType(contentType string) bool
 ```
 
-IsBinaryMimeType checks if the given MIME type represents binary data.
+IsBinaryMimeType checks if the given MIME type represents binary data. SVG \(image/svg\+xml\) is excluded since it is a text\-based XML format.
 
 <a name="IsStructuredDataFormat"></a>
 ## func IsStructuredDataFormat
