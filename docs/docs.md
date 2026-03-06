@@ -6579,7 +6579,7 @@ type UsageDimensionInfo struct {
 ```
 
 <a name="UsageHistoryEntry"></a>
-## type [UsageHistoryEntry](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/billing.go#L81-L87>)
+## type UsageHistoryEntry
 
 UsageHistoryEntry holds a usage summary for a specific dimension and billing period.
 
