@@ -193,6 +193,7 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) CreateConnectionSubscription\(ctx context.Context, workspace, connectionID string, req CreateConnectionSubscriptionRequest\) \(\*irminmodels.ConnectionSubscriptionWithToken, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateConnectionSubscription>)
   - [func \(c \*Client\) CreatePointer\(ctx context.Context, workspace, repository, path, ref string, req CreatePointerRequest\) \(\*irminmodels.Object, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreatePointer>)
   - [func \(c \*Client\) CreatePolicy\(ctx context.Context, workspace string, req CreatePolicyRequest\) \(\*irminmodels.Policy, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreatePolicy>)
+  - [func \(c \*Client\) CreatePortalSession\(ctx context.Context, workspaceSlug string\) \(\*PortalResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreatePortalSession>)
   - [func \(c \*Client\) CreateRepository\(ctx context.Context, workspace string, req CreateRepositoryRequest\) \(\*irminmodels.Repository, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateRepository>)
   - [func \(c \*Client\) CreateSignedObjectURL\(ctx context.Context, workspace, repoSlug string, req CreateSignedURLRequest\) \(\*SignedURLResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateSignedObjectURL>)
   - [func \(c \*Client\) CreateStoredQuery\(ctx context.Context, workspace string, req CreateQueryRequest\) \(\*irminmodels.StoredQuery, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateStoredQuery>)
@@ -261,7 +262,6 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) GetPolicyResourceOptions\(ctx context.Context, workspace string\) \(\*irminmodels.PolicyResourceOptions, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyResourceOptions>)
   - [func \(c \*Client\) GetPolicyRoleSummary\(ctx context.Context, workspace string\) \(\[\]irminmodels.RolePolicySummary, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyRoleSummary>)
   - [func \(c \*Client\) GetPolicyUserSummary\(ctx context.Context, workspace string\) \(\*irminmodels.UserPolicySummary, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyUserSummary>)
-  - [func \(c \*Client\) GetPortalURL\(ctx context.Context, workspaceSlug string\) \(\*PortalResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPortalURL>)
   - [func \(c \*Client\) GetProfile\(ctx context.Context\) \(\*irminmodels.User, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetProfile>)
   - [func \(c \*Client\) GetRepository\(ctx context.Context, workspace, slug string\) \(\*irminmodels.Repository, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetRepository>)
   - [func \(c \*Client\) GetStoredQuery\(ctx context.Context, workspace, queryID string\) \(\*irminmodels.StoredQuery, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetStoredQuery>)
@@ -1047,6 +1047,15 @@ func (c *Client) CreatePolicy(ctx context.Context, workspace string, req CreateP
 
 CreatePolicy creates a new policy for a workspace.
 
+<a name="Client.CreatePortalSession"></a>
+### func \(\*Client\) CreatePortalSession
+
+```go
+func (c *Client) CreatePortalSession(ctx context.Context, workspaceSlug string) (*PortalResponse, *irminmodels.IrminAPIResponse, error)
+```
+
+CreatePortalSession creates a Polar customer portal session and returns its URL.
+
 <a name="Client.CreateRepository"></a>
 ### func \(\*Client\) CreateRepository
 
@@ -1676,15 +1685,6 @@ func (c *Client) GetPolicyUserSummary(ctx context.Context, workspace string) (*i
 ```
 
 GetPolicyUserSummary returns a list of policies that apply to a user.
-
-<a name="Client.GetPortalURL"></a>
-### func \(\*Client\) GetPortalURL
-
-```go
-func (c *Client) GetPortalURL(ctx context.Context, workspaceSlug string) (*PortalResponse, *irminmodels.IrminAPIResponse, error)
-```
-
-GetPortalURL retrieves the Polar customer portal URL for a workspace.
 
 <a name="Client.GetProfile"></a>
 ### func \(\*Client\) GetProfile

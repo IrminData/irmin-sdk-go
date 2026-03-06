@@ -412,6 +412,13 @@ func (c *Client) CreatePolicy(
 ) (*irminmodels.Policy, *irminmodels.IrminAPIResponse, error)
     CreatePolicy creates a new policy for a workspace.
 
+func (c *Client) CreatePortalSession(
+	ctx context.Context,
+	workspaceSlug string,
+) (*PortalResponse, *irminmodels.IrminAPIResponse, error)
+    CreatePortalSession creates a Polar customer portal session and returns its
+    URL.
+
 func (c *Client) CreateRepository(
 	ctx context.Context,
 	workspace string,
@@ -842,12 +849,6 @@ func (c *Client) GetPolicyUserSummary(
 	workspace string,
 ) (*irminmodels.UserPolicySummary, *irminmodels.IrminAPIResponse, error)
     GetPolicyUserSummary returns a list of policies that apply to a user.
-
-func (c *Client) GetPortalURL(
-	ctx context.Context,
-	workspaceSlug string,
-) (*PortalResponse, *irminmodels.IrminAPIResponse, error)
-    GetPortalURL retrieves the Polar customer portal URL for a workspace.
 
 func (c *Client) GetProfile(ctx context.Context) (*irminmodels.User, *irminmodels.IrminAPIResponse, error)
 
