@@ -186,6 +186,15 @@ type ActionInputData struct {
 	RepositoryPath string `json:"repository_path" validate:"omitempty" example:"/data/customers.csv"`
 }
 
+type BillingInterval string
+    BillingInterval represents the billing interval.
+
+const (
+	// BillingIntervalMonthly represents monthly billing.
+	BillingIntervalMonthly BillingInterval = "monthly"
+	// BillingIntervalAnnual represents annual billing.
+	BillingIntervalAnnual BillingInterval = "annual"
+)
 type Branch struct {
 	// Name of the branch
 	Name string `json:"name"         validate:"required,max=100,validslug" example:"main"`
@@ -223,6 +232,17 @@ const (
 	ChangeTypeConflict ChangeType = "conflict"
 	ChangeTypeMoved    ChangeType = "moved"
 )
+type CheckoutRequest struct {
+	PlanTier  string `json:"plan_tier"  validate:"required"`
+	ReturnURL string `json:"return_url" validate:"required"`
+}
+    CheckoutRequest is the request body for creating a checkout session.
+
+type CheckoutResponse struct {
+	CheckoutURL string `json:"checkout_url"`
+}
+    CheckoutResponse is the response body for checkout/change-plan endpoints.
+
 type Commit struct {
 	// Hash of the commit
 	Hash string `json:"hash"                    validate:"required"          example:"1a2b3c4dn7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3"`
@@ -863,6 +883,29 @@ const (
 	PipelineStageTypePatch            PipelineStageType = "patch"
 	PipelineStageTypeFieldMapping     PipelineStageType = "field_mapping"
 )
+type PlanInfo struct {
+	Tier            PlanTier           `json:"tier"`
+	Status          SubscriptionStatus `json:"status"`
+	BillingInterval BillingInterval    `json:"billing_interval"`
+	PeriodStart     *time.Time         `json:"current_period_start"`
+	PeriodEnd       *time.Time         `json:"current_period_end"`
+	CancelledAt     *time.Time         `json:"cancelled_at"`
+}
+    PlanInfo holds information about a workspace's current plan.
+
+type PlanTier string
+    PlanTier represents the billing plan tier.
+
+const (
+	// PlanTierHobby represents the hobby plan tier.
+	PlanTierHobby PlanTier = "hobby"
+	// PlanTierPro represents the pro plan tier.
+	PlanTierPro PlanTier = "pro"
+	// PlanTierBusiness represents the business plan tier.
+	PlanTierBusiness PlanTier = "business"
+	// PlanTierEnterprise represents the enterprise plan tier.
+	PlanTierEnterprise PlanTier = "enterprise"
+)
 type PointerTarget struct {
 	// Workspace is the target workspace slug. Empty string means same workspace.
 	Workspace string `json:"target_workspace,omitempty" validate:"omitempty,max=100" example:""`
@@ -1011,6 +1054,11 @@ type PolicyResourceOptions struct {
 }
     PolicyResourceOptions represents all possible policy resource options for a
     given workspace.
+
+type PortalResponse struct {
+	PortalURL string `json:"portal_url"`
+}
+    PortalResponse is the response body for the portal endpoint.
 
 type QueryResult struct {
 	Columns    []string         `json:"columns,omitempty"     validate:"dive"  example:"region,category,total_sales"`
@@ -1377,6 +1425,21 @@ type StoredScript struct {
 	UpdatedAt   time.Time `json:"updated_at"            validate:"required"                   example:"2025-12-01T14:22:30Z"`
 }
 
+type SubscriptionStatus string
+    SubscriptionStatus represents the status of a subscription.
+
+const (
+	// SubscriptionStatusActive represents an active subscription.
+	SubscriptionStatusActive SubscriptionStatus = "active"
+	// SubscriptionStatusCancelled represents a cancelled subscription.
+	SubscriptionStatusCancelled SubscriptionStatus = "cancelled"
+	// SubscriptionStatusPastDue represents a past due subscription.
+	SubscriptionStatusPastDue SubscriptionStatus = "past_due"
+	// SubscriptionStatusTrialing represents a trialing subscription.
+	SubscriptionStatusTrialing SubscriptionStatus = "trialing"
+	// SubscriptionStatusNone represents no active subscription.
+	SubscriptionStatusNone SubscriptionStatus = "none"
+)
 type SyncMode string
     SyncMode represents the synchronization mode for import/export workflows.
 
@@ -1485,6 +1548,30 @@ type UpsertEmbeddingsResponse struct {
 	Path     string `json:"path"     example:"embeddings/documents.parquet"` // Output path of the embedding file
 }
     UpsertEmbeddingsResponse represents the result of an upsert operation.
+
+type UsageDimension string
+    UsageDimension represents a usage tracking dimension.
+
+const (
+	// UsageDimensionStorage represents storage usage.
+	UsageDimensionStorage UsageDimension = "storage"
+	// UsageDimensionWorkflowRuns represents workflow run usage.
+	UsageDimensionWorkflowRuns UsageDimension = "workflow_runs"
+	// UsageDimensionAIRequests represents AI request usage.
+	UsageDimensionAIRequests UsageDimension = "ai_requests"
+	// UsageDimensionAPIRequests represents API request usage.
+	UsageDimensionAPIRequests UsageDimension = "api_requests"
+	// UsageDimensionDataTransfer represents data transfer usage.
+	UsageDimensionDataTransfer UsageDimension = "data_transfer"
+)
+type UsageDimensionInfo struct {
+	Dimension    UsageDimension `json:"dimension"`
+	CurrentUsage int64          `json:"current_usage"`
+	Limit        *int64         `json:"limit"`
+	Unit         string         `json:"unit"`
+	RatePerUnit  float64        `json:"rate_per_unit"`
+}
+    UsageDimensionInfo holds usage info for a single dimension.
 
 type User struct {
 	ID             string `json:"id"              validate:"required,validsqid=users" example:"usr_2k8n9q1m7p3x4z"`

@@ -314,6 +314,13 @@ func (c *Client) CancelWorkflowRun(
 	workspace, workflowID, runID string,
 ) (*irminmodels.WorkflowRun, *irminmodels.IrminAPIResponse, error)
 
+func (c *Client) ChangePlan(
+	ctx context.Context,
+	workspaceSlug string,
+	req irminmodels.CheckoutRequest,
+) (*irminmodels.CheckoutResponse, *irminmodels.IrminAPIResponse, error)
+    ChangePlan changes the billing plan for a workspace.
+
 func (c *Client) CheckPermission(
 	ctx context.Context,
 	workspace string,
@@ -349,6 +356,13 @@ func (c *Client) CreateBranch(
 	req CreateBranchRequest,
 ) (*irminmodels.Branch, *irminmodels.IrminAPIResponse, error)
     CreateBranch creates a new branch in the repository.
+
+func (c *Client) CreateCheckout(
+	ctx context.Context,
+	workspaceSlug string,
+	req irminmodels.CheckoutRequest,
+) (*irminmodels.CheckoutResponse, *irminmodels.IrminAPIResponse, error)
+    CreateCheckout creates a Polar checkout session for a workspace.
 
 func (c *Client) CreateCommit(
 	ctx context.Context,
@@ -816,6 +830,12 @@ func (c *Client) GetPolicyUserSummary(
 ) (*irminmodels.UserPolicySummary, *irminmodels.IrminAPIResponse, error)
     GetPolicyUserSummary returns a list of policies that apply to a user.
 
+func (c *Client) GetPortalURL(
+	ctx context.Context,
+	workspaceSlug string,
+) (*irminmodels.PortalResponse, *irminmodels.IrminAPIResponse, error)
+    GetPortalURL retrieves the Polar customer portal URL for a workspace.
+
 func (c *Client) GetProfile(ctx context.Context) (*irminmodels.User, *irminmodels.IrminAPIResponse, error)
 
 func (c *Client) GetRepository(
@@ -833,6 +853,12 @@ func (c *Client) GetStoredScript(
 	workspace, scriptID string,
 ) (*irminmodels.StoredScript, *irminmodels.IrminAPIResponse, error)
 
+func (c *Client) GetSubscription(
+	ctx context.Context,
+	workspaceSlug string,
+) (*irminmodels.PlanInfo, *irminmodels.IrminAPIResponse, error)
+    GetSubscription retrieves the current billing subscription for a workspace.
+
 func (c *Client) GetTag(
 	ctx context.Context,
 	workspace, repository, tag string,
@@ -843,6 +869,20 @@ func (c *Client) GetUncommittedChanges(
 	workspace, repository, branch string,
 ) (*irminmodels.Diff, *irminmodels.IrminAPIResponse, error)
     GetUncommittedChanges retrieves the list of uncommitted changes in a branch.
+
+func (c *Client) GetUsage(
+	ctx context.Context,
+	workspaceSlug string,
+) ([]irminmodels.UsageDimensionInfo, *irminmodels.IrminAPIResponse, error)
+    GetUsage retrieves current period usage for a workspace.
+
+func (c *Client) GetUsageHistory(
+	ctx context.Context,
+	workspaceSlug string,
+	periods int,
+) ([]irminmodels.UsageDimensionInfo, *irminmodels.IrminAPIResponse, error)
+    GetUsageHistory retrieves usage history for a workspace over multiple
+    periods.
 
 func (c *Client) GetUser(
 	ctx context.Context,
