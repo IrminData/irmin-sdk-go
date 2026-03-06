@@ -894,9 +894,9 @@ func (c *Client) GetUsageHistory(
 	ctx context.Context,
 	workspaceSlug string,
 	periods int,
-) ([]irminmodels.UsageDimensionInfo, *irminmodels.IrminAPIResponse, error)
+) ([]irminmodels.UsageHistoryEntry, *irminmodels.IrminAPIResponse, error)
     GetUsageHistory retrieves usage history for a workspace over multiple
-    periods.
+    billing periods.
 
 func (c *Client) GetUser(
 	ctx context.Context,

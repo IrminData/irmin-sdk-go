@@ -270,7 +270,7 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) GetTag\(ctx context.Context, workspace, repository, tag string\) \(\*irminmodels.GitTag, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetTag>)
   - [func \(c \*Client\) GetUncommittedChanges\(ctx context.Context, workspace, repository, branch string\) \(\*irminmodels.Diff, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUncommittedChanges>)
   - [func \(c \*Client\) GetUsage\(ctx context.Context, workspaceSlug string\) \(\[\]irminmodels.UsageDimensionInfo, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUsage>)
-  - [func \(c \*Client\) GetUsageHistory\(ctx context.Context, workspaceSlug string, periods int\) \(\[\]irminmodels.UsageDimensionInfo, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUsageHistory>)
+  - [func \(c \*Client\) GetUsageHistory\(ctx context.Context, workspaceSlug string, periods int\) \(\[\]irminmodels.UsageHistoryEntry, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUsageHistory>)
   - [func \(c \*Client\) GetUser\(ctx context.Context, workspace, userID string\) \(\*irminmodels.User, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUser>)
   - [func \(c \*Client\) GetWorkflow\(ctx context.Context, workspace, workflowID string\) \(\*irminmodels.Workflow, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetWorkflow>)
   - [func \(c \*Client\) GetWorkflowRun\(ctx context.Context, workspace, workflowID, runID string\) \(\*irminmodels.WorkflowRun, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetWorkflowRun>)
@@ -1762,10 +1762,10 @@ GetUsage retrieves current period usage for a workspace.
 ### func \(\*Client\) [GetUsageHistory](<https://github.com/IrminData/irmin-sdk-go/blob/development/api/billing.go#L60-L64>)
 
 ```go
-func (c *Client) GetUsageHistory(ctx context.Context, workspaceSlug string, periods int) ([]irminmodels.UsageDimensionInfo, *irminmodels.IrminAPIResponse, error)
+func (c *Client) GetUsageHistory(ctx context.Context, workspaceSlug string, periods int) ([]irminmodels.UsageHistoryEntry, *irminmodels.IrminAPIResponse, error)
 ```
 
-GetUsageHistory retrieves usage history for a workspace over multiple periods.
+GetUsageHistory retrieves usage history for a workspace over multiple billing periods.
 
 <a name="Client.GetUser"></a>
 ### func \(\*Client\) [GetUser](<https://github.com/IrminData/irmin-sdk-go/blob/development/api/users.go#L31-L34>)
@@ -4099,6 +4099,7 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type UpsertEmbeddingsResponse](<#UpsertEmbeddingsResponse>)
 - [type UsageDimension](<#UsageDimension>)
 - [type UsageDimensionInfo](<#UsageDimensionInfo>)
+- [type UsageHistoryEntry](<#UsageHistoryEntry>)
 - [type User](<#User>)
 - [type UserPolicySummary](<#UserPolicySummary>)
 - [type Workflow](<#Workflow>)
@@ -6565,7 +6566,7 @@ const (
 <a name="UsageDimensionInfo"></a>
 ## type [UsageDimensionInfo](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/billing.go#L72-L78>)
 
-UsageDimensionInfo holds usage info for a single dimension.
+UsageDimensionInfo holds usage info for a single dimension in the current period.
 
 ```go
 type UsageDimensionInfo struct {
@@ -6574,6 +6575,21 @@ type UsageDimensionInfo struct {
     Limit        *int64         `json:"limit"         example:"10000"`
     Unit         string         `json:"unit"          example:"requests"`
     RatePerUnit  float64        `json:"rate_per_unit" example:"0.001"`
+}
+```
+
+<a name="UsageHistoryEntry"></a>
+## type [UsageHistoryEntry](<https://github.com/IrminData/irmin-sdk-go/blob/development/models/billing.go#L81-L87>)
+
+UsageHistoryEntry holds a usage summary for a specific dimension and billing period.
+
+```go
+type UsageHistoryEntry struct {
+    Dimension      UsageDimension `json:"dimension"        example:"api_requests"`
+    TotalQuantity  int64          `json:"total_quantity"   example:"1250"`
+    UsageLimitHard *int64         `json:"usage_limit_hard" example:"10000"`
+    PeriodStart    time.Time      `json:"period_start"     example:"2025-01-01T00:00:00Z"`
+    PeriodEnd      time.Time      `json:"period_end"       example:"2025-02-01T00:00:00Z"`
 }
 ```
 
