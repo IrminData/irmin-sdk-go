@@ -56,21 +56,21 @@ func (c *Client) GetUsage(
 	return usage, apiResp, nil
 }
 
-// GetUsageHistory retrieves usage history for a workspace over multiple periods.
+// GetUsageHistory retrieves usage history for a workspace over multiple billing periods.
 func (c *Client) GetUsageHistory(
 	ctx context.Context,
 	workspaceSlug string,
 	periods int,
-) ([]irminmodels.UsageDimensionInfo, *irminmodels.IrminAPIResponse, error) {
-	var usage []irminmodels.UsageDimensionInfo
+) ([]irminmodels.UsageHistoryEntry, *irminmodels.IrminAPIResponse, error) {
+	var history []irminmodels.UsageHistoryEntry
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/billing/usage/history?periods=%d", workspaceSlug, periods),
-	}, &usage)
+	}, &history)
 	if err != nil {
 		return nil, nil, fmt.Errorf("get usage history error: %w", err)
 	}
-	return usage, apiResp, nil
+	return history, apiResp, nil
 }
 
 // CreateCheckout creates a Polar checkout session for a workspace.
