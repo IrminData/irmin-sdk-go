@@ -68,11 +68,20 @@ type PlanInfo struct {
 	CancelledAt     *time.Time         `json:"cancelled_at"         example:"2025-03-15T12:00:00Z"`
 }
 
-// UsageDimensionInfo holds usage info for a single dimension.
+// UsageDimensionInfo holds usage info for a single dimension in the current period.
 type UsageDimensionInfo struct {
 	Dimension    UsageDimension `json:"dimension"     example:"api_requests"`
 	CurrentUsage int64          `json:"current_usage" example:"1250"`
 	Limit        *int64         `json:"limit"         example:"10000"`
 	Unit         string         `json:"unit"          example:"requests"`
 	RatePerUnit  float64        `json:"rate_per_unit" example:"0.001"`
+}
+
+// UsageHistoryEntry holds a usage summary for a specific dimension and billing period.
+type UsageHistoryEntry struct {
+	Dimension      UsageDimension `json:"dimension"        example:"api_requests"`
+	TotalQuantity  int64          `json:"total_quantity"   example:"1250"`
+	UsageLimitHard *int64         `json:"usage_limit_hard" example:"10000"`
+	PeriodStart    time.Time      `json:"period_start"     example:"2025-01-01T00:00:00Z"`
+	PeriodEnd      time.Time      `json:"period_end"       example:"2025-02-01T00:00:00Z"`
 }
