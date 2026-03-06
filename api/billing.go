@@ -8,6 +8,22 @@ import (
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
 
+// CheckoutRequest represents the JSON request body for creating a checkout session or changing a plan.
+type CheckoutRequest struct {
+	PlanTier  irminmodels.PlanTier `json:"plan_tier"  validate:"required" example:"pro"`
+	ReturnURL string               `json:"return_url" validate:"required" example:"https://app.irmin.io/workspace/my-workspace/settings/billing/success"`
+}
+
+// CheckoutResponse represents the response body for checkout and change-plan endpoints.
+type CheckoutResponse struct {
+	CheckoutURL string `json:"checkout_url" example:"https://polar.sh/checkout/abc123"`
+}
+
+// PortalResponse represents the response body for the billing portal endpoint.
+type PortalResponse struct {
+	PortalURL string `json:"portal_url" example:"https://polar.sh/portal/abc123"`
+}
+
 // GetSubscription retrieves the current billing subscription for a workspace.
 func (c *Client) GetSubscription(
 	ctx context.Context,
@@ -61,9 +77,9 @@ func (c *Client) GetUsageHistory(
 func (c *Client) CreateCheckout(
 	ctx context.Context,
 	workspaceSlug string,
-	req irminmodels.CheckoutRequest,
-) (*irminmodels.CheckoutResponse, *irminmodels.IrminAPIResponse, error) {
-	var checkout irminmodels.CheckoutResponse
+	req CheckoutRequest,
+) (*CheckoutResponse, *irminmodels.IrminAPIResponse, error) {
+	var checkout CheckoutResponse
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/billing/checkout", workspaceSlug),
@@ -80,9 +96,9 @@ func (c *Client) CreateCheckout(
 func (c *Client) ChangePlan(
 	ctx context.Context,
 	workspaceSlug string,
-	req irminmodels.CheckoutRequest,
-) (*irminmodels.CheckoutResponse, *irminmodels.IrminAPIResponse, error) {
-	var checkout irminmodels.CheckoutResponse
+	req CheckoutRequest,
+) (*CheckoutResponse, *irminmodels.IrminAPIResponse, error) {
+	var checkout CheckoutResponse
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    fmt.Sprintf("/v1/workspaces/%s/billing/change-plan", workspaceSlug),
@@ -99,8 +115,8 @@ func (c *Client) ChangePlan(
 func (c *Client) GetPortalURL(
 	ctx context.Context,
 	workspaceSlug string,
-) (*irminmodels.PortalResponse, *irminmodels.IrminAPIResponse, error) {
-	var portal irminmodels.PortalResponse
+) (*PortalResponse, *irminmodels.IrminAPIResponse, error) {
+	var portal PortalResponse
 	apiResp, err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodPost,
 		Endpoint: fmt.Sprintf("/v1/workspaces/%s/billing/portal", workspaceSlug),
