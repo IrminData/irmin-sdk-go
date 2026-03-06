@@ -111,8 +111,8 @@ func (c *Client) ChangePlan(
 	return &checkout, apiResp, nil
 }
 
-// GetPortalURL retrieves the Polar customer portal URL for a workspace.
-func (c *Client) GetPortalURL(
+// CreatePortalSession creates a Polar customer portal session and returns its URL.
+func (c *Client) CreatePortalSession(
 	ctx context.Context,
 	workspaceSlug string,
 ) (*PortalResponse, *irminmodels.IrminAPIResponse, error) {
