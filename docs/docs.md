@@ -170,6 +170,8 @@ import "github.com/IrminData/irmin-sdk-go/api"
 - [type APIError](<#APIError>)
   - [func \(e \*APIError\) Error\(\) string](<#APIError.Error>)
 - [type AssociatePresignedUploadRequest](<#AssociatePresignedUploadRequest>)
+- [type CheckoutRequest](<#CheckoutRequest>)
+- [type CheckoutResponse](<#CheckoutResponse>)
 - [type Client](<#Client>)
   - [func NewClient\(baseURL, token, locale string\) \*Client](<#NewClient>)
   - [func NewClientWithSQIDManager\(baseURL, token, locale string, sqidManager \*irminsqids.SQIDManager\) \*Client](<#NewClientWithSQIDManager>)
@@ -179,13 +181,13 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) AssociatePresignedUpload\(ctx context.Context, workspace, repository, ref, path string, req AssociatePresignedUploadRequest\) \(\*irminmodels.Object, \*irminmodels.IrminAPIResponse, error\)](<#Client.AssociatePresignedUpload>)
   - [func \(c \*Client\) CallSystemWebhook\(ctx context.Context, webhookType string, headers map\[string\]string, body any\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.CallSystemWebhook>)
   - [func \(c \*Client\) CancelWorkflowRun\(ctx context.Context, workspace, workflowID, runID string\) \(\*irminmodels.WorkflowRun, \*irminmodels.IrminAPIResponse, error\)](<#Client.CancelWorkflowRun>)
-  - [func \(c \*Client\) ChangePlan\(ctx context.Context, workspaceSlug string, req irminmodels.CheckoutRequest\) \(\*irminmodels.CheckoutResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.ChangePlan>)
+  - [func \(c \*Client\) ChangePlan\(ctx context.Context, workspaceSlug string, req CheckoutRequest\) \(\*CheckoutResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.ChangePlan>)
   - [func \(c \*Client\) CheckPermission\(ctx context.Context, workspace string, resource irminmodels.PolicyResource, action irminmodels.PolicyAction, resourceID \*string\) \(bool, error\)](<#Client.CheckPermission>)
   - [func \(c \*Client\) CompareRefs\(ctx context.Context, workspace, repository, baseRef, compareRef string\) \(\*irminmodels.Diff, \*irminmodels.IrminAPIResponse, error\)](<#Client.CompareRefs>)
   - [func \(c \*Client\) CopyObject\(ctx context.Context, workspace, repository, path, ref string, req MoveObjectRequest\) \(\*irminmodels.Object, \*irminmodels.IrminAPIResponse, error\)](<#Client.CopyObject>)
   - [func \(c \*Client\) CreateAIApplication\(ctx context.Context, workspace string, req CreateAIApplicationRequest\) \(\*irminmodels.AIApplication, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateAIApplication>)
   - [func \(c \*Client\) CreateBranch\(ctx context.Context, workspace, repository string, req CreateBranchRequest\) \(\*irminmodels.Branch, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateBranch>)
-  - [func \(c \*Client\) CreateCheckout\(ctx context.Context, workspaceSlug string, req irminmodels.CheckoutRequest\) \(\*irminmodels.CheckoutResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateCheckout>)
+  - [func \(c \*Client\) CreateCheckout\(ctx context.Context, workspaceSlug string, req CheckoutRequest\) \(\*CheckoutResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateCheckout>)
   - [func \(c \*Client\) CreateCommit\(ctx context.Context, workspace, repository string, req CreateCommitRequest\) \(\*irminmodels.Commit, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateCommit>)
   - [func \(c \*Client\) CreateConnection\(ctx context.Context, workspace string, req CreateConnectionRequest\) \(\*irminmodels.Connection, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateConnection>)
   - [func \(c \*Client\) CreateConnectionSubscription\(ctx context.Context, workspace, connectionID string, req CreateConnectionSubscriptionRequest\) \(\*irminmodels.ConnectionSubscriptionWithToken, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateConnectionSubscription>)
@@ -259,7 +261,7 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) GetPolicyResourceOptions\(ctx context.Context, workspace string\) \(\*irminmodels.PolicyResourceOptions, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyResourceOptions>)
   - [func \(c \*Client\) GetPolicyRoleSummary\(ctx context.Context, workspace string\) \(\[\]irminmodels.RolePolicySummary, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyRoleSummary>)
   - [func \(c \*Client\) GetPolicyUserSummary\(ctx context.Context, workspace string\) \(\*irminmodels.UserPolicySummary, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyUserSummary>)
-  - [func \(c \*Client\) GetPortalURL\(ctx context.Context, workspaceSlug string\) \(\*irminmodels.PortalResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPortalURL>)
+  - [func \(c \*Client\) GetPortalURL\(ctx context.Context, workspaceSlug string\) \(\*PortalResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPortalURL>)
   - [func \(c \*Client\) GetProfile\(ctx context.Context\) \(\*irminmodels.User, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetProfile>)
   - [func \(c \*Client\) GetRepository\(ctx context.Context, workspace, slug string\) \(\*irminmodels.Repository, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetRepository>)
   - [func \(c \*Client\) GetStoredQuery\(ctx context.Context, workspace, queryID string\) \(\*irminmodels.StoredQuery, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetStoredQuery>)
@@ -394,6 +396,7 @@ import "github.com/IrminData/irmin-sdk-go/api"
 - [type LogEventFilters](<#LogEventFilters>)
 - [type MergeRefsRequest](<#MergeRefsRequest>)
 - [type MoveObjectRequest](<#MoveObjectRequest>)
+- [type PortalResponse](<#PortalResponse>)
 - [type PresignedUploadResult](<#PresignedUploadResult>)
 - [type RequestOptions](<#RequestOptions>)
 - [type ResetBranchRequest](<#ResetBranchRequest>)
@@ -815,6 +818,29 @@ type AssociatePresignedUploadRequest struct {
 }
 ```
 
+<a name="CheckoutRequest"></a>
+## type CheckoutRequest
+
+CheckoutRequest represents the JSON request body for creating a checkout session or changing a plan.
+
+```go
+type CheckoutRequest struct {
+    PlanTier  irminmodels.PlanTier `json:"plan_tier"  validate:"required" example:"pro"`
+    ReturnURL string               `json:"return_url" validate:"required" example:"https://app.irmin.io/workspace/my-workspace/settings/billing/success"`
+}
+```
+
+<a name="CheckoutResponse"></a>
+## type CheckoutResponse
+
+CheckoutResponse represents the response body for checkout and change\-plan endpoints.
+
+```go
+type CheckoutResponse struct {
+    CheckoutURL string `json:"checkout_url" example:"https://polar.sh/checkout/abc123"`
+}
+```
+
 <a name="Client"></a>
 ## type Client
 
@@ -917,7 +943,7 @@ func (c *Client) CancelWorkflowRun(ctx context.Context, workspace, workflowID, r
 ### func \(\*Client\) ChangePlan
 
 ```go
-func (c *Client) ChangePlan(ctx context.Context, workspaceSlug string, req irminmodels.CheckoutRequest) (*irminmodels.CheckoutResponse, *irminmodels.IrminAPIResponse, error)
+func (c *Client) ChangePlan(ctx context.Context, workspaceSlug string, req CheckoutRequest) (*CheckoutResponse, *irminmodels.IrminAPIResponse, error)
 ```
 
 ChangePlan changes the billing plan for a workspace.
@@ -971,7 +997,7 @@ CreateBranch creates a new branch in the repository.
 ### func \(\*Client\) CreateCheckout
 
 ```go
-func (c *Client) CreateCheckout(ctx context.Context, workspaceSlug string, req irminmodels.CheckoutRequest) (*irminmodels.CheckoutResponse, *irminmodels.IrminAPIResponse, error)
+func (c *Client) CreateCheckout(ctx context.Context, workspaceSlug string, req CheckoutRequest) (*CheckoutResponse, *irminmodels.IrminAPIResponse, error)
 ```
 
 CreateCheckout creates a Polar checkout session for a workspace.
@@ -1655,7 +1681,7 @@ GetPolicyUserSummary returns a list of policies that apply to a user.
 ### func \(\*Client\) GetPortalURL
 
 ```go
-func (c *Client) GetPortalURL(ctx context.Context, workspaceSlug string) (*irminmodels.PortalResponse, *irminmodels.IrminAPIResponse, error)
+func (c *Client) GetPortalURL(ctx context.Context, workspaceSlug string) (*PortalResponse, *irminmodels.IrminAPIResponse, error)
 ```
 
 GetPortalURL retrieves the Polar customer portal URL for a workspace.
@@ -3055,6 +3081,17 @@ type MoveObjectRequest struct {
 }
 ```
 
+<a name="PortalResponse"></a>
+## type PortalResponse
+
+PortalResponse represents the response body for the billing portal endpoint.
+
+```go
+type PortalResponse struct {
+    PortalURL string `json:"portal_url" example:"https://polar.sh/portal/abc123"`
+}
+```
+
 <a name="PresignedUploadResult"></a>
 ## type PresignedUploadResult
 
@@ -3957,8 +3994,6 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type BranchGarbageCollectionRules](<#BranchGarbageCollectionRules>)
 - [type ChangeItem](<#ChangeItem>)
 - [type ChangeType](<#ChangeType>)
-- [type CheckoutRequest](<#CheckoutRequest>)
-- [type CheckoutResponse](<#CheckoutResponse>)
 - [type Commit](<#Commit>)
 - [type Connection](<#Connection>)
 - [type ConnectionEventType](<#ConnectionEventType>)
@@ -4015,7 +4050,6 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type PolicyResource](<#PolicyResource>)
 - [type PolicyResourceOption](<#PolicyResourceOption>)
 - [type PolicyResourceOptions](<#PolicyResourceOptions>)
-- [type PortalResponse](<#PortalResponse>)
 - [type QueryResult](<#QueryResult>)
 - [type Repository](<#Repository>)
 - [type RepositoryActionType](<#RepositoryActionType>)
@@ -4432,29 +4466,6 @@ const (
     ChangeTypeConflict ChangeType = "conflict"
     ChangeTypeMoved    ChangeType = "moved"
 )
-```
-
-<a name="CheckoutRequest"></a>
-## type CheckoutRequest
-
-CheckoutRequest is the request body for creating a checkout session.
-
-```go
-type CheckoutRequest struct {
-    PlanTier  string `json:"plan_tier"  validate:"required"`
-    ReturnURL string `json:"return_url" validate:"required"`
-}
-```
-
-<a name="CheckoutResponse"></a>
-## type CheckoutResponse
-
-CheckoutResponse is the response body for checkout/change\-plan endpoints.
-
-```go
-type CheckoutResponse struct {
-    CheckoutURL string `json:"checkout_url"`
-}
 ```
 
 <a name="Commit"></a>
@@ -5450,12 +5461,12 @@ PlanInfo holds information about a workspace's current plan.
 
 ```go
 type PlanInfo struct {
-    Tier            PlanTier           `json:"tier"`
-    Status          SubscriptionStatus `json:"status"`
-    BillingInterval BillingInterval    `json:"billing_interval"`
-    PeriodStart     *time.Time         `json:"current_period_start"`
-    PeriodEnd       *time.Time         `json:"current_period_end"`
-    CancelledAt     *time.Time         `json:"cancelled_at"`
+    Tier            PlanTier           `json:"tier"                 example:"pro"`
+    Status          SubscriptionStatus `json:"status"               example:"active"`
+    BillingInterval BillingInterval    `json:"billing_interval"     example:"monthly"`
+    PeriodStart     *time.Time         `json:"current_period_start" example:"2025-01-01T00:00:00Z"`
+    PeriodEnd       *time.Time         `json:"current_period_end"   example:"2025-02-01T00:00:00Z"`
+    CancelledAt     *time.Time         `json:"cancelled_at"         example:"2025-03-15T12:00:00Z"`
 }
 ```
 
@@ -5696,17 +5707,6 @@ type PolicyResourceOptions struct {
     Repositories []PolicyResourceOption `json:"repositories" validate:"required,dive"`
     Users        []PolicyResourceOption `json:"users"        validate:"required,dive"`
     Tags         []PolicyResourceOption `json:"tags"         validate:"required,dive"`
-}
-```
-
-<a name="PortalResponse"></a>
-## type PortalResponse
-
-PortalResponse is the response body for the portal endpoint.
-
-```go
-type PortalResponse struct {
-    PortalURL string `json:"portal_url"`
 }
 ```
 
@@ -6569,11 +6569,11 @@ UsageDimensionInfo holds usage info for a single dimension.
 
 ```go
 type UsageDimensionInfo struct {
-    Dimension    UsageDimension `json:"dimension"`
-    CurrentUsage int64          `json:"current_usage"`
-    Limit        *int64         `json:"limit"`
-    Unit         string         `json:"unit"`
-    RatePerUnit  float64        `json:"rate_per_unit"`
+    Dimension    UsageDimension `json:"dimension"     example:"api_requests"`
+    CurrentUsage int64          `json:"current_usage" example:"1250"`
+    Limit        *int64         `json:"limit"         example:"10000"`
+    Unit         string         `json:"unit"          example:"requests"`
+    RatePerUnit  float64        `json:"rate_per_unit" example:"0.001"`
 }
 ```
 
