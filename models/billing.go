@@ -60,35 +60,19 @@ const (
 
 // PlanInfo holds information about a workspace's current plan.
 type PlanInfo struct {
-	Tier            PlanTier           `json:"tier"`
-	Status          SubscriptionStatus `json:"status"`
-	BillingInterval BillingInterval    `json:"billing_interval"`
-	PeriodStart     *time.Time         `json:"current_period_start"`
-	PeriodEnd       *time.Time         `json:"current_period_end"`
-	CancelledAt     *time.Time         `json:"cancelled_at"`
+	Tier            PlanTier           `json:"tier"                 example:"pro"`
+	Status          SubscriptionStatus `json:"status"               example:"active"`
+	BillingInterval BillingInterval    `json:"billing_interval"     example:"monthly"`
+	PeriodStart     *time.Time         `json:"current_period_start" example:"2025-01-01T00:00:00Z"`
+	PeriodEnd       *time.Time         `json:"current_period_end"   example:"2025-02-01T00:00:00Z"`
+	CancelledAt     *time.Time         `json:"cancelled_at"         example:"2025-03-15T12:00:00Z"`
 }
 
 // UsageDimensionInfo holds usage info for a single dimension.
 type UsageDimensionInfo struct {
-	Dimension    UsageDimension `json:"dimension"`
-	CurrentUsage int64          `json:"current_usage"`
-	Limit        *int64         `json:"limit"`
-	Unit         string         `json:"unit"`
-	RatePerUnit  float64        `json:"rate_per_unit"`
-}
-
-// CheckoutRequest is the request body for creating a checkout session.
-type CheckoutRequest struct {
-	PlanTier  string `json:"plan_tier"  validate:"required"`
-	ReturnURL string `json:"return_url" validate:"required"`
-}
-
-// CheckoutResponse is the response body for checkout/change-plan endpoints.
-type CheckoutResponse struct {
-	CheckoutURL string `json:"checkout_url"`
-}
-
-// PortalResponse is the response body for the portal endpoint.
-type PortalResponse struct {
-	PortalURL string `json:"portal_url"`
+	Dimension    UsageDimension `json:"dimension"     example:"api_requests"`
+	CurrentUsage int64          `json:"current_usage" example:"1250"`
+	Limit        *int64         `json:"limit"         example:"10000"`
+	Unit         string         `json:"unit"          example:"requests"`
+	RatePerUnit  float64        `json:"rate_per_unit" example:"0.001"`
 }
