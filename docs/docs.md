@@ -179,11 +179,13 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) AssociatePresignedUpload\(ctx context.Context, workspace, repository, ref, path string, req AssociatePresignedUploadRequest\) \(\*irminmodels.Object, \*irminmodels.IrminAPIResponse, error\)](<#Client.AssociatePresignedUpload>)
   - [func \(c \*Client\) CallSystemWebhook\(ctx context.Context, webhookType string, headers map\[string\]string, body any\) \(\*irminmodels.IrminAPIResponse, error\)](<#Client.CallSystemWebhook>)
   - [func \(c \*Client\) CancelWorkflowRun\(ctx context.Context, workspace, workflowID, runID string\) \(\*irminmodels.WorkflowRun, \*irminmodels.IrminAPIResponse, error\)](<#Client.CancelWorkflowRun>)
+  - [func \(c \*Client\) ChangePlan\(ctx context.Context, workspaceSlug string, req irminmodels.CheckoutRequest\) \(\*irminmodels.CheckoutResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.ChangePlan>)
   - [func \(c \*Client\) CheckPermission\(ctx context.Context, workspace string, resource irminmodels.PolicyResource, action irminmodels.PolicyAction, resourceID \*string\) \(bool, error\)](<#Client.CheckPermission>)
   - [func \(c \*Client\) CompareRefs\(ctx context.Context, workspace, repository, baseRef, compareRef string\) \(\*irminmodels.Diff, \*irminmodels.IrminAPIResponse, error\)](<#Client.CompareRefs>)
   - [func \(c \*Client\) CopyObject\(ctx context.Context, workspace, repository, path, ref string, req MoveObjectRequest\) \(\*irminmodels.Object, \*irminmodels.IrminAPIResponse, error\)](<#Client.CopyObject>)
   - [func \(c \*Client\) CreateAIApplication\(ctx context.Context, workspace string, req CreateAIApplicationRequest\) \(\*irminmodels.AIApplication, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateAIApplication>)
   - [func \(c \*Client\) CreateBranch\(ctx context.Context, workspace, repository string, req CreateBranchRequest\) \(\*irminmodels.Branch, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateBranch>)
+  - [func \(c \*Client\) CreateCheckout\(ctx context.Context, workspaceSlug string, req irminmodels.CheckoutRequest\) \(\*irminmodels.CheckoutResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateCheckout>)
   - [func \(c \*Client\) CreateCommit\(ctx context.Context, workspace, repository string, req CreateCommitRequest\) \(\*irminmodels.Commit, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateCommit>)
   - [func \(c \*Client\) CreateConnection\(ctx context.Context, workspace string, req CreateConnectionRequest\) \(\*irminmodels.Connection, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateConnection>)
   - [func \(c \*Client\) CreateConnectionSubscription\(ctx context.Context, workspace, connectionID string, req CreateConnectionSubscriptionRequest\) \(\*irminmodels.ConnectionSubscriptionWithToken, \*irminmodels.IrminAPIResponse, error\)](<#Client.CreateConnectionSubscription>)
@@ -257,12 +259,16 @@ import "github.com/IrminData/irmin-sdk-go/api"
   - [func \(c \*Client\) GetPolicyResourceOptions\(ctx context.Context, workspace string\) \(\*irminmodels.PolicyResourceOptions, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyResourceOptions>)
   - [func \(c \*Client\) GetPolicyRoleSummary\(ctx context.Context, workspace string\) \(\[\]irminmodels.RolePolicySummary, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyRoleSummary>)
   - [func \(c \*Client\) GetPolicyUserSummary\(ctx context.Context, workspace string\) \(\*irminmodels.UserPolicySummary, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPolicyUserSummary>)
+  - [func \(c \*Client\) GetPortalURL\(ctx context.Context, workspaceSlug string\) \(\*irminmodels.PortalResponse, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetPortalURL>)
   - [func \(c \*Client\) GetProfile\(ctx context.Context\) \(\*irminmodels.User, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetProfile>)
   - [func \(c \*Client\) GetRepository\(ctx context.Context, workspace, slug string\) \(\*irminmodels.Repository, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetRepository>)
   - [func \(c \*Client\) GetStoredQuery\(ctx context.Context, workspace, queryID string\) \(\*irminmodels.StoredQuery, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetStoredQuery>)
   - [func \(c \*Client\) GetStoredScript\(ctx context.Context, workspace, scriptID string\) \(\*irminmodels.StoredScript, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetStoredScript>)
+  - [func \(c \*Client\) GetSubscription\(ctx context.Context, workspaceSlug string\) \(\*irminmodels.PlanInfo, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetSubscription>)
   - [func \(c \*Client\) GetTag\(ctx context.Context, workspace, repository, tag string\) \(\*irminmodels.GitTag, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetTag>)
   - [func \(c \*Client\) GetUncommittedChanges\(ctx context.Context, workspace, repository, branch string\) \(\*irminmodels.Diff, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUncommittedChanges>)
+  - [func \(c \*Client\) GetUsage\(ctx context.Context, workspaceSlug string\) \(\[\]irminmodels.UsageDimensionInfo, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUsage>)
+  - [func \(c \*Client\) GetUsageHistory\(ctx context.Context, workspaceSlug string, periods int\) \(\[\]irminmodels.UsageDimensionInfo, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUsageHistory>)
   - [func \(c \*Client\) GetUser\(ctx context.Context, workspace, userID string\) \(\*irminmodels.User, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetUser>)
   - [func \(c \*Client\) GetWorkflow\(ctx context.Context, workspace, workflowID string\) \(\*irminmodels.Workflow, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetWorkflow>)
   - [func \(c \*Client\) GetWorkflowRun\(ctx context.Context, workspace, workflowID, runID string\) \(\*irminmodels.WorkflowRun, \*irminmodels.IrminAPIResponse, error\)](<#Client.GetWorkflowRun>)
@@ -907,6 +913,15 @@ func (c *Client) CancelWorkflowRun(ctx context.Context, workspace, workflowID, r
 
 
 
+<a name="Client.ChangePlan"></a>
+### func \(\*Client\) ChangePlan
+
+```go
+func (c *Client) ChangePlan(ctx context.Context, workspaceSlug string, req irminmodels.CheckoutRequest) (*irminmodels.CheckoutResponse, *irminmodels.IrminAPIResponse, error)
+```
+
+ChangePlan changes the billing plan for a workspace.
+
 <a name="Client.CheckPermission"></a>
 ### func \(\*Client\) CheckPermission
 
@@ -951,6 +966,15 @@ func (c *Client) CreateBranch(ctx context.Context, workspace, repository string,
 ```
 
 CreateBranch creates a new branch in the repository.
+
+<a name="Client.CreateCheckout"></a>
+### func \(\*Client\) CreateCheckout
+
+```go
+func (c *Client) CreateCheckout(ctx context.Context, workspaceSlug string, req irminmodels.CheckoutRequest) (*irminmodels.CheckoutResponse, *irminmodels.IrminAPIResponse, error)
+```
+
+CreateCheckout creates a Polar checkout session for a workspace.
 
 <a name="Client.CreateCommit"></a>
 ### func \(\*Client\) CreateCommit
@@ -1627,6 +1651,15 @@ func (c *Client) GetPolicyUserSummary(ctx context.Context, workspace string) (*i
 
 GetPolicyUserSummary returns a list of policies that apply to a user.
 
+<a name="Client.GetPortalURL"></a>
+### func \(\*Client\) GetPortalURL
+
+```go
+func (c *Client) GetPortalURL(ctx context.Context, workspaceSlug string) (*irminmodels.PortalResponse, *irminmodels.IrminAPIResponse, error)
+```
+
+GetPortalURL retrieves the Polar customer portal URL for a workspace.
+
 <a name="Client.GetProfile"></a>
 ### func \(\*Client\) GetProfile
 
@@ -1663,6 +1696,15 @@ func (c *Client) GetStoredScript(ctx context.Context, workspace, scriptID string
 
 
 
+<a name="Client.GetSubscription"></a>
+### func \(\*Client\) GetSubscription
+
+```go
+func (c *Client) GetSubscription(ctx context.Context, workspaceSlug string) (*irminmodels.PlanInfo, *irminmodels.IrminAPIResponse, error)
+```
+
+GetSubscription retrieves the current billing subscription for a workspace.
+
 <a name="Client.GetTag"></a>
 ### func \(\*Client\) GetTag
 
@@ -1680,6 +1722,24 @@ func (c *Client) GetUncommittedChanges(ctx context.Context, workspace, repositor
 ```
 
 GetUncommittedChanges retrieves the list of uncommitted changes in a branch.
+
+<a name="Client.GetUsage"></a>
+### func \(\*Client\) GetUsage
+
+```go
+func (c *Client) GetUsage(ctx context.Context, workspaceSlug string) ([]irminmodels.UsageDimensionInfo, *irminmodels.IrminAPIResponse, error)
+```
+
+GetUsage retrieves current period usage for a workspace.
+
+<a name="Client.GetUsageHistory"></a>
+### func \(\*Client\) GetUsageHistory
+
+```go
+func (c *Client) GetUsageHistory(ctx context.Context, workspaceSlug string, periods int) ([]irminmodels.UsageDimensionInfo, *irminmodels.IrminAPIResponse, error)
+```
+
+GetUsageHistory retrieves usage history for a workspace over multiple periods.
 
 <a name="Client.GetUser"></a>
 ### func \(\*Client\) GetUser
@@ -3892,10 +3952,13 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type APIToken](<#APIToken>)
 - [type ActionExecutableType](<#ActionExecutableType>)
 - [type ActionInputData](<#ActionInputData>)
+- [type BillingInterval](<#BillingInterval>)
 - [type Branch](<#Branch>)
 - [type BranchGarbageCollectionRules](<#BranchGarbageCollectionRules>)
 - [type ChangeItem](<#ChangeItem>)
 - [type ChangeType](<#ChangeType>)
+- [type CheckoutRequest](<#CheckoutRequest>)
+- [type CheckoutResponse](<#CheckoutResponse>)
 - [type Commit](<#Commit>)
 - [type Connection](<#Connection>)
 - [type ConnectionEventType](<#ConnectionEventType>)
@@ -3942,6 +4005,8 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type PendingWriteStatus](<#PendingWriteStatus>)
 - [type PipelineStage](<#PipelineStage>)
 - [type PipelineStageType](<#PipelineStageType>)
+- [type PlanInfo](<#PlanInfo>)
+- [type PlanTier](<#PlanTier>)
 - [type PointerTarget](<#PointerTarget>)
 - [type Policy](<#Policy>)
 - [type PolicyAction](<#PolicyAction>)
@@ -3950,6 +4015,7 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type PolicyResource](<#PolicyResource>)
 - [type PolicyResourceOption](<#PolicyResourceOption>)
 - [type PolicyResourceOptions](<#PolicyResourceOptions>)
+- [type PortalResponse](<#PortalResponse>)
 - [type QueryResult](<#QueryResult>)
 - [type Repository](<#Repository>)
 - [type RepositoryActionType](<#RepositoryActionType>)
@@ -3984,6 +4050,7 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type SelectOption](<#SelectOption>)
 - [type StoredQuery](<#StoredQuery>)
 - [type StoredScript](<#StoredScript>)
+- [type SubscriptionStatus](<#SubscriptionStatus>)
 - [type SyncMode](<#SyncMode>)
 - [type Tag](<#Tag>)
 - [type TagEntityType](<#TagEntityType>)
@@ -3996,6 +4063,8 @@ import "github.com/IrminData/irmin-sdk-go/models"
 - [type TransformOperationType](<#TransformOperationType>)
 - [type UpsertEmbeddingItem](<#UpsertEmbeddingItem>)
 - [type UpsertEmbeddingsResponse](<#UpsertEmbeddingsResponse>)
+- [type UsageDimension](<#UsageDimension>)
+- [type UsageDimensionInfo](<#UsageDimensionInfo>)
 - [type User](<#User>)
 - [type UserPolicySummary](<#UserPolicySummary>)
 - [type Workflow](<#Workflow>)
@@ -4280,6 +4349,26 @@ type ActionInputData struct {
 }
 ```
 
+<a name="BillingInterval"></a>
+## type BillingInterval
+
+BillingInterval represents the billing interval.
+
+```go
+type BillingInterval string
+```
+
+<a name="BillingIntervalMonthly"></a>
+
+```go
+const (
+    // BillingIntervalMonthly represents monthly billing.
+    BillingIntervalMonthly BillingInterval = "monthly"
+    // BillingIntervalAnnual represents annual billing.
+    BillingIntervalAnnual BillingInterval = "annual"
+)
+```
+
 <a name="Branch"></a>
 ## type Branch
 
@@ -4343,6 +4432,29 @@ const (
     ChangeTypeConflict ChangeType = "conflict"
     ChangeTypeMoved    ChangeType = "moved"
 )
+```
+
+<a name="CheckoutRequest"></a>
+## type CheckoutRequest
+
+CheckoutRequest is the request body for creating a checkout session.
+
+```go
+type CheckoutRequest struct {
+    PlanTier  string `json:"plan_tier"  validate:"required"`
+    ReturnURL string `json:"return_url" validate:"required"`
+}
+```
+
+<a name="CheckoutResponse"></a>
+## type CheckoutResponse
+
+CheckoutResponse is the response body for checkout/change\-plan endpoints.
+
+```go
+type CheckoutResponse struct {
+    CheckoutURL string `json:"checkout_url"`
+}
 ```
 
 <a name="Commit"></a>
@@ -5331,6 +5443,46 @@ const (
 )
 ```
 
+<a name="PlanInfo"></a>
+## type PlanInfo
+
+PlanInfo holds information about a workspace's current plan.
+
+```go
+type PlanInfo struct {
+    Tier            PlanTier           `json:"tier"`
+    Status          SubscriptionStatus `json:"status"`
+    BillingInterval BillingInterval    `json:"billing_interval"`
+    PeriodStart     *time.Time         `json:"current_period_start"`
+    PeriodEnd       *time.Time         `json:"current_period_end"`
+    CancelledAt     *time.Time         `json:"cancelled_at"`
+}
+```
+
+<a name="PlanTier"></a>
+## type PlanTier
+
+PlanTier represents the billing plan tier.
+
+```go
+type PlanTier string
+```
+
+<a name="PlanTierHobby"></a>
+
+```go
+const (
+    // PlanTierHobby represents the hobby plan tier.
+    PlanTierHobby PlanTier = "hobby"
+    // PlanTierPro represents the pro plan tier.
+    PlanTierPro PlanTier = "pro"
+    // PlanTierBusiness represents the business plan tier.
+    PlanTierBusiness PlanTier = "business"
+    // PlanTierEnterprise represents the enterprise plan tier.
+    PlanTierEnterprise PlanTier = "enterprise"
+)
+```
+
 <a name="PointerTarget"></a>
 ## type PointerTarget
 
@@ -5544,6 +5696,17 @@ type PolicyResourceOptions struct {
     Repositories []PolicyResourceOption `json:"repositories" validate:"required,dive"`
     Users        []PolicyResourceOption `json:"users"        validate:"required,dive"`
     Tags         []PolicyResourceOption `json:"tags"         validate:"required,dive"`
+}
+```
+
+<a name="PortalResponse"></a>
+## type PortalResponse
+
+PortalResponse is the response body for the portal endpoint.
+
+```go
+type PortalResponse struct {
+    PortalURL string `json:"portal_url"`
 }
 ```
 
@@ -6140,6 +6303,32 @@ type StoredScript struct {
 }
 ```
 
+<a name="SubscriptionStatus"></a>
+## type SubscriptionStatus
+
+SubscriptionStatus represents the status of a subscription.
+
+```go
+type SubscriptionStatus string
+```
+
+<a name="SubscriptionStatusActive"></a>
+
+```go
+const (
+    // SubscriptionStatusActive represents an active subscription.
+    SubscriptionStatusActive SubscriptionStatus = "active"
+    // SubscriptionStatusCancelled represents a cancelled subscription.
+    SubscriptionStatusCancelled SubscriptionStatus = "cancelled"
+    // SubscriptionStatusPastDue represents a past due subscription.
+    SubscriptionStatusPastDue SubscriptionStatus = "past_due"
+    // SubscriptionStatusTrialing represents a trialing subscription.
+    SubscriptionStatusTrialing SubscriptionStatus = "trialing"
+    // SubscriptionStatusNone represents no active subscription.
+    SubscriptionStatusNone SubscriptionStatus = "none"
+)
+```
+
 <a name="SyncMode"></a>
 ## type SyncMode
 
@@ -6344,6 +6533,47 @@ type UpsertEmbeddingsResponse struct {
     Skipped  int    `json:"skipped"  example:"5"`                            // Number of embeddings skipped (already exist)
     Updated  int    `json:"updated"  example:"2"`                            // Number of existing embeddings updated
     Path     string `json:"path"     example:"embeddings/documents.parquet"` // Output path of the embedding file
+}
+```
+
+<a name="UsageDimension"></a>
+## type UsageDimension
+
+UsageDimension represents a usage tracking dimension.
+
+```go
+type UsageDimension string
+```
+
+<a name="UsageDimensionStorage"></a>
+
+```go
+const (
+    // UsageDimensionStorage represents storage usage.
+    UsageDimensionStorage UsageDimension = "storage"
+    // UsageDimensionWorkflowRuns represents workflow run usage.
+    UsageDimensionWorkflowRuns UsageDimension = "workflow_runs"
+    // UsageDimensionAIRequests represents AI request usage.
+    UsageDimensionAIRequests UsageDimension = "ai_requests"
+    // UsageDimensionAPIRequests represents API request usage.
+    UsageDimensionAPIRequests UsageDimension = "api_requests"
+    // UsageDimensionDataTransfer represents data transfer usage.
+    UsageDimensionDataTransfer UsageDimension = "data_transfer"
+)
+```
+
+<a name="UsageDimensionInfo"></a>
+## type UsageDimensionInfo
+
+UsageDimensionInfo holds usage info for a single dimension.
+
+```go
+type UsageDimensionInfo struct {
+    Dimension    UsageDimension `json:"dimension"`
+    CurrentUsage int64          `json:"current_usage"`
+    Limit        *int64         `json:"limit"`
+    Unit         string         `json:"unit"`
+    RatePerUnit  float64        `json:"rate_per_unit"`
 }
 ```
 
