@@ -38,13 +38,13 @@ const (
 
 // PlanInfo holds information about a workspace's current plan.
 type PlanInfo struct {
-	Status           SubscriptionStatus `json:"status"                example:"active"`
-	HasPaymentMethod bool               `json:"has_payment_method"    example:"true"`
-	PeriodStart      *time.Time         `json:"current_period_start"  example:"2025-01-01T00:00:00Z"`
-	PeriodEnd        *time.Time         `json:"current_period_end"    example:"2025-02-01T00:00:00Z"`
-	CancelledAt      *time.Time         `json:"cancelled_at"          example:"2025-03-15T12:00:00Z"`
-	CreditPerMeter   float64            `json:"credit_per_meter"      example:"2.00"`
-	TotalCredit      float64            `json:"total_credit"          example:"12.00"`
+	Status           SubscriptionStatus `json:"status"               example:"active"`
+	HasPaymentMethod bool               `json:"has_payment_method"   example:"true"`
+	PeriodStart      *time.Time         `json:"current_period_start" example:"2025-01-01T00:00:00Z"`
+	PeriodEnd        *time.Time         `json:"current_period_end"   example:"2025-02-01T00:00:00Z"`
+	CancelledAt      *time.Time         `json:"cancelled_at"         example:"2025-03-15T12:00:00Z"`
+	CreditPerMeter   float64            `json:"credit_per_meter"     example:"2.00"`
+	TotalCredit      float64            `json:"total_credit"         example:"12.00"`
 }
 
 // UsageDimensionInfo holds usage info for a single dimension in the current period.
