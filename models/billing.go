@@ -58,12 +58,12 @@ type UsageDimensionInfo struct {
 
 // BillingAddress holds a billing address.
 type BillingAddress struct {
-	Line1      string `json:"line1"      example:"123 Main St"`
-	Line2      string `json:"line2"      example:"Suite 100"`
-	City       string `json:"city"       example:"Helsinki"`
-	State      string `json:"state"      example:"Uusimaa"`
+	Line1      string `json:"line1"       example:"123 Main St"`
+	Line2      string `json:"line2"       example:"Suite 100"`
+	City       string `json:"city"        example:"Helsinki"`
+	State      string `json:"state"       example:"Uusimaa"`
 	PostalCode string `json:"postal_code" example:"00100"`
-	Country    string `json:"country"    example:"FI"`
+	Country    string `json:"country"     example:"FI"`
 }
 
 // BillingInfoTaxID is a two-element array [value, type] for tax identification (e.g. ["FI12345678", "eu_vat"]).
@@ -71,8 +71,8 @@ type BillingInfoTaxID = []string
 
 // BillingInfo holds billing information for a workspace customer.
 type BillingInfo struct {
-	Name           string          `json:"name"            example:"Acme Corp"`
-	BillingAddress *BillingAddress `json:"billing_address"`
+	Name           string           `json:"name"            example:"Acme Corp"`
+	BillingAddress *BillingAddress  `json:"billing_address"`
 	TaxID          BillingInfoTaxID `json:"tax_id"`
 }
 
