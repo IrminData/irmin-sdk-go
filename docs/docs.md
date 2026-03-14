@@ -4415,12 +4415,12 @@ BillingAddress holds a billing address.
 
 ```go
 type BillingAddress struct {
-    Line1      string `json:"line1"      example:"123 Main St"`
-    Line2      string `json:"line2"      example:"Suite 100"`
-    City       string `json:"city"       example:"Helsinki"`
-    State      string `json:"state"      example:"Uusimaa"`
+    Line1      string `json:"line1"       example:"123 Main St"`
+    Line2      string `json:"line2"       example:"Suite 100"`
+    City       string `json:"city"        example:"Helsinki"`
+    State      string `json:"state"       example:"Uusimaa"`
     PostalCode string `json:"postal_code" example:"00100"`
-    Country    string `json:"country"    example:"FI"`
+    Country    string `json:"country"     example:"FI"`
 }
 ```
 
