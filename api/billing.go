@@ -74,7 +74,7 @@ func (c *Client) GetUsageHistory(
 
 // UpdateBillingInfoRequest represents the request body for updating billing info.
 type UpdateBillingInfoRequest struct {
-	Name           *string                     `json:"name,omitempty"            validate:"omitnil,max=256"`
+	Name           *string                      `json:"name,omitempty"            validate:"omitnil,max=256"`
 	BillingAddress *irminmodels.BillingAddress  `json:"billing_address,omitempty"`
 	TaxID          irminmodels.BillingInfoTaxID `json:"tax_id,omitempty"          validate:"omitnil,len=2"`
 }
