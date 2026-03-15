@@ -72,8 +72,8 @@ type CreateSignedURLRequest struct {
 
 // CreateSignedZipURLRequest represents the JSON request body for creating a signed repository zip download URL.
 type CreateSignedZipURLRequest struct {
-	Ref            string `json:"ref,omitempty"                                         example:"main"`
-	ExpiresInHours *int   `json:"expires_in_hours,omitempty" validate:"omitempty,min=0" example:"24"`
+	Ref            string `json:"ref,omitempty"              example:"main"`
+	ExpiresInHours *int   `json:"expires_in_hours,omitempty" example:"24"   validate:"omitempty,min=0"`
 }
 
 // SignedURLResponse represents the response from creating a signed download URL.
