@@ -2885,8 +2885,8 @@ CreateSignedZipURLRequest represents the JSON request body for creating a signed
 
 ```go
 type CreateSignedZipURLRequest struct {
-    Ref            string `json:"ref,omitempty"                                         example:"main"`
-    ExpiresInHours *int   `json:"expires_in_hours,omitempty" validate:"omitempty,min=0" example:"24"`
+    Ref            string `json:"ref,omitempty"              example:"main"`
+    ExpiresInHours *int   `json:"expires_in_hours,omitempty" example:"24"   validate:"omitempty,min=0"`
 }
 ```
 
