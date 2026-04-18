@@ -1,9 +1,15 @@
 package irminmodels
 
-// OAuthConfig is the vendor-side OAuth 2.0 metadata a connector declares
-// on its /info response when it wants Irmin to run an authorization-code
-// + PKCE flow on the user's behalf. Fields map directly to RFC 6749 /
-// RFC 7591 concepts; the Irmin Core OAuth service consumes them as-is.
+// ConnectionOAuthConfig is the vendor-side OAuth 2.0 metadata a connector
+// declares on its /info response when it wants Irmin to run an
+// authorization-code + PKCE flow on the user's behalf for a Connection.
+// Fields map directly to RFC 6749 / RFC 7591 concepts; the Irmin Core
+// OAuth service consumes them as-is.
+//
+// The "Connection" prefix disambiguates this from other OAuth concepts
+// Irmin may grow later (internal service-to-service OAuth, MCP-client
+// OAuth, etc.). This type is exclusively about authenticating a user's
+// Connection to an external vendor.
 //
 // Connectors that don't support OAuth omit this block entirely — the
 // existing DynamicField form path still works for password / API-key auth.
@@ -15,7 +21,7 @@ package irminmodels
 //   - ExtraParams may not override the security-critical OAuth params
 //     (response_type, client_id, redirect_uri, state, code_challenge,
 //     code_challenge_method); entries with those keys are ignored.
-type OAuthConfig struct {
+type ConnectionOAuthConfig struct {
 	// Provider is a short canonical identifier for the vendor, e.g.
 	// "hubspot", "stripe", "intercom". Used in logs + error messages.
 	Provider string `json:"provider" validate:"required,max=64" example:"hubspot"`
