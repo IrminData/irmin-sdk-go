@@ -62,7 +62,10 @@ type ProgressEvent struct {
 
 	// --- Retry / rate-limit (ProgressKindRateLimit) ---
 
-	// Attempt is the 0-based retry attempt.
+	// Attempt is the 1-based retry attempt (1 = first retry, 2 = second, …).
+	// 1-based so that omitempty can elide the field on non-rate-limit
+	// events without colliding with a meaningful "first retry" value —
+	// matching the Page and Batch conventions.
 	Attempt int `json:"attempt,omitempty"`
 	// Wait is how long the caller is about to sleep before retrying.
 	// Serialised as a Go duration (nanoseconds) so the round trip is
