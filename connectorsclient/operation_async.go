@@ -186,8 +186,11 @@ func (c *Client) FetchOperationResult(
 
 	// 409 signals "not ready". Drain+close the body so the
 	// connection can be reused, then surface the typed error.
+	// Bounded drain — streamClient has no top-level timeout, so a
+	// misbehaving server sending an unbounded 409 body would otherwise
+	// hang this path. errorBodyReadLimit matches readAPIError's guard.
 	if resp.StatusCode == http.StatusConflict {
-		_, _ = io.Copy(io.Discard, resp.Body)
+		_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, errorBodyReadLimit))
 		_ = resp.Body.Close()
 		return nil, ErrResultNotReady
 	}
