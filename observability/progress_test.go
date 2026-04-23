@@ -99,6 +99,7 @@ func TestProgressEvent_JSONWireFormat(t *testing.T) {
 		`"records_so_far":300`,
 		`"cursor":"cus_123"`,
 		`"attempt":1`,
+		`"wait":500000000`,
 		`"batch":2`,
 		`"batch_size":100`,
 		`"rows":10000`,
