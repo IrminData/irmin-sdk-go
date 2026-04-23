@@ -94,8 +94,13 @@ type OperationJob struct {
 	// ExpiresAt is when the result, if any, will be garbage-collected
 	// by the connector service's janitor. After this point a
 	// /operation/result call is not guaranteed to succeed even for
-	// jobs that reached status=complete. Zero value means no TTL.
-	ExpiresAt time.Time `json:"expires_at,omitempty"`
+	// jobs that reached status=complete. nil means no TTL.
+	//
+	// Pointer rather than time.Time + omitempty because encoding/json's
+	// omitempty does not treat a zero time.Time as empty — it would
+	// serialise as "0001-01-01T00:00:00Z" on the wire. Matches the
+	// *time.Time convention used elsewhere in this SDK's models.
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 }
 
 // OperationJobStatusResponse is the body returned by
