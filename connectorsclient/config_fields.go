@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
@@ -20,7 +21,7 @@ func (c *Client) GetConfigFields(
 	details map[string]string,
 	settings map[string]string,
 ) (map[string]irminmodels.DynamicField, error) {
-	endpoint := fmt.Sprintf("/configuration/%s/fields", configType)
+	endpoint := fmt.Sprintf("/configuration/%s/fields", url.PathEscape(configType))
 	formFields := buildDetailsSettingsForm(details, settings)
 
 	var fields map[string]irminmodels.DynamicField

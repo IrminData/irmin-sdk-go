@@ -18,12 +18,13 @@ import (
 //
 // Requires an operation token on the Client.
 func (c *Client) GetSchema(ctx context.Context, method, path string) (*irminmodels.ObjectSchema, error) {
+	encodedMethod := url.PathEscape(method)
 	encodedPath := url.QueryEscape(path)
 
 	var schema irminmodels.ObjectSchema
 	if err := c.FetchAPI(ctx, RequestOptions{
 		Method:   http.MethodPost,
-		Endpoint: fmt.Sprintf("/operation/schema/%s?path=%s", method, encodedPath),
+		Endpoint: fmt.Sprintf("/operation/schema/%s?path=%s", encodedMethod, encodedPath),
 	}, &schema); err != nil {
 		return nil, err
 	}
