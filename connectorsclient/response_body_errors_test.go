@@ -1,4 +1,4 @@
-package connectorsclient
+package connectorsclient_test
 
 import (
 	"context"
@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"strings"
 	"testing"
-)
 
-var errResponseBodyRead = errors.New("response body read failed")
+	"github.com/IrminData/irmin-sdk-go/connectorsclient"
+)
 
 type roundTripFunc func(*http.Request) (*http.Response, error)
 
@@ -19,34 +19,36 @@ func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 
 type failingReadCloser struct {
 	data []byte
+	err  error
 	done bool
 }
 
 func (r *failingReadCloser) Read(p []byte) (int, error) {
 	if r.done {
-		return 0, errResponseBodyRead
+		return 0, r.err
 	}
 	r.done = true
-	return copy(p, r.data), errResponseBodyRead
+	return copy(p, r.data), r.err
 }
 
 func (r *failingReadCloser) Close() error { return nil }
 
 func TestRequestReturnsResponseBodyReadError(t *testing.T) {
-	c := NewClient("http://example.test", "tok", "en")
+	errResponseBodyRead := errors.New("response body read failed")
+	c := connectorsclient.NewClient("http://example.test", "tok", "en")
 	c.HTTPClient = &http.Client{
 		Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
 			return &http.Response{
 				StatusCode: http.StatusOK,
 				Status:     "200 OK",
 				Header:     make(http.Header),
-				Body:       &failingReadCloser{data: []byte("partial")},
+				Body:       &failingReadCloser{data: []byte("partial"), err: errResponseBodyRead},
 				Request:    req,
 			}, nil
 		}),
 	}
 
-	body, err := c.Request(context.Background(), RequestOptions{
+	body, err := c.Request(context.Background(), connectorsclient.RequestOptions{
 		Method:   http.MethodGet,
 		Endpoint: "/partial",
 	})
