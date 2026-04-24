@@ -210,9 +210,15 @@ type AlreadyRunningBody struct {
 	Kind string `json:"kind,omitempty" example:"pull"`
 
 	// StartedAt is when the in-flight job was accepted. Clients can
-	// compute elapsed time to decide whether to wait or cancel. May
-	// be the zero time for legacy sync holders with no row.
-	StartedAt time.Time `json:"started_at,omitempty"`
+	// compute elapsed time to decide whether to wait or cancel. nil
+	// for legacy sync holders with no registered row.
+	//
+	// Pointer rather than time.Time + omitempty because encoding/json's
+	// omitempty does not treat a zero time.Time as empty — it would
+	// serialise as "0001-01-01T00:00:00Z" on the wire. Matches the
+	// convention used by ExpiresAt above and the *time.Time fields
+	// in the other models in this package.
+	StartedAt *time.Time `json:"started_at,omitempty"`
 }
     AlreadyRunningBody is the wire shape returned by any connector endpoint that
     refuses a request because the same operation is already in flight (HTTP 409
