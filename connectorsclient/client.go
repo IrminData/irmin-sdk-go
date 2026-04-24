@@ -223,8 +223,15 @@ func prepareMultipartBody(
 // writeFormFile emits one FormFile into the multipart writer.
 func writeFormFile(writer *multipart.Writer, file FormFile) error {
 	fileName := file.FileName
-	if fileName == "" {
+	if fileName == "" && file.FilePath != "" {
 		fileName = filepath.Base(file.FilePath)
+	}
+	if fileName == "" {
+		// Reader-only FormFile with no caller-provided name. Use the
+		// field name as a stable fallback rather than letting
+		// filepath.Base("") leak "." into the multipart payload, which
+		// no server-side parser handles cleanly.
+		fileName = file.FieldName
 	}
 
 	var r io.Reader
