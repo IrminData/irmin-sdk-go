@@ -165,10 +165,6 @@ type Client struct {
 	// the Authorization header as "Bearer &lt;token&gt;".
 	Token string
 
-	// Locale is used to request localised messages from the connector
-	// service via the Accept-Language header.
-	Locale string
-
 	// HTTPClient is the client used for short request-response calls.
 	// Defaults to a client with irminsdkgo.DefaultConnectorTimeout.
 	// Callers that need custom transports, proxies, or timeouts may
@@ -190,11 +186,17 @@ type Client struct {
     one without a top-level timeout for streaming (/operation/result, multipart
     downloads), so long transfers are not cut off by the request-response timer.
 
-func NewClient(baseURL, token, locale string) *Client
+func NewClient(baseURL, token string) *Client
     NewClient creates a new connector-service client with sensible default
     http.Client settings. The two underlying clients share a single transport
     so connection pooling and TLS sessions are reused across short and streaming
     calls.
+
+    Note: connector responses are English-only. There is no Accept-Language
+    negotiation — the connectors service does not localize error bodies,
+    dynamic-field labels, or progress text, and callers that need translated
+    UI strings must layer their own localization on top of the connector's
+    responses.
 
 func (c *Client) FetchAPI(ctx context.Context, opts RequestOptions, out any) error
     FetchAPI issues a request and unmarshals the JSON response body into out.
@@ -307,7 +309,7 @@ func (c *Client) WithConnectionID(id uint) *Client
     WithConnectionID returns the receiver after setting ConnectionID, enabling a
     fluent call-site:
 
-        client := connectorsclient.NewClient(url, tok, "en").WithConnectionID(conn.ID)
+        client := connectorsclient.NewClient(url, tok).WithConnectionID(conn.ID)
 
     Mutates and returns the same pointer. Passing 0 clears the connection
     context.
@@ -321,7 +323,6 @@ type ConnectorInfo struct {
 	APIBaseURL       string                            `json:"api_base_url"      example:"https://api.example.com"`
 	LogoURL          string                            `json:"logo_url"          example:"https://example.com/logo.png"`
 	Capabilities     []irminmodels.ConnectorCapability `json:"capabilities"      example:"pull,push"`
-	Locales          []string                          `json:"locales"           example:"en,fr"`
 	PrimaryCategory  irminmodels.ConnectorCategory     `json:"primary_category"  example:"database"`
 	Categories       []irminmodels.ConnectorCategory   `json:"categories"        example:"database,api"`
 	AuthorEmail      string                            `json:"author_email"      example:"john.doe@example.com"`

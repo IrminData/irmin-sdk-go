@@ -3714,7 +3714,7 @@ Authentication: Bearer tokens on every request \(system token for info/config/re
   - [func \(e \*AlreadyRunningError\) JobID\(\) string](<#AlreadyRunningError.JobID>)
   - [func \(e \*AlreadyRunningError\) Unwrap\(\) error](<#AlreadyRunningError.Unwrap>)
 - [type Client](<#Client>)
-  - [func NewClient\(baseURL, token, locale string\) \*Client](<#NewClient>)
+  - [func NewClient\(baseURL, token string\) \*Client](<#NewClient>)
   - [func \(c \*Client\) FetchAPI\(ctx context.Context, opts RequestOptions, out any\) error](<#Client.FetchAPI>)
   - [func \(c \*Client\) FetchStreamFiles\(ctx context.Context, opts RequestOptions\) \(\[\]PulledFile, error\)](<#Client.FetchStreamFiles>)
   - [func \(c \*Client\) FetchStreamFilesReader\(ctx context.Context, opts RequestOptions\) \(io.ReadCloser, error\)](<#Client.FetchStreamFilesReader>)
@@ -3907,10 +3907,6 @@ type Client struct {
     // the Authorization header as "Bearer <token>".
     Token string
 
-    // Locale is used to request localised messages from the connector
-    // service via the Accept-Language header.
-    Locale string
-
     // HTTPClient is the client used for short request-response calls.
     // Defaults to a client with irminsdkgo.DefaultConnectorTimeout.
     // Callers that need custom transports, proxies, or timeouts may
@@ -3931,10 +3927,12 @@ type Client struct {
 ### func NewClient
 
 ```go
-func NewClient(baseURL, token, locale string) *Client
+func NewClient(baseURL, token string) *Client
 ```
 
 NewClient creates a new connector\-service client with sensible default http.Client settings. The two underlying clients share a single transport so connection pooling and TLS sessions are reused across short and streaming calls.
+
+Note: connector responses are English\-only. There is no Accept\-Language negotiation — the connectors service does not localize error bodies, dynamic\-field labels, or progress text, and callers that need translated UI strings must layer their own localization on top of the connector's responses.
 
 <a name="Client.FetchAPI"></a>
 ### func \(\*Client\) FetchAPI
@@ -4084,7 +4082,7 @@ func (c *Client) WithConnectionID(id uint) *Client
 WithConnectionID returns the receiver after setting ConnectionID, enabling a fluent call\-site:
 
 ```
-client := connectorsclient.NewClient(url, tok, "en").WithConnectionID(conn.ID)
+client := connectorsclient.NewClient(url, tok).WithConnectionID(conn.ID)
 ```
 
 Mutates and returns the same pointer. Passing 0 clears the connection context.
@@ -4104,7 +4102,6 @@ type ConnectorInfo struct {
     APIBaseURL       string                            `json:"api_base_url"      example:"https://api.example.com"`
     LogoURL          string                            `json:"logo_url"          example:"https://example.com/logo.png"`
     Capabilities     []irminmodels.ConnectorCapability `json:"capabilities"      example:"pull,push"`
-    Locales          []string                          `json:"locales"           example:"en,fr"`
     PrimaryCategory  irminmodels.ConnectorCategory     `json:"primary_category"  example:"database"`
     Categories       []irminmodels.ConnectorCategory   `json:"categories"        example:"database,api"`
     AuthorEmail      string                            `json:"author_email"      example:"john.doe@example.com"`
@@ -5540,8 +5537,6 @@ type Connector struct {
     LogoURL string `json:"logo_url"          validate:"required,validimageurl"                                                                                                                                         example:"https://cdn.irmin.dev/mysql.png"`
     // Array of capabilities of the connector, eg. what kind of operations the connector can perform
     Capabilities []ConnectorCapability `json:"capabilities"      validate:"required,dive,oneof=pull push apply_patch patch_event"                                                                                                          example:"pull,push"`
-    // Array of locales supported by the connector, eg. what languages the connector supports
-    Locales []string `json:"locales"           validate:"required,dive,min=2,max=5"                                                                                                                                      example:"en,fi"`
     // Array of categories associated with the connector, eg. what kind of connector it is
     Categories []ConnectorCategory `json:"categories"        validate:"required,dive,oneof=database crm erp warehouse marketing analytics storage messaging payment social calendar project_management ecommerce iot monitoring other" example:"database"`
     // Primary category of the connector
