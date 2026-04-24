@@ -48,13 +48,20 @@ func (c *Client) ValidateConfigFields(
 	formFields := buildDetailsSettingsForm(details, settings)
 
 	var result irminmodels.ConnectorConfigurationValidationResult
-	err := c.FetchAPI(ctx, RequestOptions{
+	if err := c.FetchAPI(ctx, RequestOptions{
 		Method:      http.MethodPost,
 		Endpoint:    "/configuration/validate",
 		FormFields:  formFields,
 		ContentType: "application/x-www-form-urlencoded",
-	}, &result)
-	return &result, err
+	}, &result); err != nil {
+		// Match the nil-on-error convention of every other method in
+		// this package (GetInfo, GetConfigFields, GetSchema,
+		// SubscribeToChanges). Handing back a zero-value pointer on
+		// error lets callers that check the pointer before the error
+		// silently proceed with bogus validation state.
+		return nil, err
+	}
+	return &result, nil
 }
 
 // buildDetailsSettingsForm emits form fields with the `details[KEY]`

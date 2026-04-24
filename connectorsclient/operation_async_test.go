@@ -41,21 +41,24 @@ func TestStartOperationPull_HappyPath(t *testing.T) {
 		gotConnection = r.Header.Get(connectorsclient.HeaderConnectionID)
 
 		w.WriteHeader(http.StatusAccepted)
-		_ = json.NewEncoder(w).Encode(irminmodels.StartOperationPullResponse{JobID: "opjob_test123"})
+		_ = json.NewEncoder(w).Encode(irminmodels.StartOperationJobResponse{
+			JobID:          "opjob_test123",
+			OperationToken: "optk_test456",
+		})
 	}))
 	defer srv.Close()
 
 	c := connectorsclient.NewClient(srv.URL, "tok_abc", "en").WithConnectionID(42)
 
-	resp, err := c.StartOperationPull(context.Background(), connectorsclient.StartOperationPullRequest{
+	job, err := c.StartOperationPull(context.Background(), connectorsclient.StartOperationPullRequest{
 		Path:  "/v1/customers",
 		Extra: map[string]string{"cursor": "abc"},
 	})
 	if err != nil {
 		t.Fatalf("StartOperationPull: %v", err)
 	}
-	if resp.JobID != "opjob_test123" {
-		t.Errorf("JobID = %q, want opjob_test123", resp.JobID)
+	if job.JobID != "opjob_test123" {
+		t.Errorf("JobID = %q, want opjob_test123", job.JobID)
 	}
 	if gotPath != "/v1/customers" {
 		t.Errorf("form path = %q, want /v1/customers", gotPath)
@@ -174,7 +177,8 @@ func TestGetOperationJobStatus_Transitions(t *testing.T) {
 		irminmodels.OperationJobStatusComplete,
 	}
 	for i, want := range wantStatuses {
-		got, err := c.GetOperationJobStatus(ctx, "opjob_test123")
+		job := connectorsclient.NewOperationJobForTest(c, "opjob_test123", "optk_test")
+		got, err := job.Status(ctx)
 		if err != nil {
 			t.Fatalf("call %d: GetOperationJobStatus: %v", i, err)
 		}
@@ -206,7 +210,8 @@ func TestGetOperationJobStatus_Failed(t *testing.T) {
 	defer srv.Close()
 
 	c := connectorsclient.NewClient(srv.URL, "tok", "en")
-	got, err := c.GetOperationJobStatus(context.Background(), "opjob_test123")
+	job := connectorsclient.NewOperationJobForTest(c, "opjob_test123", "optk_test")
+	got, err := job.Status(context.Background())
 	if err != nil {
 		t.Fatalf("GetOperationJobStatus: %v", err)
 	}
@@ -225,7 +230,7 @@ func TestGetOperationJobStatus_Failed(t *testing.T) {
 // empty job_id that would otherwise produce a malformed URL.
 func TestGetOperationJobStatus_EmptyJobID(t *testing.T) {
 	c := connectorsclient.NewClient("http://example", "tok", "en")
-	_, err := c.GetOperationJobStatus(context.Background(), "")
+	_, err := connectorsclient.NewOperationJobForTest(c, "", "optk_test").Status(context.Background())
 	if err == nil {
 		t.Fatalf("expected error for empty jobID")
 	}
@@ -246,7 +251,7 @@ func TestFetchOperationResult_HappyPath(t *testing.T) {
 	defer srv.Close()
 
 	c := connectorsclient.NewClient(srv.URL, "tok", "en")
-	rc, err := c.FetchOperationResult(context.Background(), "opjob_test123")
+	rc, err := connectorsclient.NewOperationJobForTest(c, "opjob_test123", "optk_test").Result(context.Background())
 	if err != nil {
 		t.Fatalf("FetchOperationResult: %v", err)
 	}
@@ -272,7 +277,7 @@ func TestFetchOperationResult_NotReady(t *testing.T) {
 	defer srv.Close()
 
 	c := connectorsclient.NewClient(srv.URL, "tok", "en")
-	rc, err := c.FetchOperationResult(context.Background(), "opjob_test123")
+	rc, err := connectorsclient.NewOperationJobForTest(c, "opjob_test123", "optk_test").Result(context.Background())
 	if rc != nil {
 		_ = rc.Close()
 		t.Fatalf("expected nil reader on not-ready")
@@ -292,7 +297,7 @@ func TestFetchOperationResult_ServerError(t *testing.T) {
 	defer srv.Close()
 
 	c := connectorsclient.NewClient(srv.URL, "tok", "en")
-	rc, err := c.FetchOperationResult(context.Background(), "opjob_test123")
+	rc, err := connectorsclient.NewOperationJobForTest(c, "opjob_test123", "optk_test").Result(context.Background())
 	if rc != nil {
 		_ = rc.Close()
 		t.Fatalf("expected nil reader on server error")
@@ -320,7 +325,7 @@ func TestCancelOperationJob_HappyPath(t *testing.T) {
 	defer srv.Close()
 
 	c := connectorsclient.NewClient(srv.URL, "tok", "en")
-	if err := c.CancelOperationJob(context.Background(), "opjob_test123"); err != nil {
+	if err := connectorsclient.NewOperationJobForTest(c, "opjob_test123", "optk_test").Cancel(context.Background()); err != nil {
 		t.Fatalf("CancelOperationJob: %v", err)
 	}
 	if gotPath != "/operation/cancel/opjob_test123" {

@@ -101,13 +101,23 @@ func (c *Client) WithConnectionID(id uint) *Client {
 }
 
 // applyDefaultHeaders sets the headers common to every request this
-// client issues: auth, locale, the optional connection ID, and a
-// caller-supplied default Accept when the caller did not pre-set one.
-// Extra headers from RequestOptions.Headers are applied by the caller
-// AFTER this method so they can override any of the defaults (a caller
-// that wants a custom X-Irmin-Connection-Id wins).
+// client issues using the Client's configured Token (the system token
+// in typical use). Extra headers from RequestOptions.Headers are
+// applied by the caller AFTER this method so they can override any of
+// the defaults (a caller that wants a custom X-Irmin-Connection-Id wins).
 func (c *Client) applyDefaultHeaders(req *http.Request, accept string) {
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+	c.applyHeadersForToken(req, c.Token, accept)
+}
+
+// applyHeadersForToken stamps the standard headers using an explicit
+// bearer token instead of c.Token. Used by OperationJob's lifecycle
+// methods (Status, Result, Cancel, Wait) where the per-job operation
+// token must override the client's system token — the connectors
+// service rejects the system token on job-scoped routes by design so
+// a compromised system token cannot poll or cancel jobs it did not
+// start.
+func (c *Client) applyHeadersForToken(req *http.Request, token, accept string) {
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	req.Header.Set("Accept-Language", c.Locale)
 	if req.Header.Get("Accept") == "" && accept != "" {
 		req.Header.Set("Accept", accept)
@@ -226,6 +236,11 @@ func writeFormFile(writer *multipart.Writer, file FormFile) error {
 		if err != nil {
 			return fmt.Errorf("failed to open file %q: %w", file.FilePath, err)
 		}
+		// Close the file descriptor before returning regardless of
+		// outcome. Missing this leaked one fd per push/patch that
+		// supplied FilePath — enough of those under load and the
+		// process hits its open-files rlimit.
+		defer func() { _ = f.Close() }()
 		r = f
 	default:
 		return nil
@@ -515,7 +530,11 @@ func (c *Client) doStreamRequest(req *http.Request, allowedStatus []int) (*http.
 		return nil, fmt.Errorf("request to %s failed: %w", req.URL, err)
 	}
 	if !isStatusAllowed(resp.StatusCode, allowedStatus) {
-		bodyBytes, _ := io.ReadAll(resp.Body)
+		// Bound the error-body read so a misbehaving server cannot
+		// exhaust client memory via a giant 5xx body — streamClient
+		// has no top-level timeout, so the read could otherwise run
+		// for an unbounded amount of time/bytes.
+		bodyBytes, _ := io.ReadAll(io.LimitReader(resp.Body, errorBodyReadLimit))
 		_ = resp.Body.Close()
 		return nil, fmt.Errorf("API request failed with status %d. Body: %s", resp.StatusCode, bodyBytes)
 	}
