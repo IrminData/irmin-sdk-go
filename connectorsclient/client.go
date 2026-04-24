@@ -332,9 +332,14 @@ func (c *Client) doRequest(req *http.Request, allowedStatus []int) (*http.Respon
 		return nil, fmt.Errorf("request to %s failed: %w", req.URL, err)
 	}
 
-	bodyBytes, _ := io.ReadAll(resp.Body)
+	bodyBytes, readErr := io.ReadAll(resp.Body)
 	if closeErr := resp.Body.Close(); closeErr != nil {
-		return nil, fmt.Errorf("failed to close response body: %w", closeErr)
+		if readErr == nil {
+			return nil, fmt.Errorf("failed to close response body: %w", closeErr)
+		}
+	}
+	if readErr != nil {
+		return nil, fmt.Errorf("failed to read response body: %w", readErr)
 	}
 
 	if !isStatusAllowed(resp.StatusCode, allowedStatus) {
