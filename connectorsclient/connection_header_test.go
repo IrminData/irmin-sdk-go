@@ -30,7 +30,7 @@ func newRecordingServer(t *testing.T) (string, *http.Client, func() string) {
 
 func TestRequestSetsConnectionHeaderWhenConfigured(t *testing.T) {
 	baseURL, httpClient, read := newRecordingServer(t)
-	c := NewClient(baseURL, "token", "en")
+	c := NewClient(baseURL, "token")
 	c.HTTPClient = httpClient
 	c.WithConnectionID(42)
 
@@ -50,7 +50,7 @@ func TestRequestSetsConnectionHeaderWhenConfigured(t *testing.T) {
 
 func TestRequestOmitsConnectionHeaderWhenUnset(t *testing.T) {
 	baseURL, httpClient, read := newRecordingServer(t)
-	c := NewClient(baseURL, "token", "en")
+	c := NewClient(baseURL, "token")
 	c.HTTPClient = httpClient
 	// ConnectionID defaults to 0 — header must not be sent.
 
@@ -68,7 +68,7 @@ func TestRequestOmitsConnectionHeaderWhenUnset(t *testing.T) {
 }
 
 func TestWithConnectionIDClearsWithZero(t *testing.T) {
-	c := NewClient("http://example.test", "tok", "en")
+	c := NewClient("http://example.test", "tok")
 	c.WithConnectionID(7)
 	c.WithConnectionID(0)
 	if c.ConnectionID != 0 {
@@ -82,7 +82,7 @@ func TestExplicitHeaderOverridesInjectedConnectionID(t *testing.T) {
 	// cross-workspace reattribution) to override without reaching into
 	// the client field.
 	baseURL, httpClient, read := newRecordingServer(t)
-	c := NewClient(baseURL, "token", "en")
+	c := NewClient(baseURL, "token")
 	c.HTTPClient = httpClient
 	c.WithConnectionID(100)
 
@@ -102,7 +102,7 @@ func TestExplicitHeaderOverridesInjectedConnectionID(t *testing.T) {
 
 func TestStreamFetchAlsoSetsConnectionHeader(t *testing.T) {
 	baseURL, httpClient, read := newRecordingServer(t)
-	c := NewClient(baseURL, "token", "en")
+	c := NewClient(baseURL, "token")
 	c.HTTPClient = httpClient
 	// Swap streamClient's transport to point at the test server's client.
 	c.streamClient = &http.Client{Transport: httpClient.Transport}
@@ -128,7 +128,7 @@ func TestStreamFetchAlsoSetsConnectionHeader(t *testing.T) {
 // variant of FetchStreamFilesReader).
 func TestFetchStreamFilesAlsoSetsConnectionHeader(t *testing.T) {
 	baseURL, httpClient, read := newRecordingServer(t)
-	c := NewClient(baseURL, "token", "en")
+	c := NewClient(baseURL, "token")
 	c.HTTPClient = httpClient
 	c.WithConnectionID(88)
 

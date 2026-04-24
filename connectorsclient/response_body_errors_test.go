@@ -35,7 +35,7 @@ func (r *failingReadCloser) Close() error { return nil }
 
 func TestRequestReturnsResponseBodyReadError(t *testing.T) {
 	errResponseBodyRead := errors.New("response body read failed")
-	c := connectorsclient.NewClient("http://example.test", "tok", "en")
+	c := connectorsclient.NewClient("http://example.test", "tok")
 	c.HTTPClient = &http.Client{
 		Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
 			return &http.Response{

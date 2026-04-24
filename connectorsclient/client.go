@@ -46,10 +46,6 @@ type Client struct {
 	// the Authorization header as "Bearer <token>".
 	Token string
 
-	// Locale is used to request localised messages from the connector
-	// service via the Accept-Language header.
-	Locale string
-
 	// HTTPClient is the client used for short request-response calls.
 	// Defaults to a client with irminsdkgo.DefaultConnectorTimeout.
 	// Callers that need custom transports, proxies, or timeouts may
@@ -74,12 +70,17 @@ type Client struct {
 // default http.Client settings. The two underlying clients share a
 // single transport so connection pooling and TLS sessions are reused
 // across short and streaming calls.
-func NewClient(baseURL, token, locale string) *Client {
+//
+// Note: connector responses are English-only. There is no
+// Accept-Language negotiation — the connectors service does not
+// localize error bodies, dynamic-field labels, or progress text, and
+// callers that need translated UI strings must layer their own
+// localization on top of the connector's responses.
+func NewClient(baseURL, token string) *Client {
 	transport := http.DefaultTransport
 	return &Client{
 		BaseURL: baseURL,
 		Token:   token,
-		Locale:  locale,
 		HTTPClient: &http.Client{
 			Timeout:   irminsdkgo.DefaultConnectorTimeout,
 			Transport: transport,
@@ -91,7 +92,7 @@ func NewClient(baseURL, token, locale string) *Client {
 // WithConnectionID returns the receiver after setting ConnectionID,
 // enabling a fluent call-site:
 //
-//	client := connectorsclient.NewClient(url, tok, "en").WithConnectionID(conn.ID)
+//	client := connectorsclient.NewClient(url, tok).WithConnectionID(conn.ID)
 //
 // Mutates and returns the same pointer. Passing 0 clears the
 // connection context.
@@ -118,7 +119,6 @@ func (c *Client) applyDefaultHeaders(req *http.Request, accept string) {
 // start.
 func (c *Client) applyHeadersForToken(req *http.Request, token, accept string) {
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	req.Header.Set("Accept-Language", c.Locale)
 	if req.Header.Get("Accept") == "" && accept != "" {
 		req.Header.Set("Accept", accept)
 	}

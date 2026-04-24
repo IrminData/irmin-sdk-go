@@ -18,7 +18,6 @@ type ConnectorInfo struct {
 	APIBaseURL       string                            `json:"api_base_url"      example:"https://api.example.com"`
 	LogoURL          string                            `json:"logo_url"          example:"https://example.com/logo.png"`
 	Capabilities     []irminmodels.ConnectorCapability `json:"capabilities"      example:"pull,push"`
-	Locales          []string                          `json:"locales"           example:"en,fr"`
 	PrimaryCategory  irminmodels.ConnectorCategory     `json:"primary_category"  example:"database"`
 	Categories       []irminmodels.ConnectorCategory   `json:"categories"        example:"database,api"`
 	AuthorEmail      string                            `json:"author_email"      example:"john.doe@example.com"`

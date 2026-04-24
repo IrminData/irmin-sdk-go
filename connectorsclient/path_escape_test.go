@@ -33,7 +33,7 @@ func TestGetSchemaEscapesMethodPathSegment(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := connectorsclient.NewClient(srv.URL, "tok", "en")
+	c := connectorsclient.NewClient(srv.URL, "tok")
 	schema, err := c.GetSchema(context.Background(), "pull/preview?mode=full", "/datasets/quarterly reports")
 	if err != nil {
 		t.Fatalf("GetSchema: %v", err)
@@ -69,7 +69,7 @@ func TestGetConfigFieldsEscapesConfigTypePathSegment(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := connectorsclient.NewClient(srv.URL, "tok", "en")
+	c := connectorsclient.NewClient(srv.URL, "tok")
 	fields, err := c.GetConfigFields(
 		context.Background(),
 		"details/advanced?beta",
