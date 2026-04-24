@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	irminmodels "github.com/IrminData/irmin-sdk-go/models"
 )
@@ -173,6 +174,10 @@ func (c *Client) GetOperationJobStatus(
 //
 //   - 200 OK with application/zip (or any non-JSON) body: returns
 //     the body reader.
+//   - 204 No Content: the job completed but produced no artifact
+//     (push/patch/subscribe style). Returns ErrNoResultArtifact;
+//     callers that don't need a payload should check the error
+//     with errors.Is and treat it as success.
 //   - 409 Conflict: the job is not yet in terminal state complete.
 //     Returns ErrResultNotReady; callers should resume polling
 //     status rather than retry the result fetch.
@@ -214,6 +219,16 @@ func (c *Client) FetchOperationResult(
 		return nil, ErrResultNotReady
 	}
 
+	// 204 is the structured "complete but no artifact" signal for
+	// push/patch/subscribe jobs. Drain (there should be no body) and
+	// surface the sentinel so callers that only care about status
+	// reach a clean success branch.
+	if resp.StatusCode == http.StatusNoContent {
+		_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, errorBodyReadLimit))
+		_ = resp.Body.Close()
+		return nil, ErrNoResultArtifact
+	}
+
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		apiErr := readJobNonSuccess(resp)
 		_ = resp.Body.Close()
@@ -222,6 +237,302 @@ func (c *Client) FetchOperationResult(
 
 	// Success — hand the live body to the caller. They own Close.
 	return resp.Body, nil
+}
+
+// StartOperationPushRequest holds the payload for POST /operation/push
+// under the async protocol. The body is multipart/form-data — the
+// server expects either `file` (a zip of resource files) or
+// `presigned_url` (a URL it can fetch the zip from), plus an optional
+// `path` form field for connector-specific targeting.
+//
+// Exactly one of File, FilePath, or PresignedURL must be set. Extra
+// carries any additional form fields the specific connector accepts
+// on its push endpoint.
+type StartOperationPushRequest struct {
+	// Path is the connector-specific target (table name, bucket
+	// prefix, HTTP URL override, etc.). Optional.
+	Path string
+	// PresignedURL lets the connector service fetch the zip directly
+	// from S3 so Core does not have to stream large payloads through
+	// itself. When set, File and FilePath are ignored.
+	PresignedURL string
+	// File is an in-memory zip. Used when PresignedURL is empty.
+	File []byte
+	// FileName is the multipart part filename when File is set.
+	// Defaults to "push.zip".
+	FileName string
+	// FilePath points at a zip on disk. Used when both PresignedURL
+	// and File are empty.
+	FilePath string
+	// Extra carries additional form fields (connector-specific).
+	Extra map[string]string
+}
+
+// StartOperationPatchRequest holds the payload for POST /operation/patch
+// under the async protocol. The body is multipart/form-data with a
+// required `patches` file carrying the JSON Patch operations.
+//
+// Patches may be supplied inline via Patches (the SDK marshals them)
+// or as raw JSON bytes via PatchesJSON (caller-marshalled, preserves
+// key ordering when that matters).
+type StartOperationPatchRequest struct {
+	// Patches is the slice of JSON Patch ops to apply. When non-empty
+	// the SDK marshals it into the `patches` multipart field.
+	Patches []irminmodels.PatchOperation
+	// PatchesJSON is the raw JSON bytes of the operations array. Used
+	// when Patches is nil — the caller owns marshalling.
+	PatchesJSON []byte
+	// FileName is the multipart part filename for the patches field.
+	// Defaults to "patches.json".
+	FileName string
+	// Extra carries additional form fields (connector-specific).
+	Extra map[string]string
+}
+
+// StartOperationPush initiates an asynchronous push against a
+// connector. See StartOperationPull for the response semantics — same
+// 202 + {job_id} pattern, same AlreadyRunningError / APIError /
+// JobServerError surfaces.
+func (c *Client) StartOperationPush(
+	ctx context.Context,
+	req StartOperationPushRequest,
+) (*irminmodels.StartOperationPullResponse, error) {
+	opts, err := buildPushRequestOptions(req)
+	if err != nil {
+		return nil, err
+	}
+	return c.startOperation(ctx, "/operation/push", opts)
+}
+
+// StartOperationPatch initiates an asynchronous patch against a
+// connector. Mirrors StartOperationPush's response semantics.
+func (c *Client) StartOperationPatch(
+	ctx context.Context,
+	req StartOperationPatchRequest,
+) (*irminmodels.StartOperationPullResponse, error) {
+	opts, err := buildPatchRequestOptions(req)
+	if err != nil {
+		return nil, err
+	}
+	return c.startOperation(ctx, "/operation/patch", opts)
+}
+
+// startOperation is the shared request driver for
+// Start{Pull,Push,Patch}. Handles the 202/200-legacy/409/other-non-2xx
+// branching and JSON decoding of the accepted body.
+func (c *Client) startOperation(
+	ctx context.Context,
+	endpoint string,
+	opts RequestOptions,
+) (*irminmodels.StartOperationPullResponse, error) {
+	fullURL := c.BaseURL + endpoint
+	bodyReader, preparedHeaders, err := c.prepareBodyAndHeaders(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	httpReq, err := http.NewRequestWithContext(ctx, opts.Method, fullURL, bodyReader)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build start-operation request: %w", err)
+	}
+	c.applyDefaultHeaders(httpReq, "application/json")
+	for k, v := range preparedHeaders {
+		httpReq.Header.Set(k, v)
+	}
+
+	resp, err := c.HTTPClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("start-operation request to %s failed: %w", httpReq.URL, err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	// Legacy sync server. Don't drain — body could be large.
+	if resp.StatusCode == http.StatusOK {
+		return nil, ErrLegacySyncPullResponse
+	}
+
+	if resp.StatusCode == http.StatusConflict {
+		bodyBytes := readBoundedBody(resp)
+		if alreadyErr := readAlreadyRunningError(bodyBytes); alreadyErr != nil {
+			return nil, alreadyErr
+		}
+		return nil, apiErrorFromBytes(resp.StatusCode, bodyBytes)
+	}
+
+	if resp.StatusCode != http.StatusAccepted {
+		return nil, readAPIError(resp)
+	}
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read start-operation response body: %w", err)
+	}
+
+	var out irminmodels.StartOperationPullResponse
+	if unmarshalErr := json.Unmarshal(bodyBytes, &out); unmarshalErr != nil {
+		return nil, fmt.Errorf("failed to unmarshal start-operation response: %w", unmarshalErr)
+	}
+	if out.JobID == "" {
+		return nil, errors.New(
+			"connector accepted the operation (HTTP 202) but did not return a job_id",
+		)
+	}
+	return &out, nil
+}
+
+// buildPushRequestOptions composes the multipart body for a push.
+// Validates that exactly one source (File / FilePath / PresignedURL)
+// is set.
+func buildPushRequestOptions(req StartOperationPushRequest) (RequestOptions, error) {
+	sources := 0
+	if req.PresignedURL != "" {
+		sources++
+	}
+	if len(req.File) > 0 {
+		sources++
+	}
+	if req.FilePath != "" {
+		sources++
+	}
+	if sources == 0 {
+		return RequestOptions{}, errors.New(
+			"StartOperationPush requires one of File, FilePath, or PresignedURL",
+		)
+	}
+	if sources > 1 {
+		return RequestOptions{}, errors.New(
+			"StartOperationPush accepts exactly one of File, FilePath, or PresignedURL",
+		)
+	}
+
+	formFields := map[string]string{}
+	if req.Path != "" {
+		formFields["path"] = req.Path
+	}
+	for k, v := range req.Extra {
+		if k == "file" || k == "presigned_url" {
+			continue
+		}
+		formFields[k] = v
+	}
+
+	var files []FormFile
+	if req.PresignedURL != "" {
+		formFields["presigned_url"] = req.PresignedURL
+		return RequestOptions{
+			Method:      http.MethodPost,
+			Endpoint:    "", // startOperation sets the URL
+			FormFields:  formFields,
+			ContentType: "application/x-www-form-urlencoded",
+		}, nil
+	}
+
+	fileName := req.FileName
+	if fileName == "" {
+		fileName = "push.zip"
+	}
+	if len(req.File) > 0 {
+		files = []FormFile{{
+			FieldName: "file",
+			FileName:  fileName,
+			Reader:    bytes.NewReader(req.File),
+		}}
+	} else {
+		files = []FormFile{{
+			FieldName: "file",
+			FileName:  fileName,
+			FilePath:  req.FilePath,
+		}}
+	}
+
+	return RequestOptions{
+		Method:      http.MethodPost,
+		Endpoint:    "",
+		FormFields:  formFields,
+		Files:       files,
+		ContentType: "multipart/form-data",
+	}, nil
+}
+
+// buildPatchRequestOptions composes the multipart body for a patch.
+// Either Patches (marshalled here) or PatchesJSON (caller-supplied
+// bytes) must carry the operations.
+func buildPatchRequestOptions(req StartOperationPatchRequest) (RequestOptions, error) {
+	var payload []byte
+	switch {
+	case len(req.PatchesJSON) > 0:
+		payload = req.PatchesJSON
+	case len(req.Patches) > 0:
+		marshalled, err := json.Marshal(req.Patches)
+		if err != nil {
+			return RequestOptions{}, fmt.Errorf("failed to marshal patch operations: %w", err)
+		}
+		payload = marshalled
+	default:
+		return RequestOptions{}, errors.New(
+			"StartOperationPatch requires Patches or PatchesJSON to be set",
+		)
+	}
+
+	fileName := req.FileName
+	if fileName == "" {
+		fileName = "patches.json"
+	}
+
+	formFields := map[string]string{}
+	for k, v := range req.Extra {
+		if k == "patches" {
+			continue
+		}
+		formFields[k] = v
+	}
+
+	return RequestOptions{
+		Method:     http.MethodPost,
+		Endpoint:   "",
+		FormFields: formFields,
+		Files: []FormFile{{
+			FieldName: "patches",
+			FileName:  fileName,
+			Reader:    bytes.NewReader(payload),
+		}},
+		ContentType: "multipart/form-data",
+	}, nil
+}
+
+// WaitForJob polls GetOperationJobStatus at the given cadence until
+// the job reaches a terminal state, returns the final status response.
+// Returns ctx.Err on cancellation. When the terminal state is failed
+// or cancelled the caller still gets the response (so error details
+// are available); inspect OperationJobStatusResponse.Status to
+// distinguish.
+//
+// pollInterval is clamped to a 500ms floor to stop a zero value from
+// busy-looping the connector service. Typical Core usage is 1–5s.
+func (c *Client) WaitForJob(
+	ctx context.Context,
+	jobID string,
+	pollInterval time.Duration,
+) (*irminmodels.OperationJobStatusResponse, error) {
+	const minPoll = 500 * time.Millisecond
+	if pollInterval < minPoll {
+		pollInterval = minPoll
+	}
+
+	for {
+		status, err := c.GetOperationJobStatus(ctx, jobID)
+		if err != nil {
+			return nil, err
+		}
+		if status.Status.IsTerminal() {
+			return status, nil
+		}
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-time.After(pollInterval):
+		}
+	}
 }
 
 // CancelOperationJob requests that the connector service cancel an

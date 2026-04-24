@@ -51,6 +51,16 @@ var ErrResultNotReady = errors.New(
 	"operation result is not ready: job has not reached terminal status=complete",
 )
 
+// ErrNoResultArtifact is returned by FetchOperationResult when the
+// server signals that the terminal job has no downloadable artifact
+// (HTTP 204 No Content). push, patch, and subscribe jobs surface this
+// because their success signal is status=complete, not a file. Callers
+// that only observe completion should check the error via errors.Is
+// and treat it as success rather than a missing-result failure.
+var ErrNoResultArtifact = errors.New(
+	"operation job completed without a result artifact (push/patch/subscribe)",
+)
+
 // ErrJobFailed is returned when a status response indicates the job
 // has reached a non-success terminal state (failed or cancelled).
 // Callers that wrap this can surface the original connector-supplied
