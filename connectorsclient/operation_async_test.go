@@ -74,6 +74,65 @@ func TestStartOperationPull_HappyPath(t *testing.T) {
 	}
 }
 
+func TestStartOperationPush_ExtraCannotOverwriteReservedFields(t *testing.T) {
+	var (
+		gotPath         string
+		gotPresignedURL string
+		gotFile         string
+		gotMode         string
+	)
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost || r.URL.Path != "/operation/push" {
+			t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
+		}
+		if err := r.ParseForm(); err != nil {
+			t.Fatalf("ParseForm: %v", err)
+		}
+		gotPath = r.FormValue("path")
+		gotPresignedURL = r.FormValue("presigned_url")
+		gotFile = r.FormValue("file")
+		gotMode = r.FormValue("mode")
+
+		w.WriteHeader(http.StatusAccepted)
+		_ = json.NewEncoder(w).Encode(irminmodels.StartOperationJobResponse{
+			JobID:          "opjob_push123",
+			OperationToken: "optk_push456",
+		})
+	}))
+	defer srv.Close()
+
+	c := connectorsclient.NewClient(srv.URL, "tok", "en")
+	job, err := c.StartOperationPush(context.Background(), connectorsclient.StartOperationPushRequest{
+		Path:         "/explicit",
+		PresignedURL: "https://storage.example/push.zip",
+		Extra: map[string]string{
+			"path":          "/from-extra",
+			"presigned_url": "https://storage.example/evil.zip",
+			"file":          "evil.zip",
+			"mode":          "upsert",
+		},
+	})
+	if err != nil {
+		t.Fatalf("StartOperationPush: %v", err)
+	}
+	if job.JobID != "opjob_push123" {
+		t.Errorf("JobID = %q, want opjob_push123", job.JobID)
+	}
+	if gotPath != "/explicit" {
+		t.Errorf("form path = %q, want /explicit", gotPath)
+	}
+	if gotPresignedURL != "https://storage.example/push.zip" {
+		t.Errorf("form presigned_url = %q, want explicit presigned URL", gotPresignedURL)
+	}
+	if gotFile != "" {
+		t.Errorf("form file = %q, want empty", gotFile)
+	}
+	if gotMode != "upsert" {
+		t.Errorf("form mode = %q, want upsert", gotMode)
+	}
+}
+
 // TestStartOperationPull_LegacySyncResponse verifies that a 200 OK
 // from an unmigrated connector surfaces the ErrLegacySyncPullResponse
 // sentinel rather than silently degrading to a sync path.

@@ -494,7 +494,8 @@ func buildPushRequestOptions(req StartOperationPushRequest) (RequestOptions, err
 		formFields["path"] = req.Path
 	}
 	for k, v := range req.Extra {
-		if k == "file" || k == "presigned_url" {
+		// Protect against a caller overwriting reserved fields via Extra.
+		if k == "path" || k == "file" || k == "presigned_url" {
 			continue
 		}
 		formFields[k] = v
