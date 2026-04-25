@@ -60,6 +60,28 @@ type StartOperationPullRequest struct {
 	// Postgres). Required.
 	Path string
 
+	// Details carries the connection's external-system credentials
+	// (host / port / API key / TLS cert / etc.) — the same map
+	// shape the pre-async /operation/init handshake used to ship
+	// once and the connector cached on its Operation row.
+	//
+	// After Phase 4, /operation/init is gone; every Start* request
+	// carries the credentials inline so the connector service can
+	// upsert its Operation row on the fly. The wire shape is
+	// `details[<key>]=<value>` form fields, matching what
+	// /operation/init expected so the server-side parser does not
+	// have to change.
+	//
+	// For OAuth-backed connectors, this map is typically empty —
+	// the connector reaches into Core via the SystemOAuthAccessToken
+	// route on every vendor call.
+	Details map[string]string
+
+	// Settings carries workspace-level scoping choices (which
+	// project / schema / folder to pull from). Same wire shape as
+	// Details: `settings[<key>]=<value>` form fields.
+	Settings map[string]string
+
 	// Extra carries any additional form fields the specific
 	// connector accepts on its pull endpoint (cursor, filters,
 	// batch hints). Use for connector-specific parameters — the
@@ -92,6 +114,13 @@ type StartOperationPushRequest struct {
 	// FilePath points at a zip on disk. Used when both PresignedURL
 	// and File are empty.
 	FilePath string
+
+	// Details / Settings carry the connection's credentials and
+	// workspace-level scoping. See StartOperationPullRequest for the
+	// long-form rationale — the same shape applies here.
+	Details  map[string]string
+	Settings map[string]string
+
 	// Extra carries additional form fields (connector-specific).
 	Extra map[string]string
 }
@@ -113,6 +142,13 @@ type StartOperationPatchRequest struct {
 	// FileName is the multipart part filename for the patches field.
 	// Defaults to "patches.json".
 	FileName string
+
+	// Details / Settings carry the connection's credentials and
+	// workspace-level scoping. See StartOperationPullRequest for the
+	// long-form rationale.
+	Details  map[string]string
+	Settings map[string]string
+
 	// Extra carries additional form fields (connector-specific).
 	Extra map[string]string
 }
@@ -454,9 +490,10 @@ func (j *OperationJob) Wait(
 func encodeStartPullForm(req StartOperationPullRequest) (io.Reader, map[string]string) {
 	values := url.Values{}
 	values.Set("path", req.Path)
+	addCredentialFormValues(values, req.Details, req.Settings)
 	for k, v := range req.Extra {
 		// Protect against a caller overwriting path via Extra.
-		if k == "path" {
+		if k == "path" || isReservedCredentialKey(k) {
 			continue
 		}
 		values.Set(k, v)
@@ -466,6 +503,42 @@ func encodeStartPullForm(req StartOperationPullRequest) (io.Reader, map[string]s
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 	return body, headers
+}
+
+// addCredentialFormValues stamps Details / Settings onto a url.Values in
+// the `details[<key>]=<value>` / `settings[<key>]=<value>` shape the
+// connector service's ParseFormFields helper recognises. Pulled out of
+// the per-encoder helpers so pull (urlencoded) and push/patch
+// (multipart formFields map) can share the same wire shape; the
+// connector-side Phase 4 parser keys off these prefixes to upsert the
+// Operation row inline without an /operation/init round-trip.
+func addCredentialFormValues(values url.Values, details, settings map[string]string) {
+	for k, v := range details {
+		values.Set(fmt.Sprintf("details[%s]", k), v)
+	}
+	for k, v := range settings {
+		values.Set(fmt.Sprintf("settings[%s]", k), v)
+	}
+}
+
+// addCredentialFormFields is the multipart-friendly twin of
+// addCredentialFormValues — same wire shape, different in-memory
+// container. Used by buildPushRequestOptions and buildPatchRequestOptions.
+func addCredentialFormFields(formFields, details, settings map[string]string) {
+	for k, v := range details {
+		formFields[fmt.Sprintf("details[%s]", k)] = v
+	}
+	for k, v := range settings {
+		formFields[fmt.Sprintf("settings[%s]", k)] = v
+	}
+}
+
+// isReservedCredentialKey returns true for raw form keys that overlap
+// the credential channel's wire shape. Used to refuse Extra values
+// that would silently shadow Details/Settings entries; callers that
+// genuinely need those keys should set them on Details / Settings.
+func isReservedCredentialKey(key string) bool {
+	return strings.HasPrefix(key, "details[") || strings.HasPrefix(key, "settings[")
 }
 
 // buildPushRequestOptions composes the multipart body for a push.
@@ -497,9 +570,10 @@ func buildPushRequestOptions(req StartOperationPushRequest) (RequestOptions, err
 	if req.Path != "" {
 		formFields["path"] = req.Path
 	}
+	addCredentialFormFields(formFields, req.Details, req.Settings)
 	for k, v := range req.Extra {
 		// Protect against a caller overwriting reserved fields via Extra.
-		if k == "path" || k == "file" || k == "presigned_url" {
+		if k == "path" || k == "file" || k == "presigned_url" || isReservedCredentialKey(k) {
 			continue
 		}
 		formFields[k] = v
@@ -567,8 +641,9 @@ func buildPatchRequestOptions(req StartOperationPatchRequest) (RequestOptions, e
 	}
 
 	formFields := map[string]string{}
+	addCredentialFormFields(formFields, req.Details, req.Settings)
 	for k, v := range req.Extra {
-		if k == "patches" {
+		if k == "patches" || isReservedCredentialKey(k) {
 			continue
 		}
 		formFields[k] = v
