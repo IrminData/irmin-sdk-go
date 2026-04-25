@@ -280,8 +280,15 @@ func prepareURLEncodedBody(formFields map[string]string, headers map[string]stri
 }
 
 // prepareRawBody prepares []byte or string bodies for non-structured
-// content types.
-func prepareRawBody(body any, contentType string) (io.Reader, error) {
+// content types and stamps the matching Content-Type on the outgoing
+// header map (parity with the JSON / multipart / URL-encoded helpers,
+// which all do the same — without this, a caller selecting a custom
+// ContentType like "text/xml" would issue a request with no
+// Content-Type header at all).
+func prepareRawBody(body any, contentType string, headers map[string]string) (io.Reader, error) {
+	if contentType != "" {
+		headers["Content-Type"] = contentType
+	}
 	if body == nil {
 		return bytes.NewReader(nil), nil
 	}
@@ -316,7 +323,7 @@ func (c *Client) prepareBodyAndHeaders(opts RequestOptions) (io.Reader, map[stri
 	case "application/x-www-form-urlencoded":
 		bodyReader = prepareURLEncodedBody(opts.FormFields, headers)
 	default:
-		bodyReader, err = prepareRawBody(opts.Body, opts.ContentType)
+		bodyReader, err = prepareRawBody(opts.Body, opts.ContentType, headers)
 	}
 
 	if err != nil {
