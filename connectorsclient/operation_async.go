@@ -486,11 +486,16 @@ func (j *OperationJob) Wait(
 // application/x-www-form-urlencoded body + the matching headers.
 // Keeps the request surface identical to the pre-async
 // /operation/pull handler so the server-side route does not change
-// shape.
+// shape. Credentials flow through the shared
+// buildDetailsSettingsForm encoder so the wire shape stays in
+// lockstep with the config-field endpoints (the canonical reference
+// for `details[<key>]` / `settings[<key>]` form fields).
 func encodeStartPullForm(req StartOperationPullRequest) (io.Reader, map[string]string) {
 	values := url.Values{}
 	values.Set("path", req.Path)
-	addCredentialFormValues(values, req.Details, req.Settings)
+	for k, v := range buildDetailsSettingsForm(req.Details, req.Settings) {
+		values.Set(k, v)
+	}
 	for k, v := range req.Extra {
 		// Protect against a caller overwriting path via Extra.
 		if k == "path" || isReservedCredentialKey(k) {
@@ -505,31 +510,15 @@ func encodeStartPullForm(req StartOperationPullRequest) (io.Reader, map[string]s
 	return body, headers
 }
 
-// addCredentialFormValues stamps Details / Settings onto a url.Values in
-// the `details[<key>]=<value>` / `settings[<key>]=<value>` shape the
-// connector service's ParseFormFields helper recognises. Pulled out of
-// the per-encoder helpers so pull (urlencoded) and push/patch
-// (multipart formFields map) can share the same wire shape; the
-// connector-side Phase 4 parser keys off these prefixes to upsert the
-// Operation row inline without an /operation/init round-trip.
-func addCredentialFormValues(values url.Values, details, settings map[string]string) {
-	for k, v := range details {
-		values.Set(fmt.Sprintf("details[%s]", k), v)
-	}
-	for k, v := range settings {
-		values.Set(fmt.Sprintf("settings[%s]", k), v)
-	}
-}
-
-// addCredentialFormFields is the multipart-friendly twin of
-// addCredentialFormValues — same wire shape, different in-memory
-// container. Used by buildPushRequestOptions and buildPatchRequestOptions.
-func addCredentialFormFields(formFields, details, settings map[string]string) {
-	for k, v := range details {
-		formFields[fmt.Sprintf("details[%s]", k)] = v
-	}
-	for k, v := range settings {
-		formFields[fmt.Sprintf("settings[%s]", k)] = v
+// mergeCredentialFormFields lifts the single canonical
+// buildDetailsSettingsForm encoder into the in-place merge style the
+// multipart push/patch encoders prefer. One source of truth for the
+// `details[<key>]` / `settings[<key>]` wire shape (defined in
+// config_fields.go); a future format change there propagates here
+// for free.
+func mergeCredentialFormFields(formFields, details, settings map[string]string) {
+	for k, v := range buildDetailsSettingsForm(details, settings) {
+		formFields[k] = v
 	}
 }
 
@@ -570,7 +559,7 @@ func buildPushRequestOptions(req StartOperationPushRequest) (RequestOptions, err
 	if req.Path != "" {
 		formFields["path"] = req.Path
 	}
-	addCredentialFormFields(formFields, req.Details, req.Settings)
+	mergeCredentialFormFields(formFields, req.Details, req.Settings)
 	for k, v := range req.Extra {
 		// Protect against a caller overwriting reserved fields via Extra.
 		if k == "path" || k == "file" || k == "presigned_url" || isReservedCredentialKey(k) {
@@ -641,7 +630,7 @@ func buildPatchRequestOptions(req StartOperationPatchRequest) (RequestOptions, e
 	}
 
 	formFields := map[string]string{}
-	addCredentialFormFields(formFields, req.Details, req.Settings)
+	mergeCredentialFormFields(formFields, req.Details, req.Settings)
 	for k, v := range req.Extra {
 		if k == "patches" || isReservedCredentialKey(k) {
 			continue
