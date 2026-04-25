@@ -201,10 +201,14 @@ func (c *Client) startOperation(
 	if err != nil {
 		return nil, fmt.Errorf("failed to build start-operation request: %w", err)
 	}
-	c.applyDefaultHeaders(httpReq, "application/json")
+	// Caller headers first, defaults LAST so a caller-supplied
+	// opts.Headers cannot silently overwrite Authorization or
+	// X-Irmin-Connection-Id on the start-operation call. See
+	// applyDefaultHeaders for the contract.
 	for k, v := range headers {
 		httpReq.Header.Set(k, v)
 	}
+	c.applyDefaultHeaders(httpReq, "application/json")
 
 	resp, err := c.HTTPClient.Do(httpReq)
 	if err != nil {

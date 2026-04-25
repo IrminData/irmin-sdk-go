@@ -103,9 +103,14 @@ func (c *Client) WithConnectionID(id uint) *Client {
 
 // applyDefaultHeaders sets the headers common to every request this
 // client issues using the Client's configured Token (the system token
-// in typical use). Extra headers from RequestOptions.Headers are
-// applied by the caller AFTER this method so they can override any of
-// the defaults (a caller that wants a custom X-Irmin-Connection-Id wins).
+// in typical use). MUST be the LAST header-stamping step on a request:
+// it overwrites Authorization and X-Irmin-Connection-Id unconditionally
+// so a caller-supplied opts.Headers cannot silently downgrade the
+// security-relevant headers (e.g. swapping Authorization to a different
+// bearer or pointing X-Irmin-Connection-Id at a connection the caller
+// is not authorized for). Accept is only stamped if no caller value is
+// already present, so callers can still ask for a non-default media
+// type when a route supports it.
 func (c *Client) applyDefaultHeaders(req *http.Request, accept string) {
 	c.applyHeadersForToken(req, c.Token, accept)
 }
@@ -377,10 +382,13 @@ func (c *Client) Request(ctx context.Context, opts RequestOptions) ([]byte, erro
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	c.applyDefaultHeaders(req, "application/json")
+	// Order matters: caller headers first, defaults LAST so a caller
+	// cannot silently override Authorization or X-Irmin-Connection-Id
+	// via opts.Headers.
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}
+	c.applyDefaultHeaders(req, "application/json")
 
 	resp, err := c.doRequest(req, opts.AllowedStatus)
 	if err != nil {
@@ -434,10 +442,11 @@ func (c *Client) FetchStreamFiles(ctx context.Context, opts RequestOptions) ([]P
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	c.applyDefaultHeaders(req, "application/octet-stream")
+	// Caller headers first, defaults LAST — see Request() for rationale.
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}
+	c.applyDefaultHeaders(req, "application/octet-stream")
 
 	resp, err := c.doRequest(req, opts.AllowedStatus)
 	if err != nil {
@@ -595,10 +604,11 @@ func (c *Client) FetchStreamFilesReader(ctx context.Context, opts RequestOptions
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	c.applyDefaultHeaders(req, "application/octet-stream")
+	// Caller headers first, defaults LAST — see Request() for rationale.
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}
+	c.applyDefaultHeaders(req, "application/octet-stream")
 
 	resp, err := c.doStreamRequest(req, opts.AllowedStatus)
 	if err != nil {

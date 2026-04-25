@@ -76,11 +76,12 @@ func TestWithConnectionIDClearsWithZero(t *testing.T) {
 	}
 }
 
-func TestExplicitHeaderOverridesInjectedConnectionID(t *testing.T) {
-	// If a caller explicitly passes HeaderConnectionID via opts.Headers,
-	// that wins — allows call sites with different ID semantics (e.g.
-	// cross-workspace reattribution) to override without reaching into
-	// the client field.
+func TestClientConnectionIDWinsOverOptsHeaders(t *testing.T) {
+	// Security-relevant headers (Authorization, X-Irmin-Connection-Id)
+	// are stamped LAST by applyDefaultHeaders so a caller cannot
+	// silently downgrade them via opts.Headers — e.g. swapping the
+	// connection ID to one the caller is not authorized for, or
+	// substituting a different bearer token. The client field wins.
 	baseURL, httpClient, read := newRecordingServer(t)
 	c := NewClient(baseURL, "token")
 	c.HTTPClient = httpClient
@@ -95,8 +96,8 @@ func TestExplicitHeaderOverridesInjectedConnectionID(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Request: %v", err)
 	}
-	if got := read(); got != "999" {
-		t.Fatalf("explicit header should win: got %q, want %q", got, "999")
+	if got := read(); got != "100" {
+		t.Fatalf("client ConnectionID should win: got %q, want %q", got, "100")
 	}
 }
 
